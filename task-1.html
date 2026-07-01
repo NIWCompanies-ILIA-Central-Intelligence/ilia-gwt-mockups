@@ -5,33 +5,34 @@
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>GWT Task 1 — Auto-populate Kai-Zen policy (clickable mockup)</title>
 <style>
-  :root{--navy:#112a4a;--ink:#20262e;--muted:#6b7480;--line:#dfe4ea;--blue:#185fa5;--bluebg:#e7f1fb;--bg:#f6f8fb;--ro:#eef1f5;--green:#1d7a52;--greenbg:#e7f4ec;}
+  :root{--navy:#112a4a;--ink:#20262e;--muted:#6b7480;--line:#dfe4ea;--blue:#185fa5;--bluebg:#e7f1fb;--bg:#f6f8fb;--ro:#eef1f5;--green:#1d7a52;--greenbg:#e7f4ec;--red:#c0392b;}
   *{box-sizing:border-box}
   body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg);line-height:1.5;}
   .bar{background:var(--navy);color:#fff;padding:16px 22px;}
   .bar h1{margin:0;font-size:18px;font-weight:600;}
   .bar p{margin:3px 0 0;font-size:13px;color:#c3d6ec;}
   .wrap{max-width:920px;margin:0 auto;padding:20px;}
-  .demobar{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin-bottom:18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
-  .demobar b{font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;}
-  .toggle{display:flex;gap:8px;}
-  .toggle button{font-size:13px;border:1px solid var(--line);background:#fff;border-radius:20px;padding:6px 14px;cursor:pointer;}
-  .toggle button.on{background:var(--blue);color:#fff;border-color:var(--blue);}
-  .card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:22px 24px;margin-bottom:18px;}
+  .tabs{display:flex;gap:4px;border-bottom:2px solid var(--line);margin-bottom:0;}
+  .tab{font-size:15px;font-weight:600;padding:12px 20px;border:none;background:none;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;}
+  .tab.on{color:var(--blue);border-bottom-color:var(--blue);}
+  .card{background:#fff;border:1px solid var(--line);border-top:none;border-radius:0 0 12px 12px;padding:22px 24px;margin-bottom:18px;}
   .card h2{font-family:Georgia,serif;font-size:26px;font-weight:600;margin:0 0 4px;}
   .card .hint{color:var(--muted);font-size:13px;margin:0 0 18px;}
-  .q{font-size:15px;margin:18px 0 8px;}
+  .q{font-size:15px;margin:14px 0 8px;font-weight:600;}
   .radios{display:flex;gap:26px;margin-bottom:6px;}
   .radios label{display:flex;align-items:center;gap:8px;font-size:15px;cursor:pointer;}
   .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 20px;margin-top:14px;}
   @media(max-width:640px){.grid{grid-template-columns:1fr;}}
   .field label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px;}
+  .field .req{color:var(--red);}
   .field input,.field select{width:100%;font-size:15px;padding:11px 12px;border:1px solid var(--line);border-radius:6px;background:#fff;}
   .field input[readonly]{background:var(--ro);color:#3a4350;cursor:not-allowed;}
   .robadge{display:inline-block;font-size:11px;font-weight:600;color:var(--green);background:var(--greenbg);border-radius:5px;padding:2px 8px;margin-left:6px;vertical-align:middle;}
   .picker{background:var(--bluebg);border:1px solid #cfe0f4;border-radius:8px;padding:12px 14px;margin:14px 0;}
   .picker label{font-size:13px;color:var(--blue);font-weight:600;display:block;margin-bottom:6px;}
-  .autonote{font-size:13px;color:var(--green);margin:10px 0 0;display:flex;align-items:center;gap:6px;}
+  .autonote{font-size:13px;color:var(--green);margin:10px 0 0;}
+  .reqnote{font-size:12px;color:var(--muted);margin:12px 0 0;font-style:italic;}
+  .prompt{font-size:13px;color:var(--muted);background:#fbf8e9;border:1px dashed #e0d7a8;border-radius:6px;padding:8px 12px;margin-top:12px;}
   .hidden{display:none;}
   .legend{background:#fff;border:1px solid var(--line);border-left:5px solid var(--blue);border-radius:10px;padding:14px 18px;font-size:14px;}
   .legend h3{margin:0 0 8px;font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);}
@@ -46,89 +47,96 @@
 </div>
 <div class="wrap">
 
-  <div class="demobar">
-    <b>Demo — simulate a giftor with:</b>
-    <div class="toggle">
-      <button id="btn1" class="on" onclick="setPolicies(1)">1 Kai-Zen policy</button>
-      <button id="btn2" onclick="setPolicies(2)">2 Kai-Zen policies</button>
-      <button id="btn0" onclick="setPolicies(0)">no policy on file</button>
-    </div>
+  <div class="tabs">
+    <button id="tabA" class="tab on" onclick="setTab('A')">1 · Giftor has a Kai-Zen policy</button>
+    <button id="tabB" class="tab" onclick="setTab('B')">2 · Giftor has no policy</button>
   </div>
 
   <div class="card">
     <h2>My details (giftor)</h2>
-    <p class="hint">Existing Kai-Zen policy details are pulled from ILIA automatically. Click Yes / No to see the behavior.</p>
+    <p class="hint" id="hint">Existing Kai-Zen policy details are pulled from ILIA automatically.</p>
 
-    <div class="q"><strong>Do you (the Giftor) currently have a Kai-Zen policy?</strong> <span style="color:#c0392b">*</span></div>
+    <div class="q">Do you (the Giftor) currently have a Kai-Zen policy? <span style="color:var(--red)">*</span></div>
     <div class="radios">
-      <label><input type="radio" name="haspolicy" value="yes" onclick="choose('yes')"> Yes</label>
-      <label><input type="radio" name="haspolicy" value="no" onclick="choose('no')"> No</label>
+      <label><input type="radio" name="haspolicy" id="rYes" value="yes" onclick="choose('yes')"> Yes</label>
+      <label><input type="radio" name="haspolicy" id="rNo" value="no" onclick="choose('no')"> No</label>
     </div>
+    <div class="prompt" id="prompt">Click <strong>Yes</strong> to see the multiple-policy scenario.</div>
 
-    <div id="policyBlock" class="hidden">
-      <div id="picker" class="picker hidden">
+    <!-- YES path: has policy, auto-filled -->
+    <div id="yesBlock" class="hidden">
+      <div id="picker" class="picker">
         <label>You have more than one Kai-Zen policy — select which one applies:</label>
-        <select id="policySelect" onchange="fillFromSelect()"></select>
+        <select id="policySelect" onchange="fillFromSelect()">
+          <option value="0">KZ-100234 — National Life (LSW)</option>
+          <option value="1">KZ-100987 — Allianz</option>
+        </select>
       </div>
-
       <div class="grid">
         <div class="field"><label>Tranche #</label><input id="f_tranche" readonly></div>
         <div class="field"><label>Policy Number</label><input id="f_policy" readonly></div>
         <div class="field"><label>Insurance Carrier Name</label><input id="f_carrier" readonly></div>
         <div class="field"><label>Death Benefit Amount of the Policy</label><input id="f_db" readonly></div>
       </div>
-      <p class="autonote" id="autonote">✓ Auto-filled from ILIA — read only <span class="robadge">READ ONLY</span></p>
+      <p class="autonote">✓ Auto-filled from ILIA — read only <span class="robadge">READ ONLY</span></p>
     </div>
 
-    <div id="noPolicyMsg" class="hidden" style="margin-top:12px;color:var(--muted);font-size:14px;">
-      No additional policy information is required.
+    <!-- NO path: no policy, required fields -->
+    <div id="noBlock" class="hidden">
+      <div class="q">Do you (the Giftor) have current insurance coverage? <span class="req">*</span></div>
+      <div class="radios">
+        <label><input type="radio" name="coverage"> Yes</label>
+        <label><input type="radio" name="coverage"> No</label>
+      </div>
+      <div class="q" style="margin-top:16px;">Are you (the Giftor) uninsurable? <span class="req">*</span></div>
+      <div class="radios">
+        <label><input type="radio" name="uninsurable"> Yes</label>
+        <label><input type="radio" name="uninsurable"> No</label>
+      </div>
+      <p class="reqnote">These qualification fields are required and manually entered when no Kai-Zen policy is on file. (Field wording — e.g. "uninsurable" — is finalized in Tasks 2 & 3.)</p>
     </div>
   </div>
 
   <div class="legend">
     <h3>What this demonstrates (for dev)</h3>
     <ul>
-      <li>On <strong>Yes</strong>, the giftor's Kai-Zen policy fields (tranche, policy #, carrier, death benefit) are <strong>pulled from ILIA and auto-filled</strong> — no manual typing.</li>
-      <li>Auto-filled fields are <strong>read-only</strong> (greyed, not editable).</li>
-      <li>If the giftor has <strong>more than one</strong> policy, a <strong>dropdown</strong> appears to pick which one; selecting it repopulates the fields. (Try the "2 policies" toggle.)</li>
-      <li>If <strong>no policy</strong> is on file, no policy fields are shown (fallback). (Try "no policy on file.")</li>
-      <li>On <strong>No</strong>, the policy section stays hidden.</li>
+      <li><strong>Tab 1 — Giftor has a Kai-Zen policy:</strong> clicking <strong>Yes</strong> pulls the policy from ILIA and <strong>auto-fills read-only</strong> fields (tranche, policy #, carrier, death benefit). If more than one policy exists, a <strong>dropdown</strong> lets them pick which one.</li>
+      <li><strong>Tab 2 — Giftor has no policy:</strong> clicking <strong>No</strong> shows the <strong>required fields</strong> the giftor must complete manually (editable, marked *).</li>
+      <li>Auto-filled fields are never editable; required (no-policy) fields are editable and validated.</li>
     </ul>
   </div>
 
 </div>
 <script>
-  var POLICIES=[];
-  var SETS={
-    1:[{tranche:"55",policy:"KZ-100234",carrier:"National Life (LSW)",db:"$1,750,000"}],
-    2:[{tranche:"55",policy:"KZ-100234",carrier:"National Life (LSW)",db:"$1,750,000"},
-       {tranche:"58",policy:"KZ-100987",carrier:"Allianz",db:"$1,000,000"}],
-    0:[]
-  };
-  function setPolicies(n){
-    POLICIES=SETS[n];
-    ['btn0','btn1','btn2'].forEach(function(id){document.getElementById(id).classList.remove('on');});
-    document.getElementById(n===0?'btn0':(n===1?'btn1':'btn2')).classList.add('on');
-    var checked=document.querySelector('input[name=haspolicy]:checked');
-    if(checked) choose(checked.value);
+  var POLICIES=[{tranche:"55",policy:"KZ-100234",carrier:"National Life (LSW)",db:"$1,750,000"},
+                {tranche:"58",policy:"KZ-100987",carrier:"Allianz",db:"$1,000,000"}];
+  var TAB='A';
+  function setTab(t){
+    TAB=t;
+    document.getElementById('tabA').classList.toggle('on',t==='A');
+    document.getElementById('tabB').classList.toggle('on',t==='B');
+    document.getElementById('rYes').checked=false;
+    document.getElementById('rNo').checked=false;
+    document.getElementById('yesBlock').classList.add('hidden');
+    document.getElementById('noBlock').classList.add('hidden');
+    var prompt=document.getElementById('prompt');
+    prompt.classList.remove('hidden');
+    if(t==='A'){
+      document.getElementById('hint').textContent='Existing Kai-Zen policy details are pulled from ILIA automatically.';
+      prompt.innerHTML='Click <strong>Yes</strong> to see the multiple-policy scenario.';
+    } else {
+      document.getElementById('hint').textContent='This giftor has no Kai-Zen policy on file in ILIA.';
+      prompt.innerHTML='Click <strong>No</strong> to see the required fields.';
+    }
   }
   function choose(v){
-    var block=document.getElementById('policyBlock');
-    var noMsg=document.getElementById('noPolicyMsg');
-    if(v==='no'){block.classList.add('hidden');noMsg.classList.add('hidden');return;}
-    if(POLICIES.length===0){block.classList.add('hidden');noMsg.classList.remove('hidden');return;}
-    noMsg.classList.add('hidden');block.classList.remove('hidden');
-    var picker=document.getElementById('picker');
-    var sel=document.getElementById('policySelect');
-    if(POLICIES.length>1){
-      picker.classList.remove('hidden');
-      sel.innerHTML=POLICIES.map(function(p,i){return '<option value="'+i+'">'+p.policy+' — '+p.carrier+'</option>';}).join('');
-    } else { picker.classList.add('hidden'); }
-    fillFromSelect();
+    document.getElementById('prompt').classList.add('hidden');
+    var yes=document.getElementById('yesBlock'), no=document.getElementById('noBlock');
+    if(v==='yes'){ no.classList.add('hidden'); yes.classList.remove('hidden'); fillFromSelect(); }
+    else { yes.classList.add('hidden'); no.classList.remove('hidden'); }
   }
   function fillFromSelect(){
-    var i=POLICIES.length>1?parseInt(document.getElementById('policySelect').value,10):0;
-    var p=POLICIES[i]; if(!p) return;
+    var p=POLICIES[parseInt(document.getElementById('policySelect').value,10)];
     document.getElementById('f_tranche').value=p.tranche;
     document.getElementById('f_policy').value=p.policy;
     document.getElementById('f_carrier').value=p.carrier;
