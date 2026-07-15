@@ -24,14 +24,20 @@
   .top .burger{font-size:20px;color:var(--muted)}
   .top .who{display:flex;align-items:center;gap:12px;color:var(--muted)}
   .top .who .av{width:34px;height:34px;border-radius:50%;background:var(--blue-soft);color:var(--blue);display:flex;align-items:center;justify-content:center;font-weight:600}
-  .wrap{padding:24px 34px;width:100%;max-width:1200px}
+  .wrap{padding:24px 34px;width:100%;max-width:960px}
   .crumb{color:var(--faint);font-size:12.5px;margin-bottom:4px}
-  h1{font-size:23px;font-weight:700;letter-spacing:-.2px}
-  .lede{color:var(--muted);margin-top:6px;max-width:640px}
-  .layout{display:grid;grid-template-columns:1fr 300px;gap:22px;align-items:start;margin-top:20px}
+  h1{font-size:24px;font-weight:700;letter-spacing:-.2px}
+  .lede{color:var(--muted);margin-top:6px;max-width:680px}
 
-  .card{background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:18px}
-  .card>summary,.card .hd{padding:15px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:11px;cursor:default}
+  .reqcard{background:#fff;border:1px solid var(--border);border-radius:14px;padding:18px 20px;margin-top:20px}
+  .reqcard h3{font-size:14.5px;font-weight:600;display:flex;align-items:center;gap:8px;margin-bottom:3px}
+  .reqcard .rsub{color:var(--faint);font-size:12.5px;margin-bottom:15px}
+  .reqgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px 26px}
+  .reqitem{display:flex;gap:10px;font-size:13px;color:var(--muted);line-height:1.55}
+  .reqitem .ri{color:var(--blue);flex-shrink:0;margin-top:1px;font-size:13px}
+
+  .card{background:var(--card);border:1px solid var(--border);border-radius:14px;margin-top:18px}
+  .card>summary,.card .hd{padding:15px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:11px}
   details.card>summary{cursor:pointer;list-style:none}
   details.card>summary::-webkit-details-marker{display:none}
   .snum{width:24px;height:24px;border-radius:50%;background:var(--blue-soft);color:var(--blue-d);display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
@@ -40,17 +46,20 @@
   .chev{margin-left:auto;color:var(--faint);transition:transform .15s}
   details.card[open]>summary .chev{transform:rotate(90deg)}
   .agent-only{margin-left:auto;background:#EEF1F5;color:#5A6472;font-size:10.5px;font-weight:700;letter-spacing:.4px;padding:2px 8px;border-radius:5px;text-transform:uppercase}
+  .lockchip{display:none;background:#FFF3E0;color:#8A5A12;border:1px solid #F3D9A8;border-radius:20px;font-size:11.5px;font-weight:600;padding:2px 10px;margin-left:auto;align-items:center;gap:5px}
+  .card.locked .lockchip{display:inline-flex}
+  .card.locked .bd{opacity:.55;pointer-events:none}
   .bd{padding:20px}
 
   .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
   .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
-  .fld{margin-bottom:0}
   .fld label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px;font-weight:600}
   .fld .rq{color:var(--red)}
   .fld input,.fld select{width:100%;height:40px;border:1px solid var(--border-d);border-radius:9px;padding:0 12px;font-size:14px;color:var(--ink);background:#fff}
   .fld input:focus,.fld select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-soft)}
   .fld.err input{border-color:var(--red);background:var(--red-soft)}
-  .chip-ro{display:inline-flex;align-items:center;gap:7px;height:40px;border:1px solid #CFE0FB;background:var(--blue-soft);color:var(--blue-d);border-radius:9px;padding:0 12px;font-weight:600;font-size:13.5px}
+  .fld input:disabled,.fld select:disabled{background:#F1F3F6;color:#AEB8C6;cursor:not-allowed;border-color:var(--border)}
+  .hint{font-size:11.5px;color:var(--faint);margin-top:5px}
   .rgroup{display:flex;gap:22px;margin-top:6px}
   .ropt{display:flex;align-items:center;gap:7px;font-size:14px;font-weight:400}
   .ropt input{width:16px;height:16px;accent-color:var(--blue);margin:0}
@@ -58,6 +67,7 @@
   .gcol-h{font-size:12px;color:var(--muted);font-weight:600;margin-bottom:8px}
   .note{background:var(--amber-bg);border:1px solid var(--amber-bd);border-radius:9px;padding:11px 13px;color:var(--amber-tx);font-size:12.5px;line-height:1.55}
   .note.blue{background:var(--blue-soft);border-color:#CFE0FB;color:var(--blue-d)}
+  .note.green{background:var(--g-bg);border-color:#BFE6CF;color:var(--g-tx)}
   .upload{border:1.5px dashed var(--border-d);border-radius:10px;padding:16px;text-align:center;color:var(--muted);font-size:13px;cursor:pointer}
   .upload:hover{border-color:var(--blue);color:var(--blue)}
 
@@ -65,28 +75,15 @@
   table.alloc th{text-align:left;font-size:11px;letter-spacing:.4px;text-transform:uppercase;color:var(--faint);font-weight:600;padding:0 10px 9px;border-bottom:1px solid var(--border)}
   table.alloc td{padding:9px 10px;border-bottom:1px solid #F0F3F7;font-size:13.5px}
   table.alloc input{width:80px;height:34px;border:1px solid var(--border-d);border-radius:8px;padding:0 8px;font-size:13.5px;text-align:right}
-  table.alloc input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-soft)}
   .rate{color:var(--muted)}
   .alloc-tot{display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding:12px 14px;background:var(--gr-bg);border-radius:9px;font-size:13.5px}
-  .alloc-tot b{font-size:15px}
-  .tot-bad{color:var(--red)}
-  .tot-ok{color:var(--g-tx)}
+  .tot-ok{color:var(--g-tx);font-weight:700}.tot-bad{color:var(--red);font-weight:700}
 
-  .btn{height:42px;border:none;border-radius:9px;background:var(--blue);color:#fff;font-weight:600;font-size:14px;padding:0 18px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:7px;width:100%}
+  .footer-bar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:20px;padding:16px 20px;background:#fff;border:1px solid var(--border);border-radius:14px}
+  .lic{font-size:12px;color:var(--faint);max-width:520px}
+  .btn{height:44px;border:none;border-radius:9px;background:var(--blue);color:#fff;font-weight:600;font-size:14px;padding:0 22px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:7px;white-space:nowrap}
   .btn:hover{background:var(--blue-d)}
-  .btn.ghost{background:#fff;color:var(--blue);border:1px solid var(--border-d)}
-  .btn.ghost:hover{background:var(--blue-soft)}
-
-  .rail{position:sticky;top:20px;display:flex;flex-direction:column;gap:16px}
-  .rail .card{margin-bottom:0}
-  .sumrow{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;gap:10px}
-  .sumrow .k{color:var(--muted)}
-  .sumrow .v{font-weight:600;text-align:right}
-  .check{display:flex;align-items:center;gap:9px;font-size:13px;padding:6px 0}
-  .check .dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--border-d);flex-shrink:0}
-  .check.done .dot{background:var(--g-tx);border-color:var(--g-tx)}
-  .check.done .dot::after{content:"✓";color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;height:100%}
-  .lic{font-size:11.5px;color:var(--faint);line-height:1.5}
+  .btn:disabled{background:#C3CEDE;cursor:not-allowed}
 
   .toast{position:fixed;bottom:24px;right:24px;background:#12253F;color:#fff;padding:13px 18px;border-radius:11px;font-size:13.5px;display:flex;align-items:center;gap:9px;opacity:0;transform:translateY(10px);transition:.25s;z-index:60;box-shadow:0 10px 30px rgba(0,0,0,.25)}
   .toast.show{opacity:1;transform:translateY(0)}
@@ -120,159 +117,175 @@
     </div>
     <div class="wrap">
       <div class="crumb">Client Management · Create invitation · Individual</div>
-      <h1>New Greatest Wealth Transfer invitation</h1>
-      <p class="lede">Set up the giftor and send their GWT invitation. Anything you leave blank, the giftor can finish in their own portal after they're invited.</p>
+      <h1>Create a new invitation</h1>
+      <p class="lede">Choose the carrier and product to invite your client. When you select the Greatest Wealth Transfer, we'll guide you through the giftor setup below.</p>
 
-      <div class="layout">
-        <div class="col-main">
-          <section class="card">
-            <div class="hd"><span class="snum">1</span><div><div class="stit">Product &amp; offer</div><div class="ssub">What the giftor is being invited to.</div></div></div>
-            <div class="bd">
-              <div class="grid3">
-                <div class="fld"><label>Primary carrier <span class="rq">*</span></label><select><option>National Life (LSW)</option><option>Allianz</option></select></div>
-                <div class="fld"><label>Product</label><div class="chip-ro">◈ The Greatest Wealth Transfer</div></div>
-                <div class="fld"><label>Offer type <span class="rq">*</span></label><select><option>Full Underwriting (Summit)</option><option>Simplified Issue</option><option>Guaranteed Issue</option></select></div>
-              </div>
-              <div class="note blue" style="margin-top:14px">ⓘ You've selected the Greatest Wealth Transfer. The giftor's net worth and/or annual salary are required to send. Anything you don't complete here, the giftor fills in their portal once invited.</div>
-            </div>
-          </section>
-
-          <section class="card">
-            <div class="hd"><span class="snum">2</span><div><div class="stit">Giftor details</div><div class="ssub">Who you're inviting.</div></div></div>
-            <div class="bd">
-              <div class="grid2">
-                <div class="fld" id="a-first"><label>First name <span class="rq">*</span></label><input placeholder="First name"></div>
-                <div class="fld" id="a-last"><label>Last name <span class="rq">*</span></label><input placeholder="Last name"></div>
-              </div>
-              <div class="grid2" style="margin-top:14px">
-                <div class="fld" id="a-email"><label>Email address <span class="rq">*</span></label><input placeholder="name@example.com"></div>
-                <div class="fld"><label>Cell phone</label><input placeholder="(000) 000-0000"></div>
-              </div>
-              <div class="grid2" style="margin-top:14px">
-                <div class="fld"><label>Date of birth <span class="rq">*</span></label><input placeholder="MM/DD/YYYY"></div>
-                <div class="fld"><label>Gender <span class="rq">*</span></label><select><option value="">Select</option><option>Female</option><option>Male</option><option>Other</option></select></div>
-              </div>
-              <div style="margin-top:16px;font-size:13.5px">Does the giftor currently have a Kai-Zen policy?
-                <div class="rgroup"><label class="ropt"><input type="radio" name="a-kz" onclick="document.getElementById('kzfields').style.display='grid'"> Yes</label><label class="ropt"><input type="radio" name="a-kz" checked onclick="document.getElementById('kzfields').style.display='none'"> No</label></div>
-              </div>
-              <div class="grid2" id="kzfields" style="display:none;margin-top:14px">
-                <div class="fld"><label>Tranche #</label><input></div>
-                <div class="fld"><label>Policy number</label><input></div>
-              </div>
-            </div>
-          </section>
-
-          <details class="card">
-            <summary><span class="snum">3</span><div><div class="stit">Giftor financials</div><div class="ssub">Income, net worth, assets, liabilities — optional to send.</div></div><span class="chev">›</span></summary>
-            <div class="bd">
-              <div class="note" style="margin-bottom:16px">ⓘ Fill in what you have. Net worth <b>or</b> an annual salary is required to send; the giftor can complete the rest in their portal.</div>
-              <div class="gcol-h" style="margin-bottom:12px;font-weight:600;color:var(--ink)">Income</div>
-              <div class="grid3">
-                <div><div class="gcol-h">Last year</div><div class="fld" style="margin-bottom:10px"><label>Annual salary</label><input value="$"></div><div class="fld" style="margin-bottom:10px"><label>Dividends etc.</label><input value="$"></div><div class="fld"><label>Other income</label><input value="$"></div></div>
-                <div><div class="gcol-h">1 year prior</div><div class="fld" style="margin-bottom:10px"><label>Annual salary</label><input value="$"></div><div class="fld" style="margin-bottom:10px"><label>Dividends etc.</label><input value="$"></div><div class="fld"><label>Other income</label><input value="$"></div></div>
-                <div><div class="gcol-h">2 years prior</div><div class="fld" style="margin-bottom:10px"><label>Annual salary</label><input value="$"></div><div class="fld" style="margin-bottom:10px"><label>Dividends etc.</label><input value="$"></div><div class="fld"><label>Other income</label><input value="$"></div></div>
-              </div>
-              <div class="gsub">Net worth</div>
-              <div class="grid3"><div class="fld"><label>Giftor net worth</label><input value="$"></div><div></div><div></div></div>
-              <div class="gsub">Assets</div>
-              <div class="grid3">
-                <div class="fld" style="margin-bottom:10px"><label>Cash in banks</label><input value="$"></div>
-                <div class="fld" style="margin-bottom:10px"><label>Real estate</label><input value="$"></div>
-                <div class="fld" style="margin-bottom:10px"><label>Receivables</label><input value="$"></div>
-                <div class="fld" style="margin-bottom:10px"><label>Stocks, bonds, funds</label><input value="$"></div>
-                <div class="fld" style="margin-bottom:10px"><label>Personal property</label><input value="$"></div>
-                <div class="fld" style="margin-bottom:10px"><label>Business interest</label><input value="$"></div>
-                <div class="fld"><label>Cash-value life insurance</label><input value="$"></div>
-                <div class="fld"><label>Annuities</label><input value="$"></div>
-                <div class="fld"><label>Other assets</label><input value="$"></div>
-              </div>
-              <div class="gsub">Liabilities</div>
-              <div class="grid3">
-                <div class="fld" style="margin-bottom:10px"><label>Taxes and interest due</label><input value="$"></div>
-                <div class="fld" style="margin-bottom:10px"><label>Real estate mortgages / liens</label><input value="$"></div>
-                <div class="fld" style="margin-bottom:10px"><label>Loans on life insurance</label><input value="$"></div>
-                <div class="fld"><label>Notes payable</label><input value="$"></div>
-                <div class="fld"><label>Accounts payable</label><input value="$"></div>
-                <div class="fld"><label>Other liabilities</label><input value="$"></div>
-              </div>
-            </div>
-          </details>
-
-          <details class="card">
-            <summary><span class="snum">4</span><div><div class="stit">Documents</div><div class="ssub">Identity and tax documents — optional to send.</div></div><span class="chev">›</span></summary>
-            <div class="bd">
-              <div class="note blue" style="margin-bottom:16px">ⓘ If you don't upload these, the giftor uploads them in their portal after they're invited.</div>
-              <div class="fld" style="margin-bottom:14px"><label>Identity document type</label><select><option value="">Select</option><option>Driver's license</option><option>Passport</option><option>State ID</option></select></div>
-              <div class="grid2" style="margin-bottom:18px"><div class="upload">＋ Upload ID (front)</div><div class="upload">＋ Upload ID (back)</div></div>
-              <div class="fld"><label>Tax document type</label><select><option value="">Select</option><option>W-2</option><option>Tax return</option><option>1099</option></select></div>
-              <div class="upload" style="margin-top:12px">＋ Upload tax document</div>
-            </div>
-          </details>
-
-          <section class="card">
-            <div class="hd"><span class="snum">5</span><div><div class="stit">Allocation</div><div class="ssub">Index strategy for the policy.</div></div><span class="agent-only">Agent only</span></div>
-            <div class="bd">
-              <div class="fld" style="max-width:260px;margin-bottom:16px"><label>Premise</label><select><option>S&amp;P 500</option></select></div>
-              <table class="alloc">
-                <thead><tr><th>Index option</th><th style="width:120px">Percent</th><th style="width:120px">Current rate</th></tr></thead>
-                <tbody>
-                  <tr><td>S&amp;P PtP Cap</td><td><input class="apct" value="100"></td><td class="rate">6.81%</td></tr>
-                  <tr><td>S&amp;P PtP Par</td><td><input class="apct" value=""></td><td class="rate">5.64%</td></tr>
-                  <tr><td>S&amp;P PtP 1% Floor</td><td><input class="apct" value=""></td><td class="rate">5.55%</td></tr>
-                  <tr><td>Credit Suisse</td><td><input class="apct" value=""></td><td class="rate">6.81%</td></tr>
-                  <tr><td>Pacesetter</td><td><input class="apct" value=""></td><td class="rate">6.81%</td></tr>
-                  <tr><td>Fixed Account</td><td><input class="apct" value=""></td><td class="rate">3.50%</td></tr>
-                </tbody>
-              </table>
-              <div class="alloc-tot"><span>Total allocation</span><b id="alloc-total" class="tot-ok">100%</b></div>
-            </div>
-          </section>
-
-          <section class="card">
-            <div class="hd"><span class="snum">6</span><div><div class="stit">Recipients <span style="color:var(--faint);font-weight:400">(optional)</span></div><div class="ssub">Add the giftor's loved ones now, or let them add later.</div></div></div>
-            <div class="bd">
-              <div style="font-size:13.5px">Add recipients now?
-                <div class="rgroup"><label class="ropt"><input type="radio" name="a-rec"> Yes</label><label class="ropt"><input type="radio" name="a-rec" checked> No — the giftor adds them in their portal</label></div>
-              </div>
-              <div class="note" style="margin-top:14px">Most agents let the giftor add recipients themselves in the giftor portal. You can also add them here if you're setting everything up together.</div>
-            </div>
-          </section>
+      <div class="reqcard">
+        <h3>ⓘ What your client may need</h3>
+        <div class="rsub">Have these ready to complete enrollment — depending on the product and answers.</div>
+        <div class="reqgrid">
+          <div class="reqitem"><span class="ri">▸</span><span>A valid, non-expired driver's license (front and back) or passport photo + signature page.</span></div>
+          <div class="reqitem"><span class="ri">▸</span><span>The two most recent years of W-2s or 1099s, or two years of tax returns.</span></div>
+          <div class="reqitem"><span class="ri">▸</span><span>If the license address differs from the current address, a recent utility bill (under 60 days).</span></div>
+          <div class="reqitem"><span class="ri">▸</span><span>A list of assets, liabilities, and beneficiary details (name, SSN, address, phone, email).</span></div>
+          <div class="reqitem"><span class="ri">▸</span><span>Any in-force life insurance policies — carrier, active date, and death benefit amounts.</span></div>
         </div>
+      </div>
 
-        <aside class="rail">
-          <section class="card">
-            <div class="hd"><div><div class="stit">Invitation summary</div></div></div>
-            <div class="bd">
-              <div class="sumrow"><span class="k">Product</span><span class="v">The Greatest Wealth Transfer</span></div>
-              <div class="sumrow"><span class="k">Carrier</span><span class="v">National Life (LSW)</span></div>
-              <div class="sumrow"><span class="k">Offer</span><span class="v">Full Underwriting</span></div>
-              <div class="sumrow"><span class="k">Allocation</span><span class="v" id="sum-alloc">100%</span></div>
-              <div style="border-top:1px solid #F0F3F7;margin:12px 0;padding-top:12px">
-                <div class="check done"><span class="dot"></span>Product &amp; offer</div>
-                <div class="check" id="chk-giftor"><span class="dot"></span>Giftor details</div>
-                <div class="check done"><span class="dot"></span>Allocation</div>
-              </div>
-              <button class="btn" style="margin-top:6px" onclick="sendInvite()">Send invitation</button>
-              <button class="btn ghost" style="margin-top:10px" onclick="toast('Draft saved')">Save draft</button>
-              <p class="lic" style="margin-top:14px">All agents must be licensed in the giftor's state before sending. Fields left blank can be completed by the giftor in their portal.</p>
+      <section class="card">
+        <div class="hd"><span class="snum">1</span><div><div class="stit">Create a new invitation</div><div class="ssub">Carrier and product for this invite.</div></div></div>
+        <div class="bd">
+          <div class="grid2">
+            <div class="fld"><label>Primary carrier <span class="rq">*</span></label><select id="carrier"><option>National Life (LSW)</option><option>Allianz</option></select></div>
+            <div class="fld"><label>ilia product type <span class="rq">*</span></label><select id="prodType" onchange="onProduct()"><option value="">Select product</option><option value="gwt">The Greatest Wealth Transfer</option></select></div>
+          </div>
+          <div class="grid2" style="margin-top:14px">
+            <div class="fld"><label>Offer type <span class="rq">*</span></label><select id="offerType" disabled><option>Full Underwriting (Summit)</option></select><div class="hint" id="offer-hint"></div></div>
+            <div class="fld"><label>Expected contribution amount</label><input id="contrib" placeholder="$" disabled><div class="hint" id="contrib-hint"></div></div>
+          </div>
+          <div class="note green" id="gwt-note" style="display:none;margin-top:16px">✓ Greatest Wealth Transfer selected — offer type and expected contribution aren't needed. Complete the giftor's details in the next step below.</div>
+        </div>
+      </section>
+
+      <section class="card locked" id="participantCard">
+        <div class="hd"><span class="snum">2</span><div><div class="stit">Participant contact</div><div class="ssub">The person being enrolled.</div></div><span class="lockchip">🔒 Not used for the Greatest Wealth Transfer</span></div>
+        <div class="bd">
+          <div class="grid2">
+            <div class="fld"><label>First name <span class="rq">*</span></label><input disabled></div>
+            <div class="fld"><label>Last name <span class="rq">*</span></label><input disabled></div>
+          </div>
+          <div class="grid2" style="margin-top:14px">
+            <div class="fld"><label>Email address <span class="rq">*</span></label><input disabled></div>
+            <div class="fld"><label>Cell phone <span class="rq">*</span></label><input disabled></div>
+          </div>
+          <div class="grid2" style="margin-top:14px">
+            <div class="fld"><label>Date of birth <span class="rq">*</span></label><input placeholder="MM/DD/YYYY" disabled></div>
+            <div class="fld"><label>Combined annual household income <span class="rq">*</span></label><input placeholder="$" disabled></div>
+          </div>
+          <div class="grid2" style="margin-top:14px">
+            <div class="fld"><label>Net worth <span class="rq">*</span></label><input placeholder="$" disabled></div>
+            <div class="fld"><label>Gender <span class="rq">*</span></label><select disabled><option>Select</option></select></div>
+          </div>
+        </div>
+      </section>
+      <div id="giftorStep" style="display:none">
+        <section class="card">
+          <div class="hd"><span class="snum">3</span><div><div class="stit">Giftor details</div><div class="ssub">The Greatest Wealth Transfer giftor you're inviting. Anything you leave blank, the giftor completes in their portal.</div></div></div>
+          <div class="bd">
+            <div class="grid2">
+              <div class="fld" id="g-first"><label>First name <span class="rq">*</span></label><input placeholder="First name"></div>
+              <div class="fld" id="g-last"><label>Last name <span class="rq">*</span></label><input placeholder="Last name"></div>
             </div>
-          </section>
-        </aside>
+            <div class="grid2" style="margin-top:14px">
+              <div class="fld" id="g-email"><label>Email address <span class="rq">*</span></label><input placeholder="name@example.com"></div>
+              <div class="fld"><label>Cell phone</label><input placeholder="(000) 000-0000"></div>
+            </div>
+            <div class="grid2" style="margin-top:14px">
+              <div class="fld"><label>Date of birth <span class="rq">*</span></label><input placeholder="MM/DD/YYYY"></div>
+              <div class="fld"><label>Gender <span class="rq">*</span></label><select><option value="">Select</option><option>Female</option><option>Male</option><option>Other</option></select></div>
+            </div>
+            <div style="margin-top:16px;font-size:13.5px">Does the giftor currently have a Kai-Zen policy?
+              <div class="rgroup"><label class="ropt"><input type="radio" name="g-kz" onclick="document.getElementById('kzf').style.display='grid'"> Yes</label><label class="ropt"><input type="radio" name="g-kz" checked onclick="document.getElementById('kzf').style.display='none'"> No</label></div>
+            </div>
+            <div class="grid2" id="kzf" style="display:none;margin-top:14px">
+              <div class="fld"><label>Tranche #</label><input></div>
+              <div class="fld"><label>Policy number</label><input></div>
+            </div>
+            <div class="note" style="margin-top:16px">ⓘ Net worth <b>or</b> an annual salary is required to send. Add financials and documents below, or the giftor can complete them in their portal.</div>
+          </div>
+        </section>
+
+        <details class="card">
+          <summary><span class="snum">4</span><div><div class="stit">Giftor financials</div><div class="ssub">Income, net worth, assets, liabilities — optional to send.</div></div><span class="chev">›</span></summary>
+          <div class="bd">
+            <div class="gcol-h" style="color:var(--ink);margin-bottom:12px">Income</div>
+            <div class="grid3">
+              <div><div class="gcol-h">Last year</div><div class="fld" style="margin-bottom:10px"><label>Annual salary</label><input value="$"></div><div class="fld" style="margin-bottom:10px"><label>Dividends etc.</label><input value="$"></div><div class="fld"><label>Other income</label><input value="$"></div></div>
+              <div><div class="gcol-h">1 year prior</div><div class="fld" style="margin-bottom:10px"><label>Annual salary</label><input value="$"></div><div class="fld" style="margin-bottom:10px"><label>Dividends etc.</label><input value="$"></div><div class="fld"><label>Other income</label><input value="$"></div></div>
+              <div><div class="gcol-h">2 years prior</div><div class="fld" style="margin-bottom:10px"><label>Annual salary</label><input value="$"></div><div class="fld" style="margin-bottom:10px"><label>Dividends etc.</label><input value="$"></div><div class="fld"><label>Other income</label><input value="$"></div></div>
+            </div>
+            <div class="gsub">Net worth</div>
+            <div class="grid3"><div class="fld"><label>Giftor net worth</label><input value="$"></div><div></div><div></div></div>
+            <div class="gsub">Assets</div>
+            <div class="grid3">
+              <div class="fld" style="margin-bottom:10px"><label>Cash in banks</label><input value="$"></div>
+              <div class="fld" style="margin-bottom:10px"><label>Real estate</label><input value="$"></div>
+              <div class="fld" style="margin-bottom:10px"><label>Receivables</label><input value="$"></div>
+              <div class="fld" style="margin-bottom:10px"><label>Stocks, bonds, funds</label><input value="$"></div>
+              <div class="fld" style="margin-bottom:10px"><label>Personal property</label><input value="$"></div>
+              <div class="fld" style="margin-bottom:10px"><label>Business interest</label><input value="$"></div>
+              <div class="fld"><label>Cash-value life insurance</label><input value="$"></div>
+              <div class="fld"><label>Annuities</label><input value="$"></div>
+              <div class="fld"><label>Other assets</label><input value="$"></div>
+            </div>
+            <div class="gsub">Liabilities</div>
+            <div class="grid3">
+              <div class="fld" style="margin-bottom:10px"><label>Taxes and interest due</label><input value="$"></div>
+              <div class="fld" style="margin-bottom:10px"><label>Real estate mortgages / liens</label><input value="$"></div>
+              <div class="fld" style="margin-bottom:10px"><label>Loans on life insurance</label><input value="$"></div>
+              <div class="fld"><label>Notes payable</label><input value="$"></div>
+              <div class="fld"><label>Accounts payable</label><input value="$"></div>
+              <div class="fld"><label>Other liabilities</label><input value="$"></div>
+            </div>
+          </div>
+        </details>
+
+        <details class="card">
+          <summary><span class="snum">5</span><div><div class="stit">Documents</div><div class="ssub">Identity and tax documents — optional to send.</div></div><span class="chev">›</span></summary>
+          <div class="bd">
+            <div class="note blue" style="margin-bottom:16px">ⓘ If you don't upload these, the giftor uploads them in their portal after they're invited.</div>
+            <div class="fld" style="margin-bottom:14px"><label>Identity document type</label><select><option value="">Select</option><option>Driver's license</option><option>Passport</option><option>State ID</option></select></div>
+            <div class="grid2" style="margin-bottom:18px"><div class="upload">＋ Upload ID (front)</div><div class="upload">＋ Upload ID (back)</div></div>
+            <div class="fld"><label>Tax document type</label><select><option value="">Select</option><option>W-2</option><option>Tax return</option><option>1099</option></select></div>
+          </div>
+        </details>
+
+        <section class="card">
+          <div class="hd"><span class="snum">6</span><div><div class="stit">Allocation</div><div class="ssub">Index strategy for the policy.</div></div><span class="agent-only">Agent only</span></div>
+          <div class="bd">
+            <div class="fld" style="max-width:260px;margin-bottom:16px"><label>Premise</label><select><option>S&amp;P 500</option></select></div>
+            <table class="alloc">
+              <thead><tr><th>Index option</th><th style="width:120px">Percent</th><th style="width:120px">Current rate</th></tr></thead>
+              <tbody>
+                <tr><td>S&amp;P PtP Cap</td><td><input class="apct" value="100"></td><td class="rate">6.81%</td></tr>
+                <tr><td>S&amp;P PtP Par</td><td><input class="apct" value=""></td><td class="rate">5.64%</td></tr>
+                <tr><td>S&amp;P PtP 1% Floor</td><td><input class="apct" value=""></td><td class="rate">5.55%</td></tr>
+                <tr><td>Credit Suisse</td><td><input class="apct" value=""></td><td class="rate">6.81%</td></tr>
+                <tr><td>Pacesetter</td><td><input class="apct" value=""></td><td class="rate">6.81%</td></tr>
+                <tr><td>Fixed Account</td><td><input class="apct" value=""></td><td class="rate">3.50%</td></tr>
+              </tbody>
+            </table>
+            <div class="alloc-tot"><span>Total allocation</span><b id="alloc-total" class="tot-ok">100%</b></div>
+          </div>
+        </section>
+      </div>
+
+      <div class="footer-bar">
+        <div class="lic"><b>Please note:</b> all agents must be licensed in the giftor's state before sending an invite. Anything left blank can be completed by the giftor in their portal.</div>
+        <button class="btn" id="sendBtn" disabled onclick="sendInvite()">Send invitation</button>
       </div>
     </div>
   </div>
 </div>
 <div class="toast" id="toast"><span class="tk">✔</span><span id="toast-msg"></span></div>
 <script>
+  function onProduct(){
+    var gwt=document.getElementById('prodType').value==='gwt';
+    document.getElementById('giftorStep').style.display=gwt?'block':'none';
+    document.getElementById('gwt-note').style.display=gwt?'flex':'none';
+    document.getElementById('offerType').disabled=gwt;
+    document.getElementById('contrib').disabled=gwt;
+    document.getElementById('offer-hint').textContent=gwt?'Not required for the Greatest Wealth Transfer.':'';
+    document.getElementById('contrib-hint').textContent=gwt?'Not required for the Greatest Wealth Transfer.':'';
+    document.getElementById('sendBtn').disabled=!gwt;
+  }
   function sumAlloc(){ var t=0; document.querySelectorAll('.apct').forEach(function(i){ var n=parseFloat(i.value); if(!isNaN(n)) t+=n; });
-    var el=document.getElementById('alloc-total'); el.textContent=t+'%'; el.className=t===100?'tot-ok':'tot-bad';
-    document.getElementById('sum-alloc').textContent=t+'%'; }
+    var el=document.getElementById('alloc-total'); el.textContent=t+'%'; el.className=t===100?'tot-ok':'tot-bad'; }
   document.querySelectorAll('.apct').forEach(function(i){ i.addEventListener('input',sumAlloc); });
   function val(id){ return document.getElementById(id).querySelector('input,select').value.trim(); }
   function sendInvite(){
     var ok=true;
-    ['a-first','a-last','a-email'].forEach(function(id){ var f=document.getElementById(id); if(!val(id)){ f.classList.add('err'); ok=false; } else f.classList.remove('err'); });
-    document.getElementById('chk-giftor').classList.toggle('done',ok);
+    ['g-first','g-last','g-email'].forEach(function(id){ var f=document.getElementById(id); if(!val(id)){ f.classList.add('err'); ok=false; } else f.classList.remove('err'); });
     if(!ok){ toast('Add the giftor name and email to send'); return; }
     toast('Invitation sent — the giftor will receive their email');
   }
