@@ -247,8 +247,8 @@
 
       <section class="card gsec" id="giftorCard">
         <div class="hd" onclick="toggleGiftor()">
-          <div><h2>Your details (Giftor) <span id="g-status" class="pill later"><i></i>Needs review</span></h2><div class="sub" id="g-sub">Confirm your information — required before you can send any invitations. Your agent pre-filled what we have on file.</div></div>
-          <button class="clr-demo" style="color:var(--blue-d)" onclick="event.stopPropagation();fillGiftor()" title="Demo — fills all required giftor fields">⚡ Auto-fill (demo)</button><button class="expand open" id="g-chev">›</button>
+          <div><h2>Your details (Giftor) <span id="g-status" class="pill later"><i></i>Missing information</span></h2><div class="sub" id="g-sub">Confirm your information — required before you can send any invitations. Your agent pre-filled what we have on file.</div></div>
+          <button class="clr-demo" id="g-demo" style="color:var(--blue-d)" onclick="event.stopPropagation();demoToggle()" title="Demo control — toggles giftor data">⚡ Auto-fill (demo)</button><button class="expand open" id="g-chev">›</button>
         </div>
         <div class="bd" id="giftorBody">
           <div class="grid2">
@@ -561,16 +561,25 @@
   function setGiftorOpen(open){ document.getElementById('giftorBody').style.display=open?'block':'none'; document.getElementById('g-chev').classList.toggle('open',open); }
   function toggleGiftor(){ setGiftorOpen(document.getElementById('giftorBody').style.display==='none'); }
   function openGiftor(){ setGiftorOpen(true); document.getElementById('giftorCard').scrollIntoView({behavior:'smooth',block:'start'}); }
+  var giftorSaved='';
   function setLock(locked){ var lb=document.getElementById('lockbar'); if(lb) lb.classList.toggle('show',locked);
     ['addCard','draftCard','laterCard'].forEach(function(id){ var el=document.getElementById(id); if(el) el.classList.toggle('locked',locked); }); }
-  function fillGiftor(){ var b=document.getElementById('giftorBody');
-    b.querySelectorAll('input').forEach(function(i){ if(i.type==='checkbox'){ i.checked=true; } else if(!i.value){ i.value=(i.placeholder&&i.placeholder.indexOf('•')>=0)?'•••-••-6789':'Sample'; } });
-    b.querySelectorAll('select').forEach(function(sel){ if(!sel.value) sel.selectedIndex=1; });
-    toast('Giftor fields auto-filled — click Verify to complete'); }
-  function verifyGiftor(){ giftorDone=true;
+  function fillGiftorFields(){ if(giftorSaved) document.getElementById('giftorBody').innerHTML=giftorSaved; }
+  function clearGiftorFields(){ var b=document.getElementById('giftorBody');
+    b.querySelectorAll('input').forEach(function(i){ if(i.type==='checkbox') i.checked=false; else i.value=''; });
+    b.querySelectorAll('select').forEach(function(sel){ sel.selectedIndex=0; }); }
+  function markComplete(){ giftorDone=true;
     var st=document.getElementById('g-status'); st.className='g-done'; st.innerHTML='<i></i>Completed';
     document.getElementById('g-sub').textContent='Completed Jul 15, 2026 — click to review or update.';
-    setGiftorOpen(false); setLock(false); toast('Giftor details verified'); }
+    var d=document.getElementById('g-demo'); if(d) d.innerHTML='🗑 Remove data (demo)';
+    setGiftorOpen(false); setLock(false); }
+  function markIncomplete(){ giftorDone=false;
+    var st=document.getElementById('g-status'); st.className='pill later'; st.innerHTML='<i></i>Missing information';
+    document.getElementById('g-sub').textContent='Confirm your information — required before you can send any invitations. Your agent pre-filled what we have on file.';
+    var d=document.getElementById('g-demo'); if(d) d.innerHTML='⚡ Auto-fill (demo)';
+    setGiftorOpen(true); setLock(true); }
+  function verifyGiftor(){ markComplete(); toast('Giftor details verified'); }
+  function demoToggle(){ if(!giftorDone){ fillGiftorFields(); markComplete(); toast('Auto-filled — giftor details completed'); } else { clearGiftorFields(); markIncomplete(); toast('Giftor data removed'); } }
   function moveLater(id){ find(id).status='later'; render(); toast('Moved to Invite later'); }
   function moveDraft(id){ find(id).status='draft'; render(); toast('Moved to Recipients to invite'); }
   function selBarHtml(){ return selected.length?('<div class="selbar"><span class="st">'+selected.length+' selected</span><span class="sr"><button class="clr" onclick="clearSel()">Clear</button><button class="btn sm" onclick="sendSelected()">Send '+selected.length+' invitation'+(selected.length>1?'s':'')+'</button></span></div>'):''; }
@@ -726,6 +735,7 @@
   function toast(m){ document.getElementById('toast-msg').textContent=m; var t=document.getElementById('toast');
     t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(function(){t.classList.remove('show');},2400); }
   render();
+  giftorSaved=document.getElementById('giftorBody').innerHTML;
   setLock(!giftorDone);
 </script>
 </body>
