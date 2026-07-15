@@ -91,6 +91,10 @@
   .pill i{width:7px;height:7px;border-radius:50%;background:currentColor;display:block}
   .pill.draft{background:var(--gr-bg);color:var(--gr-tx)}
   .pill.later{background:#FBF0DA;color:#9A6B10}
+  .review-cell{display:flex;align-items:center;gap:12px;background:#FBF7EC;padding:14px 16px}
+  .review-cell .rev-ic{color:#9A6B10;font-size:16px}
+  .review-cell .rev-tx{flex:1;color:#6B5A2E;font-size:12.5px;line-height:1.5}
+  .review-cell .rev-tx a{color:var(--blue-d)}
   .pill.ps-gray{background:#EEF1F5;color:#5A6472}
   .pill.ps-blue{background:#EAF1FD;color:#245BC0}
   .pill.ps-amber{background:#FBF0DA;color:#9A6B10}
@@ -397,8 +401,9 @@
   function sendInvite(id){ requestSend([id]); }
   function sendSelected(){ if(!selected.length) return; requestSend(selected); }
   function closeDs(){ document.getElementById('dsOverlay').classList.remove('show'); pendingBatch=[]; }
-  function confirmSign(){ var n=pendingBatch.length; pendingBatch.forEach(function(id){var r=find(id); if(!r)return; r.status='invited'; r.invitedOn='Jul 15, 2026'; r.pstat='notstarted'; r.link=linkFor(r);});
-    document.getElementById('dsOverlay').classList.remove('show'); pendingBatch=[]; selected=[]; render(); toast(n>1?(n+' invitations sent'):'Invitation sent'); }
+  function confirmSign(){ var n=pendingBatch.length; pendingBatch.forEach(function(id){var r=find(id); if(!r)return; r.status='review'; r.signedOn='Jul 15, 2026'; r.link=linkFor(r);});
+    document.getElementById('dsOverlay').classList.remove('show'); pendingBatch=[]; selected=[]; render(); toast(n>1?(n+' sent to our team for review'):'Signed — sent to our team for review'); }
+  function clearedByAdmin(id){ var r=find(id); r.status='invited'; r.invitedOn='Jul 15, 2026'; r.pstat='notstarted'; render(); toast(r.first+' cleared — moved to Invited loved ones'); }
   function toggleSel(id){ var i=selected.indexOf(id); if(i>=0)selected.splice(i,1); else selected.push(id); render(); }
   function selAllSection(status,chk){ var ids=state.filter(function(r){return r.status===status;}).map(function(r){return r.id;});
     ids.forEach(function(id){ var i=selected.indexOf(id); if(chk&&i<0)selected.push(id); if(!chk&&i>=0)selected.splice(i,1); }); render(); }
@@ -500,14 +505,22 @@
     return main+det;
   }
 
+  function reviewRow(r){
+    return '<tr class="rrow"><td colspan="7" style="padding:0">'
+      +'<div class="review-cell"><span class="rev-ic">◷</span>'
+      +'<div class="rev-tx"><b>'+r.first+' '+r.last+'</b> — pending admin review. We are reviewing this invitation before it goes to your loved one. Once cleared, they will appear under Invited loved ones below. Questions? Contact your Kai-Zen service team at <a href="mailto:support@niwcorp.com">support@niwcorp.com</a> · (972) 000-0000.</div>'
+      +'<button class="btn ghost sm" onclick="clearedByAdmin('+r.id+')" title="Demo control">Cleared by admin</button>'
+      +'</div></td></tr>';
+  }
   function sectionTable(rows,section){
-    var allsel=rows.length&&rows.every(function(r){return selected.indexOf(r.id)>=0;});
+    var selectable=rows.filter(function(r){return r.status!=='review';});
+    var allsel=selectable.length&&selectable.every(function(r){return selected.indexOf(r.id)>=0;});
     var onchange=section==='later'?'selAllLater(this.checked)':'selAllDraft(this.checked)';
     var head='<table><thead><tr><th style="width:26px"><input type="checkbox" class="cbx" '+(allsel?'checked':'')+' onclick="'+onchange+'"></th><th style="width:22px"></th><th>Recipient</th><th>Email</th><th>Gift amount</th><th>Status</th><th style="text-align:right">Actions</th></tr></thead><tbody>';
-    return selBarHtml()+head+rows.map(inviteRow).join('')+'</tbody></table>';
+    return selBarHtml()+head+rows.map(function(r){return r.status==='review'?reviewRow(r):inviteRow(r);}).join('')+'</tbody></table>';
   }
   function renderDraft(){
-    var rows=state.filter(function(r){return r.status==='draft';});
+    var rows=state.filter(function(r){return r.status==='draft'||r.status==='review';});
     var el=document.getElementById('tbl-draft');
     el.innerHTML=rows.length?sectionTable(rows,'draft'):'<div class="empty">No recipients waiting. Add a loved one above, or move someone up from Invite later.</div>';
   }
@@ -533,7 +546,7 @@
   function render(){
     selected=selected.filter(function(id){var r=find(id);return r&&(r.status==='draft'||r.status==='later');});
     renderDraft(); renderLater(); renderInvited();
-    document.getElementById('ct-draft').textContent=state.filter(function(r){return r.status==='draft';}).length;
+    document.getElementById('ct-draft').textContent=state.filter(function(r){return r.status==='draft'||r.status==='review';}).length;
     document.getElementById('ct-later').textContent=state.filter(function(r){return r.status==='later';}).length;
     document.getElementById('ct-invited').textContent=state.filter(function(r){return r.status==='invited';}).length;
   }
