@@ -346,13 +346,14 @@
       else document.getElementById(p[1]).classList.remove('err');
     });
     if(!ok) return;
-    state.push({id:++seq,first:f.first,last:f.last,email:f.email,amount:f.amt.replace(/^\$/,''),rel:document.getElementById('i-rel').value,status:'draft'});
+    state.push({id:++seq,first:f.first,last:f.last,email:f.email,amount:fmtMoney(f.amt),rel:document.getElementById('i-rel').value,status:'draft'});
     ['i-first','i-last','i-email','i-amt'].forEach(function(id){document.getElementById(id).value='';});
     document.getElementById('i-rel').value='';
     sampleIx=(sampleIx+1)%SAMPLES.length;
     render(); toast(f.first+' added to your recipients');
   }
   function val(id){return document.getElementById(id).value.trim();}
+  function fmtMoney(s){var n=(''+s).replace(/[^0-9]/g,'');return n?parseInt(n,10).toLocaleString():'0';}
   function find(id){ return state.filter(function(r){return r.id===id;})[0]; }
   function linkFor(r){ return r.link||('https://gwtg2.simplicityniw.com/i/'+r.id); }
 
@@ -381,12 +382,12 @@
 
   function openEdit(id){ var r=find(id); editId=id;
     document.getElementById('e-first').value=r.first; document.getElementById('e-last').value=r.last;
-    document.getElementById('e-email').value=r.email; document.getElementById('e-amt').value=r.amount;
+    document.getElementById('e-email').value=r.email; document.getElementById('e-amt').value='$'+r.amount;
     document.getElementById('editOverlay').classList.add('show'); }
   function closeEdit(){ document.getElementById('editOverlay').classList.remove('show'); }
   function saveEdit(){ var r=find(editId);
     r.first=document.getElementById('e-first').value; r.last=document.getElementById('e-last').value;
-    r.email=document.getElementById('e-email').value; r.amount=document.getElementById('e-amt').value.replace(/^\$/,'');
+    r.email=document.getElementById('e-email').value; r.amount=fmtMoney(document.getElementById('e-amt').value);
     closeEdit(); render(); toast(r.status==='invited'?'Saved — invite link refreshed':'Changes saved'); }
 
   function viewIll(id){ var r=find(id); var g=parseInt(r.amount.replace(/[^0-9]/g,''))||25000;
