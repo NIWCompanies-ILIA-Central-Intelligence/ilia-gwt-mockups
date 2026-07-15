@@ -103,6 +103,9 @@
   .est-note{background:#FBF7EC;border:1px solid #F0E4C4;border-radius:9px;padding:11px 13px;color:#6B5A2E;font-size:12.5px;line-height:1.5;margin-bottom:16px}
   .clr-demo{background:none;border:none;color:var(--red);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
   .clr-demo:hover{text-decoration:underline}
+  .card.locked .bd{opacity:.5;pointer-events:none}
+  .lockbar{display:none;align-items:center;gap:9px;background:#FFF7ED;border:1px solid #F3D9A8;color:#8A5A12;border-radius:12px;padding:12px 16px;margin-top:20px;font-size:13px;font-weight:500}
+  .lockbar.show{display:flex}
   .gsec .hd{cursor:pointer}
   .gstep{width:22px;height:22px;border-radius:50%;background:var(--blue);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
   .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
@@ -242,10 +245,10 @@
 
       <section class="card gsec" id="giftorCard">
         <div class="hd" onclick="toggleGiftor()">
-          <div><h2><span class="gstep">1</span> Your details (Giftor) <span id="g-status" class="g-done"><i></i>Completed</span></h2><div class="sub" id="g-sub">Completed by your agent when they set up your invitation — expand to review or update.</div></div>
-          <button class="expand" id="g-chev">›</button>
+          <div><h2><span class="gstep">1</span> Your details (Giftor) <span id="g-status" class="pill later"><i></i>Needs review</span></h2><div class="sub" id="g-sub">Confirm your information — required before you can send any invitations. Your agent pre-filled what we have on file.</div></div>
+          <button class="clr-demo" style="color:var(--blue-d)" onclick="event.stopPropagation();fillGiftor()" title="Demo — fills all required giftor fields">⚡ Auto-fill (demo)</button><button class="expand open" id="g-chev">›</button>
         </div>
-        <div class="bd" id="giftorBody" style="display:none">
+        <div class="bd" id="giftorBody">
           <div class="grid2">
             <div class="gfield"><label>First name</label><input value="Jamin"></div>
             <div class="gfield"><label>Last name</label><input value="Austin"></div>
@@ -322,7 +325,9 @@
         </div>
       </section>
 
-      <section class="card">
+      <div class="lockbar" id="lockbar">🔒 Verify your giftor details above to unlock adding and inviting recipients.</div>
+
+      <section class="card" id="addCard">
         <div class="hd"><div><h2>Add a recipient</h2><div class="sub">Enter the essentials — click any field to auto-fill sample data.</div></div></div>
         <div class="bd">
           <div class="form">
@@ -336,12 +341,12 @@
         </div>
       </section>
 
-      <section class="card">
+      <section class="card" id="draftCard">
         <div class="hd"><div><h2>Recipients to invite <span class="badge-ct" id="ct-draft">0</span></h2><div class="sub">Confirm each loved one's details, check the box next to the ones you're ready to invite, then send. You'll sign once in DocuSign to send the whole batch — even for several at a time.</div></div><button class="clr-demo" title="Demo control — clears sample rows" onclick="clearData('draft')">🗑 Clear section</button></div>
         <div class="bd" style="padding:8px 20px 12px"><div id="tbl-draft"></div></div>
       </section>
 
-      <section class="card">
+      <section class="card" id="laterCard">
         <div class="hd"><div><h2>Invite later <span class="badge-ct" id="ct-later">0</span></h2><div class="sub">Set aside for now — still fully editable. Check the box to include anyone here in a current invitation.</div></div><button class="clr-demo" title="Demo control — clears sample rows" onclick="clearData('later')">🗑 Clear section</button></div>
         <div class="bd" style="padding:8px 20px 12px"><div id="tbl-later"></div></div>
       </section>
@@ -482,7 +487,7 @@
     {first:'Riley',last:'Foster',email:'riley.foster@example.com',rel:'Nephew',amount:'30,000'}
   ];
   var sampleIx=0, editId=null, delId=null, seq=100;
-  var selected=[]; var pendingBatch=[]; var pendingTip=[]; var estId=null; var giftorDone=true;
+  var selected=[]; var pendingBatch=[]; var pendingTip=[]; var estId=null; var giftorDone=false;
   var invF={q:'',status:'all'};
   var state=[
     {id:1,first:'Jordan',last:'Rivera',email:'jordan.rivera@example.com',amount:'25,000',rel:'Daughter',status:'invited',invitedOn:'Jul 12, 2026',pstat:'progress',illRun:true,illDate:'Jul 12, 2026'},
@@ -554,10 +559,16 @@
   function setGiftorOpen(open){ document.getElementById('giftorBody').style.display=open?'block':'none'; document.getElementById('g-chev').classList.toggle('open',open); }
   function toggleGiftor(){ setGiftorOpen(document.getElementById('giftorBody').style.display==='none'); }
   function openGiftor(){ setGiftorOpen(true); document.getElementById('giftorCard').scrollIntoView({behavior:'smooth',block:'start'}); }
+  function setLock(locked){ var lb=document.getElementById('lockbar'); if(lb) lb.classList.toggle('show',locked);
+    ['addCard','draftCard','laterCard'].forEach(function(id){ var el=document.getElementById(id); if(el) el.classList.toggle('locked',locked); }); }
+  function fillGiftor(){ var b=document.getElementById('giftorBody');
+    b.querySelectorAll('input').forEach(function(i){ if(i.type==='checkbox'){ i.checked=true; } else if(!i.value){ i.value=(i.placeholder&&i.placeholder.indexOf('•')>=0)?'•••-••-6789':'Sample'; } });
+    b.querySelectorAll('select').forEach(function(sel){ if(!sel.value) sel.selectedIndex=1; });
+    toast('Giftor fields auto-filled — click Verify to complete'); }
   function verifyGiftor(){ giftorDone=true;
     var st=document.getElementById('g-status'); st.className='g-done'; st.innerHTML='<i></i>Completed';
     document.getElementById('g-sub').textContent='Completed Jul 15, 2026 — click to review or update.';
-    setGiftorOpen(false); toast('Giftor details verified'); }
+    setGiftorOpen(false); setLock(false); toast('Giftor details verified'); }
   function moveLater(id){ find(id).status='later'; render(); toast('Moved to Invite later'); }
   function moveDraft(id){ find(id).status='draft'; render(); toast('Moved to Recipients to invite'); }
   function selBarHtml(){ return selected.length?('<div class="selbar"><span class="st">'+selected.length+' selected</span><span class="sr"><button class="clr" onclick="clearSel()">Clear</button><button class="btn sm" onclick="sendSelected()">Send '+selected.length+' invitation'+(selected.length>1?'s':'')+'</button></span></div>'):''; }
@@ -713,6 +724,7 @@
   function toast(m){ document.getElementById('toast-msg').textContent=m; var t=document.getElementById('toast');
     t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(function(){t.classList.remove('show');},2400); }
   render();
+  setLock(!giftorDone);
 </script>
 </body>
 </html>
