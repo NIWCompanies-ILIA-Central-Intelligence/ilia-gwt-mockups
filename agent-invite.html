@@ -139,11 +139,11 @@
             <div class="fld"><label>Primary carrier <span class="rq">*</span></label><select id="carrier"><option>National Life (LSW)</option><option>Allianz</option></select></div>
             <div class="fld"><label>ilia product type <span class="rq">*</span></label><select id="prodType" onchange="onProduct()"><option value="">Select product</option><option value="gwt">The Greatest Wealth Transfer</option></select></div>
           </div>
-          <div class="grid2" style="margin-top:14px">
+          <div class="grid2" id="offerRow" style="margin-top:14px">
             <div class="fld"><label>Offer type <span class="rq">*</span></label><select id="offerType" disabled><option>Full Underwriting (Summit)</option></select><div class="hint" id="offer-hint"></div></div>
             <div class="fld"><label>Expected contribution amount</label><input id="contrib" placeholder="$" disabled><div class="hint" id="contrib-hint"></div></div>
           </div>
-          <div class="note green" id="gwt-note" style="display:none;margin-top:16px">✓ Greatest Wealth Transfer selected — offer type and expected contribution aren't needed. Complete the giftor's details in the next step below.</div>
+          <div class="note green" id="gwt-note" style="display:none;margin-top:16px">✓ Greatest Wealth Transfer selected — complete the giftor's details below.</div>
         </div>
       </section>
 
@@ -170,7 +170,7 @@
       </section>
       <div id="giftorStep" style="display:none">
         <section class="card">
-          <div class="hd"><span class="snum">3</span><div><div class="stit">Giftor details</div><div class="ssub">The Greatest Wealth Transfer giftor you're inviting. Anything you leave blank, the giftor completes in their portal.</div></div></div>
+          <div class="hd"><span class="snum">2</span><div><div class="stit">Giftor details</div><div class="ssub">The Greatest Wealth Transfer giftor you're inviting. Anything you leave blank, the giftor completes in their portal.</div></div></div>
           <div class="bd">
             <div class="grid2">
               <div class="fld" id="g-first"><label>First name <span class="rq">*</span></label><input placeholder="First name"></div>
@@ -196,7 +196,7 @@
         </section>
 
         <details class="card">
-          <summary><span class="snum">4</span><div><div class="stit">Giftor financials</div><div class="ssub">Income, net worth, assets, liabilities — optional to send.</div></div><span class="chev">›</span></summary>
+          <summary><span class="snum">3</span><div><div class="stit">Giftor financials</div><div class="ssub">Income, net worth, assets, liabilities — optional to send.</div></div><span class="chev">›</span></summary>
           <div class="bd">
             <div class="gcol-h" style="color:var(--ink);margin-bottom:12px">Income</div>
             <div class="grid3">
@@ -231,7 +231,7 @@
         </details>
 
         <details class="card">
-          <summary><span class="snum">5</span><div><div class="stit">Documents</div><div class="ssub">Identity and tax documents — optional to send.</div></div><span class="chev">›</span></summary>
+          <summary><span class="snum">4</span><div><div class="stit">Documents</div><div class="ssub">Identity and tax documents — optional to send.</div></div><span class="chev">›</span></summary>
           <div class="bd">
             <div class="note blue" style="margin-bottom:16px">ⓘ If you don't upload these, the giftor uploads them in their portal after they're invited.</div>
             <div class="fld" style="margin-bottom:14px"><label>Identity document type</label><select><option value="">Select</option><option>Driver's license</option><option>Passport</option><option>State ID</option></select></div>
@@ -241,7 +241,7 @@
         </details>
 
         <section class="card">
-          <div class="hd"><span class="snum">6</span><div><div class="stit">Allocation</div><div class="ssub">Index strategy for the policy.</div></div><span class="agent-only">Agent only</span></div>
+          <div class="hd"><span class="snum">5</span><div><div class="stit">Allocation</div><div class="ssub">Index strategy for the policy.</div></div><span class="agent-only">Agent only</span></div>
           <div class="bd">
             <div class="fld" style="max-width:260px;margin-bottom:16px"><label>Premise</label><select><option>S&amp;P 500</option></select></div>
             <table class="alloc">
@@ -273,10 +273,8 @@
     var gwt=document.getElementById('prodType').value==='gwt';
     document.getElementById('giftorStep').style.display=gwt?'block':'none';
     document.getElementById('gwt-note').style.display=gwt?'flex':'none';
-    document.getElementById('offerType').disabled=gwt;
-    document.getElementById('contrib').disabled=gwt;
-    document.getElementById('offer-hint').textContent=gwt?'Not required for the Greatest Wealth Transfer.':'';
-    document.getElementById('contrib-hint').textContent=gwt?'Not required for the Greatest Wealth Transfer.':'';
+    document.getElementById('offerRow').style.display=gwt?'none':'grid';
+    document.getElementById('participantCard').style.display=gwt?'none':'block';
     document.getElementById('sendBtn').disabled=!gwt;
   }
   function sumAlloc(){ var t=0; document.querySelectorAll('.apct').forEach(function(i){ var n=parseFloat(i.value); if(!isNaN(n)) t+=n; });
