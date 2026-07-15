@@ -90,6 +90,7 @@
   .pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:4px 10px;border-radius:20px}
   .pill i{width:7px;height:7px;border-radius:50%;background:currentColor;display:block}
   .pill.draft{background:var(--gr-bg);color:var(--gr-tx)}
+  .pill.later{background:#FBF0DA;color:#9A6B10}
   .pill.ps-gray{background:#EEF1F5;color:#5A6472}
   .pill.ps-blue{background:#EAF1FD;color:#245BC0}
   .pill.ps-amber{background:#FBF0DA;color:#9A6B10}
@@ -214,6 +215,11 @@
       <section class="card">
         <div class="hd"><div><h2>Recipients to invite <span class="badge-ct" id="ct-draft">0</span></h2><div class="sub">Confirm each loved one's details, check the box next to the ones you're ready to invite, then send. You'll sign once in DocuSign to send the whole batch — even for several at a time.</div></div></div>
         <div class="bd" style="padding:8px 20px 12px"><div id="tbl-draft"></div></div>
+      </section>
+
+      <section class="card">
+        <div class="hd"><div><h2>Invite later <span class="badge-ct" id="ct-later">0</span></h2><div class="sub">Set aside for now — still fully editable. Check the box to include anyone here in a current invitation.</div></div></div>
+        <div class="bd" style="padding:8px 20px 12px"><div id="tbl-later"></div></div>
       </section>
 
       <section class="card mgmt">
@@ -345,7 +351,8 @@
     {id:3,first:'Priya',last:'Shah',email:'priya.shah@example.com',amount:'15,000',rel:'Granddaughter',status:'invited',invitedOn:'Jun 28, 2026',pstat:'approved'},
     {id:4,first:'Chris',last:'Diaz',email:'chris.diaz@example.com',amount:'10,000',rel:'Nephew',status:'invited',invitedOn:'Jul 14, 2026',pstat:'notstarted'},
     {id:5,first:'Sam',last:'Carter',email:'sam.carter@example.com',amount:'25,000',rel:'Son',status:'draft'},
-    {id:6,first:'Alex',last:'Nguyen',email:'alex.nguyen@example.com',amount:'10,000',rel:'Grandchild',status:'draft'}
+    {id:6,first:'Alex',last:'Nguyen',email:'alex.nguyen@example.com',amount:'10,000',rel:'Grandchild',status:'draft'},
+    {id:7,first:'Dana',last:'Kim',email:'dana.kim@example.com',amount:'5,000',rel:'Granddaughter',status:'later'}
   ];
 
   ['first','last','email','amt'].forEach(function(k){
@@ -379,10 +386,10 @@
     document.getElementById('ds-list').innerHTML=pendingBatch.map(function(id){var r=find(id);return '<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #F0F3F7;font-size:13.5px"><span>'+r.first+' '+r.last+' <span style="color:var(--faint)">('+(r.rel||'recipient')+')</span></span><span style="font-weight:600">$'+r.amount+'</span></div>';}).join('');
     document.getElementById('ds-intro').textContent=pendingBatch.length>1?('Review and sign one authorization to send all '+pendingBatch.length+' invitations at once.'):'Review and sign the giftor authorization to send this invitation.';
     document.getElementById('dsOverlay').classList.add('show'); }
-  function draftCount(){ return state.filter(function(r){return r.status==='draft';}).length; }
+  function pendingCount(){ return state.filter(function(r){return r.status==='draft'||r.status==='later';}).length; }
   function requestSend(ids){
-    if(ids.length===1 && draftCount()>1){ pendingTip=ids.slice(); var r=find(ids[0]);
-      document.getElementById('tip-msg').innerHTML='You have <b>'+draftCount()+'</b> loved ones ready to invite. You can check the box next to several and send them together, signing in DocuSign only <b>once</b> for the whole group.<br><br>Continue with just <b>'+r.first+' '+r.last+'</b>, or go back and select more?';
+    if(ids.length===1 && pendingCount()>1){ pendingTip=ids.slice(); var r=find(ids[0]);
+      document.getElementById('tip-msg').innerHTML='You have <b>'+pendingCount()+'</b> loved ones lined up. You can check the box next to several — including anyone in Invite later — and send them together, signing in DocuSign only <b>once</b> for the whole group.<br><br>Continue with just <b>'+r.first+' '+r.last+'</b>, or go back and select more?';
       document.getElementById('tipOverlay').classList.add('show'); }
     else { openDs(ids); } }
   function tipContinue(){ document.getElementById('tipOverlay').classList.remove('show'); openDs(pendingTip); }
@@ -392,9 +399,15 @@
   function closeDs(){ document.getElementById('dsOverlay').classList.remove('show'); pendingBatch=[]; }
   function confirmSign(){ var n=pendingBatch.length; pendingBatch.forEach(function(id){var r=find(id); if(!r)return; r.status='invited'; r.invitedOn='Jul 15, 2026'; r.pstat='notstarted'; r.link=linkFor(r);});
     document.getElementById('dsOverlay').classList.remove('show'); pendingBatch=[]; selected=[]; render(); toast(n>1?(n+' invitations sent'):'Invitation sent'); }
-  function toggleSel(id){ var i=selected.indexOf(id); if(i>=0)selected.splice(i,1); else selected.push(id); renderDraft(); }
-  function selAll(chk){ selected=chk?state.filter(function(r){return r.status==='draft';}).map(function(r){return r.id;}):[]; renderDraft(); }
-  function clearSel(){ selected=[]; renderDraft(); }
+  function toggleSel(id){ var i=selected.indexOf(id); if(i>=0)selected.splice(i,1); else selected.push(id); render(); }
+  function selAllSection(status,chk){ var ids=state.filter(function(r){return r.status===status;}).map(function(r){return r.id;});
+    ids.forEach(function(id){ var i=selected.indexOf(id); if(chk&&i<0)selected.push(id); if(!chk&&i>=0)selected.splice(i,1); }); render(); }
+  function selAllDraft(chk){ selAllSection('draft',chk); }
+  function selAllLater(chk){ selAllSection('later',chk); }
+  function clearSel(){ selected=[]; render(); }
+  function moveLater(id){ find(id).status='later'; render(); toast('Moved to Invite later'); }
+  function moveDraft(id){ find(id).status='draft'; render(); toast('Moved to Recipients to invite'); }
+  function selBarHtml(){ return selected.length?('<div class="selbar"><span class="st">'+selected.length+' selected</span><span class="sr"><button class="clr" onclick="clearSel()">Clear</button><button class="btn sm" onclick="sendSelected()">Send '+selected.length+' invitation'+(selected.length>1?'s':'')+'</button></span></div>'):''; }
 
   function copyLink(id){
     var r=find(id); var link=linkFor(r);
@@ -439,26 +452,30 @@
 
   var PSTAT={notstarted:['Not started','ps-gray'],created:['Account created','ps-blue'],progress:['Application started','ps-amber'],submitted:['Submitted for review','ps-purple'],approved:['Approved / active','ps-green']};
   function pstatPill(p){ var m=PSTAT[p]||PSTAT.notstarted; return '<span class="pill '+m[1]+'"><i></i>'+m[0]+'</span>'; }
-  function draftRow(r){
+  function inviteRow(r){
     var relTxt=r.rel?r.rel:'Not set';
     var sel=selected.indexOf(r.id)>=0;
+    var later=r.status==='later';
+    var pill=later?'<span class="pill later"><i></i>Invite later</span>':'<span class="pill draft"><i></i>Draft</span>';
+    var mover=later?'<button class="ia" onclick="moveDraft('+r.id+')">↑ Move to Recipients</button>':'<button class="ia" onclick="moveLater('+r.id+')">◷ Invite later</button>';
     var acts='<button class="btn sm"'+(sel?'':' disabled title="Check the box to enable"')+' onclick="sendInvite('+r.id+')">Send invite</button>'
       +'<button class="ia" onclick="copyLink('+r.id+')">⧉ Copy invitation link</button>'
       +'<button class="ia" onclick="openEdit('+r.id+')">✎ Edit</button>'
+      +mover
       +'<button class="ia del" onclick="del('+r.id+')">🗑 Delete</button>';
     var main='<tr class="rrow">'
-      +'<td style="width:26px"><input type="checkbox" class="cbx" '+(selected.indexOf(r.id)>=0?'checked':'')+' onclick="toggleSel('+r.id+')"></td>'
+      +'<td style="width:26px"><input type="checkbox" class="cbx" '+(sel?'checked':'')+' onclick="toggleSel('+r.id+')"></td>'
       +'<td style="width:22px"><button class="expand" id="chev-'+r.id+'" onclick="toggleExp('+r.id+')">›</button></td>'
       +'<td><div class="rname">'+r.first+' '+r.last+'</div><div class="rrel">'+(r.rel||'')+'</div></td>'
       +'<td class="email">'+r.email+'</td>'
       +'<td class="amt">$'+r.amount+'</td>'
-      +'<td><span class="pill draft"><i></i>Draft</span></td>'
+      +'<td>'+pill+'</td>'
       +'<td><div class="acts">'+acts+'</div></td></tr>';
     var det='<tr class="exp-row" id="exp-'+r.id+'" style="display:none"><td colspan="7"><div class="exp-in">'
       +'<div><div class="k">Relationship</div><div class="v">'+relTxt+'</div></div>'
-      +'<div><div class="k">Status</div><div class="v"><span class="pill draft"><i></i>Draft</span></div></div>'
+      +'<div><div class="k">Status</div><div class="v">'+pill+'</div></div>'
       +'<div><div class="k">Illustration</div><div class="v"><button class="linkcell" onclick="viewIll('+r.id+')">▤ View illustration</button></div></div>'
-      +'<div class="exp-note">ⓘ Sending the invite opens DocuSign for you to sign the giftor documents. If the email doesn\'t arrive, use Copy invitation link to send it yourself.</div>'
+      +'<div class="exp-note">ⓘ Sending the invite opens DocuSign for you to sign the giftor documents. If the email does not arrive, use Copy invitation link to send it yourself.</div>'
       +'</div></td></tr>';
     return main+det;
   }
@@ -483,15 +500,21 @@
     return main+det;
   }
 
+  function sectionTable(rows,section){
+    var allsel=rows.length&&rows.every(function(r){return selected.indexOf(r.id)>=0;});
+    var onchange=section==='later'?'selAllLater(this.checked)':'selAllDraft(this.checked)';
+    var head='<table><thead><tr><th style="width:26px"><input type="checkbox" class="cbx" '+(allsel?'checked':'')+' onclick="'+onchange+'"></th><th style="width:22px"></th><th>Recipient</th><th>Email</th><th>Gift amount</th><th>Status</th><th style="text-align:right">Actions</th></tr></thead><tbody>';
+    return selBarHtml()+head+rows.map(inviteRow).join('')+'</tbody></table>';
+  }
   function renderDraft(){
     var rows=state.filter(function(r){return r.status==='draft';});
-    selected=selected.filter(function(id){return rows.some(function(r){return r.id===id;});});
     var el=document.getElementById('tbl-draft');
-    if(!rows.length){ selected=[]; el.innerHTML='<div class="empty">No recipients waiting. Add a loved one above to get started.</div>'; return; }
-    var allsel=rows.every(function(r){return selected.indexOf(r.id)>=0;});
-    var bar=selected.length?('<div class="selbar"><span class="st">'+selected.length+' selected</span><span class="sr"><button class="clr" onclick="clearSel()">Clear</button><button class="btn sm" onclick="sendSelected()">Send '+selected.length+' invitation'+(selected.length>1?'s':'')+'</button></span></div>'):'';
-    var head='<table><thead><tr><th style="width:26px"><input type="checkbox" class="cbx" '+(allsel?'checked':'')+' onclick="selAll(this.checked)"></th><th style="width:22px"></th><th>Recipient</th><th>Email</th><th>Gift amount</th><th>Status</th><th style="text-align:right">Actions</th></tr></thead><tbody>';
-    el.innerHTML=bar+head+rows.map(draftRow).join('')+'</tbody></table>';
+    el.innerHTML=rows.length?sectionTable(rows,'draft'):'<div class="empty">No recipients waiting. Add a loved one above, or move someone up from Invite later.</div>';
+  }
+  function renderLater(){
+    var rows=state.filter(function(r){return r.status==='later';});
+    var el=document.getElementById('tbl-later');
+    el.innerHTML=rows.length?sectionTable(rows,'later'):'<div class="empty">No one set aside yet. Use Invite later on a recipient to park them here.</div>';
   }
 
   function renderInvited(){
@@ -508,8 +531,10 @@
   function filterInvited(){ invF.q=document.getElementById('inv-search').value; invF.status=document.getElementById('inv-status').value; renderInvited(); }
 
   function render(){
-    renderDraft(); renderInvited();
+    selected=selected.filter(function(id){var r=find(id);return r&&(r.status==='draft'||r.status==='later');});
+    renderDraft(); renderLater(); renderInvited();
     document.getElementById('ct-draft').textContent=state.filter(function(r){return r.status==='draft';}).length;
+    document.getElementById('ct-later').textContent=state.filter(function(r){return r.status==='later';}).length;
     document.getElementById('ct-invited').textContent=state.filter(function(r){return r.status==='invited';}).length;
   }
   var toastT;
