@@ -215,10 +215,6 @@
             <div class="fld money" id="f-amt"><label>Gift amount</label><span>$</span><input id="i-amt" placeholder="25,000"><div class="req">Required</div></div>
             <button class="btn addbtn" onclick="addRecipient()">＋ Add recipient</button>
           </div>
-          <div class="linknote">
-            <span>When you send an invite, it links to their personal page:</span>
-            <span class="chip">https://gwtg2.simplicityniw.com</span>
-          </div>
         </div>
       </section>
 
@@ -540,7 +536,7 @@
   function reviewRow(r){
     return '<tr class="rrow"><td colspan="7" style="padding:0">'
       +'<div class="review-cell"><span class="rev-ic">◷</span>'
-      +'<div class="rev-tx"><b>'+r.first+' '+r.last+'</b> — pending admin review. We are reviewing this invitation before it goes to your loved one. Once cleared, they will appear under Invited loved ones below. Questions? Contact your Kai-Zen service team at <a href="mailto:support@niwcorp.com">support@niwcorp.com</a> · (972) 000-0000.</div>'
+      +'<div class="rev-tx"><b>'+r.first+' '+r.last+'</b> — pending admin review. We are reviewing this invitation before it goes to your loved one. Once cleared, they will appear under Invited loved ones below. Questions? Contact your Kai-Zen service team at <a href="mailto:niw.info@simplicitygroup.com">niw.info@simplicitygroup.com</a>.</div>'
       +'<button class="btn ghost sm" onclick="clearedByAdmin('+r.id+')" title="Demo control">Cleared by admin</button>'
       +'</div></td></tr>';
   }
