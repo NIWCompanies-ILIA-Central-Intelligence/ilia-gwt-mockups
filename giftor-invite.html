@@ -103,6 +103,22 @@
   .est-note{background:#FBF7EC;border:1px solid #F0E4C4;border-radius:9px;padding:11px 13px;color:#6B5A2E;font-size:12.5px;line-height:1.5;margin-bottom:16px}
   .clr-demo{background:none;border:none;color:var(--red);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
   .clr-demo:hover{text-decoration:underline}
+  .gsec .hd{cursor:pointer}
+  .gstep{width:22px;height:22px;border-radius:50%;background:var(--blue);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+  .gfield label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px;font-weight:600}
+  .gfield input,.gfield select{width:100%;height:40px;border:1px solid var(--border-d);border-radius:9px;padding:0 12px;font-size:14px;color:var(--ink);background:#fff}
+  .gfield input:focus,.gfield select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-soft)}
+  .gfield input[readonly]{background:var(--gr-bg);color:var(--muted)}
+  .gsub{font-size:13.5px;font-weight:600;color:var(--ink);margin:22px 0 12px;padding-top:16px;border-top:1px solid #F0F3F7}
+  .gcol-h{font-size:12px;color:var(--muted);font-weight:600;margin-bottom:8px}
+  .gupload{border:1.5px dashed var(--border-d);border-radius:10px;padding:16px;text-align:center;color:var(--muted);font-size:13px;cursor:pointer}
+  .gupload:hover{border-color:var(--blue);color:var(--blue)}
+  .gcheck{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:13px;color:var(--ink)}
+  .gcheck input{width:16px;height:16px;accent-color:var(--blue);margin:0}
+  .g-done{background:var(--g-bg);border:1px solid #BFE6CF;border-radius:20px;font-size:12px;font-weight:600;color:var(--g-tx);padding:2px 10px;display:inline-flex;align-items:center;gap:6px}
+  .g-done i{width:7px;height:7px;border-radius:50%;background:currentColor;display:block}
   .devnotes{margin-top:18px;border:1px dashed #C9B37A;background:#FCFAF3;border-radius:12px}
   .devnotes>summary{list-style:none;cursor:pointer;padding:12px 16px;display:flex;align-items:center;gap:10px;font-size:13px;color:#8A6D1F}
   .devnotes>summary::-webkit-details-marker{display:none}
@@ -223,6 +239,86 @@
           </ul>
         </div>
       </details>
+
+      <section class="card gsec" id="giftorCard">
+        <div class="hd" onclick="toggleGiftor()">
+          <div><h2><span class="gstep">1</span> Your details (Giftor) <span id="g-status" class="pill later"><i></i>Needs review</span></h2><div class="sub" id="g-sub">Confirm your information — required before you can send any invitations. Your agent pre-filled what we have on file.</div></div>
+          <button class="expand open" id="g-chev">›</button>
+        </div>
+        <div class="bd" id="giftorBody">
+          <div class="grid2">
+            <div class="gfield"><label>First name</label><input value="Jamin"></div>
+            <div class="gfield"><label>Last name</label><input value="Austin"></div>
+          </div>
+          <div class="grid2" style="margin-top:14px">
+            <div class="gfield"><label>Email address</label><input value="jamin.austin+4242@simplicitygroup.com"></div>
+            <div class="gfield"><label>Cell phone</label><input value="(111) 111-1111"></div>
+          </div>
+          <div class="grid2" style="margin-top:14px">
+            <div class="gfield"><label>Date of birth</label><input value="12/12/1980"></div>
+            <div class="gfield"><label>Gender</label><select><option>Male</option><option>Female</option><option>Other</option></select></div>
+          </div>
+          <div class="grid2" style="margin-top:14px">
+            <div class="gfield"><label>Social Security number</label><input placeholder="•••-••-••••"></div>
+            <div></div>
+          </div>
+          <div style="margin-top:16px;font-size:13.5px;color:var(--ink)">Do you currently have a Kai-Zen policy?
+            <div class="rgroup"><label class="ropt"><input type="radio" name="g-kz" checked> Yes</label><label class="ropt"><input type="radio" name="g-kz"> No</label></div>
+          </div>
+          <div class="grid2" style="margin-top:14px">
+            <div class="gfield"><label>Tranche #</label><input value="34"></div>
+            <div class="gfield"><label>Policy number</label><input value="E123123123"></div>
+          </div>
+          <div class="grid2" style="margin-top:14px">
+            <div class="gfield"><label>Insurance carrier</label><input value="National Life (LSW)"></div>
+            <div class="gfield"><label>Death benefit amount</label><input value="$12,123,131"></div>
+          </div>
+
+          <div class="gsub">Giftor income</div>
+          <div class="grid3">
+            <div><div class="gcol-h">Last year</div><div class="gfield" style="margin-bottom:10px"><label>Annual salary</label><input value="$0"></div><div class="gfield" style="margin-bottom:10px"><label>Dividends etc.</label><input value="$0"></div><div class="gfield" style="margin-bottom:10px"><label>Other income</label><input value="$0"></div><div class="gfield"><label>Total</label><input value="$0" readonly></div></div>
+            <div><div class="gcol-h">1 year prior</div><div class="gfield" style="margin-bottom:10px"><label>Annual salary</label><input value="$0"></div><div class="gfield" style="margin-bottom:10px"><label>Dividends etc.</label><input value="$0"></div><div class="gfield" style="margin-bottom:10px"><label>Other income</label><input value="$0"></div><div class="gfield"><label>Total</label><input value="$0" readonly></div></div>
+            <div><div class="gcol-h">2 years prior</div><div class="gfield" style="margin-bottom:10px"><label>Annual salary</label><input value="$0"></div><div class="gfield" style="margin-bottom:10px"><label>Dividends etc.</label><input value="$0"></div><div class="gfield" style="margin-bottom:10px"><label>Other income</label><input value="$0"></div><div class="gfield"><label>Total</label><input value="$0" readonly></div></div>
+          </div>
+
+          <div class="gsub">Net worth</div>
+          <div class="grid3"><div class="gfield"><label>Giftor net worth</label><input value="$0"></div><div></div><div></div></div>
+
+          <div class="gsub">Assets</div>
+          <div class="grid3">
+            <div class="gfield" style="margin-bottom:10px"><label>Cash in banks</label><input value="$0"></div>
+            <div class="gfield" style="margin-bottom:10px"><label>Real estate</label><input value="$0"></div>
+            <div class="gfield" style="margin-bottom:10px"><label>Receivables</label><input value="$0"></div>
+            <div class="gfield" style="margin-bottom:10px"><label>Stocks, bonds, mutual funds</label><input value="$0"></div>
+            <div class="gfield" style="margin-bottom:10px"><label>Personal property</label><input value="$0"></div>
+            <div class="gfield" style="margin-bottom:10px"><label>Business interest</label><input value="$0"></div>
+            <div class="gfield"><label>Cash-value life insurance</label><input value="$0"></div>
+            <div class="gfield"><label>Annuities</label><input value="$0"></div>
+            <div class="gfield"><label>Other assets</label><input value="$0"></div>
+          </div>
+          <label class="gcheck"><input type="checkbox"> I verify my total assets are correct.</label>
+
+          <div class="gsub">Liabilities</div>
+          <div class="grid3">
+            <div class="gfield" style="margin-bottom:10px"><label>Taxes and interest due</label><input value="$0"></div>
+            <div class="gfield" style="margin-bottom:10px"><label>Real estate mortgages / liens</label><input value="$0"></div>
+            <div class="gfield" style="margin-bottom:10px"><label>Loans on life insurance</label><input value="$0"></div>
+            <div class="gfield"><label>Notes payable</label><input value="$0"></div>
+            <div class="gfield"><label>Accounts payable</label><input value="$0"></div>
+            <div class="gfield"><label>Other liabilities</label><input value="$0"></div>
+          </div>
+          <label class="gcheck"><input type="checkbox"> I verify my total liabilities are correct.</label>
+
+          <div class="gsub">Identity documents</div>
+          <div class="gfield" style="margin-bottom:14px"><label>Verification document type</label><select><option>Driver's license</option><option>Passport</option><option>State ID</option></select></div>
+          <div class="grid2"><div class="gupload">＋ Upload driver's license (front)</div><div class="gupload">＋ Upload driver's license (back)</div></div>
+
+          <div class="gsub">Tax documents</div>
+          <div class="gfield"><label>Verification document type</label><select><option value="">Select</option><option>W-2</option><option>Tax return</option><option>1099</option></select></div>
+
+          <div style="text-align:right;margin-top:20px"><button class="btn" onclick="verifyGiftor()">Verify giftor details</button></div>
+        </div>
+      </section>
 
       <section class="card">
         <div class="hd"><div><h2>Add a recipient</h2><div class="sub">Enter the essentials — click any field to auto-fill sample data.</div></div></div>
@@ -384,7 +480,7 @@
     {first:'Riley',last:'Foster',email:'riley.foster@example.com',rel:'Nephew',amount:'30,000'}
   ];
   var sampleIx=0, editId=null, delId=null, seq=100;
-  var selected=[]; var pendingBatch=[]; var pendingTip=[]; var estId=null;
+  var selected=[]; var pendingBatch=[]; var pendingTip=[]; var estId=null; var giftorDone=false;
   var invF={q:'',status:'all'};
   var state=[
     {id:1,first:'Jordan',last:'Rivera',email:'jordan.rivera@example.com',amount:'25,000',rel:'Daughter',status:'invited',invitedOn:'Jul 12, 2026',pstat:'progress',illRun:true,illDate:'Jul 12, 2026'},
@@ -429,6 +525,7 @@
     document.getElementById('dsOverlay').classList.add('show'); }
   function pendingCount(){ return state.filter(function(r){return r.status==='draft'||r.status==='later';}).length; }
   function requestSend(ids){
+    if(!giftorDone){ openGiftor(); toast('Please verify your giftor details first'); return; }
     if(ids.length===1 && pendingCount()>1){ pendingTip=ids.slice(); var r=find(ids[0]);
       document.getElementById('tip-msg').innerHTML='You have <b>'+pendingCount()+'</b> loved ones lined up. You can check the box next to several — including anyone in Invite later — and send them together, signing in DocuSign only <b>once</b> for the whole group.<br><br>Continue with just <b>'+r.first+' '+r.last+'</b>, or go back and select more?';
       document.getElementById('tipOverlay').classList.add('show'); }
@@ -452,6 +549,13 @@
     else if(section==='later'){ state=state.filter(function(r){return r.status!=='later';}); }
     else if(section==='invited'){ state=state.filter(function(r){return r.status!=='invited';}); }
     render(); toast('Section cleared'); }
+  function setGiftorOpen(open){ document.getElementById('giftorBody').style.display=open?'block':'none'; document.getElementById('g-chev').classList.toggle('open',open); }
+  function toggleGiftor(){ setGiftorOpen(document.getElementById('giftorBody').style.display==='none'); }
+  function openGiftor(){ setGiftorOpen(true); document.getElementById('giftorCard').scrollIntoView({behavior:'smooth',block:'start'}); }
+  function verifyGiftor(){ giftorDone=true;
+    var st=document.getElementById('g-status'); st.className='g-done'; st.innerHTML='<i></i>Completed';
+    document.getElementById('g-sub').textContent='Completed Jul 15, 2026 — click to review or update.';
+    setGiftorOpen(false); toast('Giftor details verified'); }
   function moveLater(id){ find(id).status='later'; render(); toast('Moved to Invite later'); }
   function moveDraft(id){ find(id).status='draft'; render(); toast('Moved to Recipients to invite'); }
   function selBarHtml(){ return selected.length?('<div class="selbar"><span class="st">'+selected.length+' selected</span><span class="sr"><button class="clr" onclick="clearSel()">Clear</button><button class="btn sm" onclick="sendSelected()">Send '+selected.length+' invitation'+(selected.length>1?'s':'')+'</button></span></div>'):''; }
