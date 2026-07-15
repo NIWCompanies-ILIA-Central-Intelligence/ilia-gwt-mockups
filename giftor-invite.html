@@ -242,10 +242,10 @@
 
       <section class="card gsec" id="giftorCard">
         <div class="hd" onclick="toggleGiftor()">
-          <div><h2><span class="gstep">1</span> Your details (Giftor) <span id="g-status" class="pill later"><i></i>Needs review</span></h2><div class="sub" id="g-sub">Confirm your information — required before you can send any invitations. Your agent pre-filled what we have on file.</div></div>
-          <button class="expand open" id="g-chev">›</button>
+          <div><h2><span class="gstep">1</span> Your details (Giftor) <span id="g-status" class="g-done"><i></i>Completed</span></h2><div class="sub" id="g-sub">Completed by your agent when they set up your invitation — expand to review or update.</div></div>
+          <button class="expand" id="g-chev">›</button>
         </div>
-        <div class="bd" id="giftorBody">
+        <div class="bd" id="giftorBody" style="display:none">
           <div class="grid2">
             <div class="gfield"><label>First name</label><input value="Jamin"></div>
             <div class="gfield"><label>Last name</label><input value="Austin"></div>
@@ -297,6 +297,7 @@
             <div class="gfield"><label>Other assets</label><input value="$0"></div>
           </div>
           <label class="gcheck"><input type="checkbox"> I verify my total assets are correct.</label>
+          <div class="gfield" style="margin-top:12px"><label>Other assets details</label><input placeholder="Optional"></div>
 
           <div class="gsub">Liabilities</div>
           <div class="grid3">
@@ -308,6 +309,7 @@
             <div class="gfield"><label>Other liabilities</label><input value="$0"></div>
           </div>
           <label class="gcheck"><input type="checkbox"> I verify my total liabilities are correct.</label>
+          <div class="gfield" style="margin-top:12px"><label>Other liabilities details</label><input placeholder="Optional"></div>
 
           <div class="gsub">Identity documents</div>
           <div class="gfield" style="margin-bottom:14px"><label>Verification document type</label><select><option>Driver's license</option><option>Passport</option><option>State ID</option></select></div>
@@ -480,7 +482,7 @@
     {first:'Riley',last:'Foster',email:'riley.foster@example.com',rel:'Nephew',amount:'30,000'}
   ];
   var sampleIx=0, editId=null, delId=null, seq=100;
-  var selected=[]; var pendingBatch=[]; var pendingTip=[]; var estId=null; var giftorDone=false;
+  var selected=[]; var pendingBatch=[]; var pendingTip=[]; var estId=null; var giftorDone=true;
   var invF={q:'',status:'all'};
   var state=[
     {id:1,first:'Jordan',last:'Rivera',email:'jordan.rivera@example.com',amount:'25,000',rel:'Daughter',status:'invited',invitedOn:'Jul 12, 2026',pstat:'progress',illRun:true,illDate:'Jul 12, 2026'},
