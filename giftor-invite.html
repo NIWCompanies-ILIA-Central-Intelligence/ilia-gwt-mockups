@@ -275,6 +275,14 @@
   </div>
 </div>
 
+<div class="overlay" id="tipOverlay">
+  <div class="modal sm">
+    <div class="mh"><h3>Sending just one?</h3><button class="x" onclick="closeTip()">✕</button></div>
+    <div class="mb"><p id="tip-msg" style="color:var(--muted)"></p></div>
+    <div class="mfoot"><button class="btn ghost" onclick="closeTip()">Go back</button><button class="btn" onclick="tipContinue()">Continue</button></div>
+  </div>
+</div>
+
 <div class="overlay" id="dsOverlay">
   <div class="modal">
     <div class="mh"><h3>Sign your giftor documents <span class="ds-brand">DocuSign</span></h3><button class="x" onclick="closeDs()">✕</button></div>
@@ -329,7 +337,7 @@
     {first:'Riley',last:'Foster',email:'riley.foster@example.com',rel:'Nephew',amount:'30,000'}
   ];
   var sampleIx=0, editId=null, delId=null, seq=100;
-  var selected=[]; var pendingBatch=[];
+  var selected=[]; var pendingBatch=[]; var pendingTip=[];
   var invF={q:'',status:'all'};
   var state=[
     {id:1,first:'Jordan',last:'Rivera',email:'jordan.rivera@example.com',amount:'25,000',rel:'Daughter',status:'invited',invitedOn:'Jul 12, 2026',pstat:'progress'},
@@ -371,8 +379,16 @@
     document.getElementById('ds-list').innerHTML=pendingBatch.map(function(id){var r=find(id);return '<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #F0F3F7;font-size:13.5px"><span>'+r.first+' '+r.last+' <span style="color:var(--faint)">('+(r.rel||'recipient')+')</span></span><span style="font-weight:600">$'+r.amount+'</span></div>';}).join('');
     document.getElementById('ds-intro').textContent=pendingBatch.length>1?('Review and sign one authorization to send all '+pendingBatch.length+' invitations at once.'):'Review and sign the giftor authorization to send this invitation.';
     document.getElementById('dsOverlay').classList.add('show'); }
-  function sendInvite(id){ openDs([id]); }
-  function sendSelected(){ if(!selected.length) return; openDs(selected); }
+  function draftCount(){ return state.filter(function(r){return r.status==='draft';}).length; }
+  function requestSend(ids){
+    if(ids.length===1 && draftCount()>1){ pendingTip=ids.slice(); var r=find(ids[0]);
+      document.getElementById('tip-msg').innerHTML='You have <b>'+draftCount()+'</b> loved ones ready to invite. You can check the box next to several and send them together, signing in DocuSign only <b>once</b> for the whole group.<br><br>Continue with just <b>'+r.first+' '+r.last+'</b>, or go back and select more?';
+      document.getElementById('tipOverlay').classList.add('show'); }
+    else { openDs(ids); } }
+  function tipContinue(){ document.getElementById('tipOverlay').classList.remove('show'); openDs(pendingTip); }
+  function closeTip(){ document.getElementById('tipOverlay').classList.remove('show'); pendingTip=[]; }
+  function sendInvite(id){ requestSend([id]); }
+  function sendSelected(){ if(!selected.length) return; requestSend(selected); }
   function closeDs(){ document.getElementById('dsOverlay').classList.remove('show'); pendingBatch=[]; }
   function confirmSign(){ var n=pendingBatch.length; pendingBatch.forEach(function(id){var r=find(id); if(!r)return; r.status='invited'; r.invitedOn='Jul 15, 2026'; r.pstat='notstarted'; r.link=linkFor(r);});
     document.getElementById('dsOverlay').classList.remove('show'); pendingBatch=[]; selected=[]; render(); toast(n>1?(n+' invitations sent'):'Invitation sent'); }
