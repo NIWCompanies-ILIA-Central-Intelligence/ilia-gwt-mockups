@@ -95,6 +95,12 @@
   .review-cell .rev-ic{color:#9A6B10;font-size:16px}
   .review-cell .rev-tx{flex:1;color:#6B5A2E;font-size:12.5px;line-height:1.5}
   .review-cell .rev-tx a{color:var(--blue-d)}
+  .mf select{width:100%;height:40px;border:1px solid var(--border-d);border-radius:9px;padding:0 10px;font-size:14px;color:var(--ink);background:#fff}
+  .mf select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-soft)}
+  .rgroup{display:flex;gap:22px;margin-top:6px}
+  .ropt{display:flex;align-items:center;gap:7px;font-size:14px;color:var(--ink);font-weight:400}
+  .ropt input{width:16px;height:16px;accent-color:var(--blue);margin:0}
+  .est-note{background:#FBF7EC;border:1px solid #F0E4C4;border-radius:9px;padding:11px 13px;color:#6B5A2E;font-size:12.5px;line-height:1.5;margin-bottom:16px}
   .pill.ps-gray{background:#EEF1F5;color:#5A6472}
   .pill.ps-blue{background:#EAF1FD;color:#245BC0}
   .pill.ps-amber{background:#FBF0DA;color:#9A6B10}
@@ -313,6 +319,21 @@
   </div>
 </div>
 
+<div class="overlay" id="estOverlay">
+  <div class="modal">
+    <div class="mh"><h3>Run a sample illustration <span class="ds-brand" style="background:#E6F1FB;color:#0C447C">Carrier estimator</span></h3><button class="x" onclick="closeEst()">✕</button></div>
+    <div class="mb">
+      <div class="est-note">ⓘ This is an <b>estimate only</b> to preview a sample from the carrier. It is <b>not saved to the invitation</b> — your loved one confirms their own details when they apply.</div>
+      <div class="mrow"><div class="mf"><label>First name</label><input id="es-first"></div><div class="mf"><label>Last name</label><input id="es-last"></div></div>
+      <div class="mrow"><div class="mf"><label>Relationship</label><input id="es-rel"></div><div class="mf"><label>Date of birth</label><input id="es-dob" placeholder="MM/DD/YYYY"></div></div>
+      <div class="mrow"><div class="mf"><label>Gender</label><select id="es-gender"><option value="">Select</option><option>Female</option><option>Male</option><option>Other</option></select></div><div class="mf"><label>Health class</label><select id="es-health"><option value="">Select</option><option>Preferred Plus</option><option>Preferred</option><option>Standard Plus</option><option>Standard</option></select></div></div>
+      <div class="mf" style="margin-bottom:0"><label>Does your loved one use tobacco or marijuana products?</label>
+        <div class="rgroup"><label class="ropt"><input type="radio" name="es-tob"> No</label><label class="ropt"><input type="radio" name="es-tob"> Yes</label></div></div>
+    </div>
+    <div class="mfoot"><button class="btn ghost" onclick="closeEst()">Cancel</button><button class="btn" onclick="runSample()">Run sample illustration</button></div>
+  </div>
+</div>
+
 <div class="overlay" id="illOverlay">
   <div class="modal">
     <div class="mh"><h3 id="ill-title">Kai-Zen illustration</h3><button class="x" onclick="closeIll()">✕</button></div>
@@ -331,7 +352,7 @@
         <tr><td>Projected income (ages 65–90)</td><td id="ill-inc">$41,900 / yr</td></tr>
         <tr><td>Projected death benefit</td><td id="ill-db">$980,000</td></tr>
       </table>
-      <p style="color:var(--faint);font-size:12px;margin-top:14px">Illustrative values for demonstration only — not a guarantee of future results.</p>
+      <p style="color:var(--faint);font-size:12px;margin-top:14px">Illustrative values for demonstration only — not a guarantee of future results. These estimate inputs are not saved to the invitation.</p>
     </div>
     <div class="mfoot"><button class="btn" onclick="closeIll()">Close</button></div>
   </div>
@@ -347,10 +368,10 @@
     {first:'Riley',last:'Foster',email:'riley.foster@example.com',rel:'Nephew',amount:'30,000'}
   ];
   var sampleIx=0, editId=null, delId=null, seq=100;
-  var selected=[]; var pendingBatch=[]; var pendingTip=[];
+  var selected=[]; var pendingBatch=[]; var pendingTip=[]; var estId=null;
   var invF={q:'',status:'all'};
   var state=[
-    {id:1,first:'Jordan',last:'Rivera',email:'jordan.rivera@example.com',amount:'25,000',rel:'Daughter',status:'invited',invitedOn:'Jul 12, 2026',pstat:'progress'},
+    {id:1,first:'Jordan',last:'Rivera',email:'jordan.rivera@example.com',amount:'25,000',rel:'Daughter',status:'invited',invitedOn:'Jul 12, 2026',pstat:'progress',illRun:true,illDate:'Jul 12, 2026'},
     {id:2,first:'Morgan',last:'Ellis',email:'morgan.ellis@example.com',amount:'25,000',rel:'Son',status:'invited',invitedOn:'Jul 10, 2026',pstat:'created'},
     {id:3,first:'Priya',last:'Shah',email:'priya.shah@example.com',amount:'15,000',rel:'Granddaughter',status:'invited',invitedOn:'Jun 28, 2026',pstat:'approved'},
     {id:4,first:'Chris',last:'Diaz',email:'chris.diaz@example.com',amount:'10,000',rel:'Nephew',status:'invited',invitedOn:'Jul 14, 2026',pstat:'notstarted'},
@@ -440,6 +461,14 @@
     r.email=document.getElementById('e-email').value; r.amount=fmtMoney(document.getElementById('e-amt').value);
     closeEdit(); render(); toast(r.status==='invited'?'Saved — invite link refreshed':'Changes saved'); }
 
+  function openEst(id){ estId=id; var r=find(id);
+    document.getElementById('es-first').value=r.first; document.getElementById('es-last').value=r.last;
+    document.getElementById('es-rel').value=r.rel||''; document.getElementById('es-dob').value='';
+    document.getElementById('es-gender').value=''; document.getElementById('es-health').value='';
+    var t=document.getElementsByName('es-tob'); t[0].checked=false; t[1].checked=false;
+    document.getElementById('estOverlay').classList.add('show'); }
+  function closeEst(){ document.getElementById('estOverlay').classList.remove('show'); }
+  function runSample(){ var r=find(estId); r.illRun=true; r.illDate='Jul 15, 2026'; var id=estId; closeEst(); render(); viewIll(id); toast('Sample illustration ready'); }
   function viewIll(id){ var r=find(id); var g=parseInt(r.amount.replace(/[^0-9]/g,''))||25000;
     document.getElementById('ill-title').textContent=r.first+' '+r.last+" — Kai-Zen illustration";
     document.getElementById('ill-gift').textContent='$'+g.toLocaleString();
@@ -457,6 +486,9 @@
 
   var PSTAT={notstarted:['Not started','ps-gray'],created:['Account created','ps-blue'],progress:['Application started','ps-amber'],submitted:['Submitted for review','ps-purple'],approved:['Approved / active','ps-green']};
   function pstatPill(p){ var m=PSTAT[p]||PSTAT.notstarted; return '<span class="pill '+m[1]+'"><i></i>'+m[0]+'</span>'; }
+  function illCell(r){ return r.illRun
+    ? '<button class="linkcell" onclick="viewIll('+r.id+')">▤ View sample illustration</button><div style="color:var(--faint);font-size:11.5px;margin-top:3px">Sample · '+r.illDate+'</div>'
+    : '<button class="linkcell" onclick="openEst('+r.id+')">▤ Run illustration</button>'; }
   function inviteRow(r){
     var relTxt=r.rel?r.rel:'Not set';
     var sel=selected.indexOf(r.id)>=0;
@@ -479,7 +511,7 @@
     var det='<tr class="exp-row" id="exp-'+r.id+'" style="display:none"><td colspan="7"><div class="exp-in">'
       +'<div><div class="k">Relationship</div><div class="v">'+relTxt+'</div></div>'
       +'<div><div class="k">Status</div><div class="v">'+pill+'</div></div>'
-      +'<div><div class="k">Illustration</div><div class="v"><button class="linkcell" onclick="viewIll('+r.id+')">▤ View illustration</button></div></div>'
+      +'<div><div class="k">Illustration</div><div class="v">'+illCell(r)+'</div></div>'
       +'<div class="exp-note">ⓘ Sending the invite opens DocuSign for you to sign the giftor documents. If the email does not arrive, use Copy invitation link to send it yourself.</div>'
       +'</div></td></tr>';
     return main+det;
@@ -499,7 +531,7 @@
     var det='<tr class="exp-row" id="exp-'+r.id+'" style="display:none"><td colspan="6"><div class="exp-in">'
       +'<div><div class="k">Relationship</div><div class="v">'+relTxt+'</div></div>'
       +'<div><div class="k">Invited on</div><div class="v">'+r.invitedOn+'</div></div>'
-      +'<div><div class="k">Illustration</div><div class="v"><button class="linkcell" onclick="viewIll('+r.id+')">▤ View illustration</button></div></div>'
+      +'<div><div class="k">Illustration</div><div class="v">'+illCell(r)+'</div></div>'
       +'<div class="exp-note">ⓘ Participant status updates automatically as your loved one creates their account and completes their application.</div>'
       +'</div></td></tr>';
     return main+det;
