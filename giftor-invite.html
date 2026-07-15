@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GWT · Giftor Portal — Invite (clickable prototype)</title>
+<style>
+  :root{
+    --blue:#2F6FE0; --blue-d:#245BC0; --blue-soft:#EAF1FD;
+    --ink:#1E2A38; --muted:#66738A; --faint:#93A0B4;
+    --bg:#F4F6F9; --card:#FFFFFF; --border:#E5E9F0; --border-d:#D6DCE6;
+    --g-bg:#E7F6EE; --g-tx:#1B7F4B;
+    --gr-bg:#EEF1F5; --gr-tx:#5A6472;
+    --red:#D64562; --red-soft:#FCEBEF;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;font-size:14px;line-height:1.5}
+  .app{display:flex;min-height:100vh}
+  .side{width:236px;background:#0E1726;color:#C4CEDC;flex-shrink:0;padding:20px 0}
+  .brand{padding:0 22px 18px;border-bottom:1px solid #1E2A3D;margin-bottom:14px}
+  .logo{display:flex;align-items:center;gap:9px;font-weight:700;font-size:22px;letter-spacing:.5px;color:#fff}
+  .dots{display:flex;gap:4px;margin-top:9px}
+  .dots i{width:9px;height:9px;border-radius:50%;display:block}
+  .kai{margin-top:14px;font-weight:700;color:#8FB4F2;font-size:15px;letter-spacing:.3px}
+  .kai small{display:block;color:#5C6B82;font-weight:400;font-size:11px;letter-spacing:.2px}
+  .nav{margin-top:8px}
+  .nav a{display:flex;align-items:center;gap:11px;padding:10px 22px;color:#AAB6C8;text-decoration:none;font-size:13.5px}
+  .nav a .ico{width:17px;text-align:center;opacity:.8}
+  .nav a.active{background:#16213A;color:#fff;border-left:3px solid var(--blue);padding-left:19px;font-weight:600}
+  .nav a:hover:not(.active){background:#131D31;color:#fff}
+  .main{flex:1;display:flex;flex-direction:column;min-width:0}
+  .top{height:60px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 26px}
+  .top .burger{font-size:20px;color:var(--muted)}
+  .top .who{display:flex;align-items:center;gap:14px;color:var(--muted)}
+  .top .who .av{width:34px;height:34px;border-radius:50%;background:var(--blue-soft);color:var(--blue);display:flex;align-items:center;justify-content:center;font-weight:600}
+  .wrap{padding:26px 34px;max-width:1080px;width:100%}
+  .crumb{color:var(--faint);font-size:12.5px;margin-bottom:4px}
+  h1{font-size:23px;font-weight:700;letter-spacing:-.2px}
+  .lede{color:var(--muted);margin-top:6px;max-width:700px}
+
+  .card{background:var(--card);border:1px solid var(--border);border-radius:14px;margin-top:20px}
+  .card .hd{padding:15px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+  .card .hd h2{font-size:15.5px;font-weight:600;display:flex;align-items:center;gap:9px}
+  .badge-ct{background:var(--blue-soft);color:var(--blue-d);border-radius:20px;font-size:12px;font-weight:600;padding:1px 9px}
+  .card .hd .sub{color:var(--faint);font-size:12.5px;font-weight:400;margin-top:2px}
+  .card .bd{padding:20px}
+  .card.mgmt{border-color:#CFE0F5}
+  .card.mgmt .hd{background:#F2F7FE;border-bottom-color:#DBE7F8;border-radius:14px 14px 0 0}
+  .card.mgmt .hd h2 .dot{width:8px;height:8px;border-radius:50%;background:var(--blue)}
+  .card.mgmt .badge-ct{background:#DCE9FB}
+
+  .form{display:grid;grid-template-columns:1fr 1fr .95fr 1.35fr .8fr auto;gap:12px;align-items:start}
+  .fld label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px;font-weight:600}
+  .fld input,.fld select{width:100%;height:40px;border:1px solid var(--border-d);border-radius:9px;padding:0 12px;font-size:14px;color:var(--ink);background:#fff}
+  .fld select{padding:0 8px}
+  .fld input::placeholder{color:#AEB8C6}
+  .fld input:focus,.fld select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-soft)}
+  .fld.err input{border-color:var(--red);background:var(--red-soft)}
+  .fld.err input:focus{box-shadow:0 0 0 3px #F9D9E1}
+  .fld .req{display:none;color:var(--red);font-size:11.5px;margin-top:4px;font-weight:600}
+  .fld.err .req{display:block}
+  .money{position:relative}
+  .money span{position:absolute;left:12px;top:32px;color:var(--muted)}
+  .money input{padding-left:24px}
+  .btn{height:40px;border:none;border-radius:9px;background:var(--blue);color:#fff;font-weight:600;font-size:13.5px;padding:0 18px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:7px;white-space:nowrap}
+  .btn:hover{background:var(--blue-d)}
+  .btn.ghost{background:#fff;color:var(--blue);border:1px solid var(--border-d)}
+  .btn.ghost:hover{background:var(--blue-soft)}
+  .btn.danger{background:var(--red)}
+  .btn.danger:hover{background:#B93552}
+  .btn.sm{height:32px;font-size:12.5px;padding:0 13px}
+  .btn.addbtn{margin-top:22px}
+  .linknote{margin-top:14px;display:flex;align-items:center;gap:9px;color:var(--muted);font-size:12.5px;flex-wrap:wrap}
+  .chip{background:var(--blue-soft);color:var(--blue-d);border:1px solid #CFE0FB;border-radius:7px;padding:4px 9px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px}
+
+  .toolbar{display:flex;gap:10px;padding:14px 12px 6px;flex-wrap:wrap;align-items:center}
+  .toolbar .search{flex:1;min-width:230px;height:38px;border:1px solid var(--border-d);border-radius:9px;padding:0 12px;font-size:13.5px;color:var(--ink)}
+  .toolbar select{height:38px;border:1px solid var(--border-d);border-radius:9px;padding:0 10px;font-size:13.5px;color:var(--ink);background:#fff}
+  .toolbar .search:focus,.toolbar select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-soft)}
+
+  table{width:100%;border-collapse:collapse}
+  thead th{text-align:left;font-size:11px;letter-spacing:.4px;text-transform:uppercase;color:var(--faint);font-weight:600;padding:0 12px 10px;border-bottom:1px solid var(--border)}
+  tbody td{padding:13px 12px;border-bottom:1px solid #F0F3F7;vertical-align:middle}
+  tbody tr.rrow:last-child td{border-bottom:none}
+  .rname{font-weight:600}
+  .rrel{color:var(--faint);font-size:12px;margin-top:1px}
+  .email{color:var(--muted)}
+  .amt{font-weight:600}
+  .pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:4px 10px;border-radius:20px}
+  .pill i{width:7px;height:7px;border-radius:50%;background:currentColor;display:block}
+  .pill.draft{background:var(--gr-bg);color:var(--gr-tx)}
+  .pill.ps-gray{background:#EEF1F5;color:#5A6472}
+  .pill.ps-blue{background:#EAF1FD;color:#245BC0}
+  .pill.ps-amber{background:#FBF0DA;color:#9A6B10}
+  .pill.ps-purple{background:#EFEAF9;color:#5B3FA6}
+  .pill.ps-green{background:#E7F6EE;color:#1B7F4B}
+  .acts{display:flex;gap:10px;align-items:center;justify-content:flex-end;flex-wrap:wrap}
+  .ia{color:var(--muted);cursor:pointer;font-size:13px;text-decoration:none;display:inline-flex;align-items:center;gap:5px;background:none;border:none;font-family:inherit}
+  .ia:hover{color:var(--blue)}
+  .ia.del:hover{color:var(--red)}
+  .linkcell{color:var(--blue);cursor:pointer;font-size:13px;display:inline-flex;align-items:center;gap:5px;background:none;border:none;font-family:inherit;padding:0}
+  .linkcell:hover{text-decoration:underline}
+  .dash{color:#C4CCD8}
+  .expand{color:var(--faint);cursor:pointer;font-size:15px;user-select:none;background:none;border:none;transition:transform .15s}
+  .expand.open{transform:rotate(90deg)}
+  .exp-in{padding:14px 22px 16px 40px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;background:#FBFCFE}
+  .exp-in .k{font-size:11px;color:var(--faint);text-transform:uppercase;letter-spacing:.3px;font-weight:600;margin-bottom:3px}
+  .exp-in .v{font-size:13.5px}
+  .exp-note{grid-column:1/4;color:var(--muted);font-size:12.5px;display:flex;align-items:center;gap:7px;background:#fff;border:1px dashed var(--border-d);border-radius:8px;padding:9px 12px}
+  .empty{padding:26px;text-align:center;color:var(--faint);font-size:13px}
+  .foot{display:flex;align-items:center;gap:8px;color:var(--faint);font-size:12px;margin-top:14px;padding:0 8px}
+  .legend{display:flex;gap:16px;flex-wrap:wrap}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .legend i{width:8px;height:8px;border-radius:50%;display:block}
+
+  .overlay{position:fixed;inset:0;background:rgba(20,30,45,.5);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}
+  .overlay.show{display:flex}
+  .modal{background:#fff;border-radius:16px;width:520px;max-width:100%;max-height:90vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+  .modal.sm{width:430px}
+  .modal .mh{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+  .modal .mh h3{font-size:16.5px;font-weight:700;display:flex;align-items:center}
+  .modal .mh .x{cursor:pointer;color:var(--faint);font-size:20px;background:none;border:none;line-height:1}
+  .modal .mb{padding:22px}
+  .mrow{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+  .mf{margin-bottom:14px}
+  .mf label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px;font-weight:600}
+  .mf input{width:100%;height:40px;border:1px solid var(--border-d);border-radius:9px;padding:0 12px;font-size:14px}
+  .mf input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-soft)}
+  .mfoot{display:flex;justify-content:flex-end;align-items:center;gap:10px;padding:16px 22px;border-top:1px solid var(--border)}
+  .del-warn{width:44px;height:44px;border-radius:50%;background:var(--red-soft);color:var(--red);display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:14px}
+
+  .ds-brand{background:#FFCC00;color:#3D3000;font-weight:700;font-size:11px;padding:3px 8px;border-radius:5px;margin-left:10px;letter-spacing:.3px}
+  .ds-intro{color:var(--muted);font-size:13px;margin-bottom:16px}
+  .ds-doc{border:1px solid var(--border);border-radius:10px;padding:20px;background:#FCFCFD}
+  .ds-line{height:9px;background:#E7EBF1;border-radius:4px;margin-bottom:11px}
+  .ds-sign{position:relative;margin:22px 0 6px;display:flex;align-items:center;min-height:56px;border:1px dashed #E0A800;background:#FFF9E8;border-radius:8px;padding:14px 14px 14px 60px}
+  .ds-tab{position:absolute;left:8px;top:50%;transform:translateY(-50%);background:#FFCC00;color:#3D3000;font-weight:700;font-size:10.5px;padding:6px 7px;border-radius:5px}
+  .ds-sigtext{font-family:"Segoe Script","Brush Script MT","Snell Roundhand",cursive;font-size:24px;color:var(--ink)}
+  .ds-cap{font-size:12px;color:var(--muted);margin-top:8px}
+
+  .ill-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px}
+  .ill-metric{color:var(--muted);font-size:12.5px}
+  .ill-metric b{color:var(--ink);font-size:15px}
+  .bars{display:flex;align-items:flex-end;gap:14px;height:150px;padding:10px 4px;border-bottom:2px solid var(--border);margin-bottom:6px}
+  .bar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
+  .bar .col{width:70%;background:#9DBEF0;border-radius:6px 6px 0 0}
+  .barlabels{display:flex;gap:14px;margin-bottom:16px}
+  .barlabels span{flex:1;text-align:center;font-size:11.5px;color:var(--faint)}
+  .ill-tbl{width:100%;font-size:13px;border-collapse:collapse}
+  .ill-tbl td{padding:7px 0;border-bottom:1px solid #F0F3F7}
+  .ill-tbl td:last-child{text-align:right;font-weight:600}
+  .sample-tag{background:#FBF0DA;color:#9A6B10;font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:6px}
+
+  .toast{position:fixed;bottom:24px;right:24px;background:#12253F;color:#fff;padding:13px 18px;border-radius:11px;font-size:13.5px;display:flex;align-items:center;gap:9px;opacity:0;transform:translateY(10px);transition:.25s;z-index:60;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+  .toast.show{opacity:1;transform:translateY(0)}
+  .toast .tk{color:#6FE0A8}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand">
+      <div class="logo">ilia</div>
+      <div class="dots"><i style="background:#2F6FE0"></i><i style="background:#35B36A"></i><i style="background:#E8536B"></i><i style="background:#F0B429"></i></div>
+      <div class="kai">Kai-Zen<small>The Greatest Wealth Transfer</small></div>
+    </div>
+    <nav class="nav">
+      <a href="#"><span class="ico">⌂</span> Home Dashboard</a>
+      <a href="#" class="active"><span class="ico">◈</span> Giftor Portal</a>
+      <a href="#"><span class="ico">✔</span> Action Items</a>
+      <a href="#"><span class="ico">ⓘ</span> Kai-Zen Details</a>
+      <a href="#"><span class="ico">▷</span> Introduction Video</a>
+      <a href="#"><span class="ico">✦</span> Estimate My Benefits</a>
+      <a href="#"><span class="ico">☰</span> How It Works</a>
+    </nav>
+  </aside>
+
+  <div class="main">
+    <div class="top">
+      <div class="burger">☰</div>
+      <div class="who"><span>🔔</span><span>Welcome! Jamin</span><span class="av">JA</span></div>
+    </div>
+
+    <div class="wrap">
+      <div class="crumb">Giftor Portal</div>
+      <h1>Invite your loved ones</h1>
+      <p class="lede">Add a loved one below and we'll email them a personal invitation to begin their Greatest Wealth Transfer with Kai-Zen. All we need to send it is their name, email, and the gift amount.</p>
+
+      <section class="card">
+        <div class="hd"><div><h2>Add a recipient</h2><div class="sub">Enter the essentials — click any field to auto-fill sample data.</div></div></div>
+        <div class="bd">
+          <div class="form">
+            <div class="fld" id="f-first"><label>First name</label><input id="i-first" placeholder="First name"><div class="req">Required</div></div>
+            <div class="fld" id="f-last"><label>Last name</label><input id="i-last" placeholder="Last name"><div class="req">Required</div></div>
+            <div class="fld" id="f-rel"><label>Relationship</label><select id="i-rel"><option value="">Optional</option><option>Son</option><option>Daughter</option><option>Grandson</option><option>Granddaughter</option><option>Grandchild</option><option>Nephew</option><option>Niece</option><option>Other</option></select></div>
+            <div class="fld" id="f-email"><label>Email address</label><input id="i-email" placeholder="name@example.com"><div class="req">Required</div></div>
+            <div class="fld money" id="f-amt"><label>Gift amount</label><span>$</span><input id="i-amt" placeholder="25,000"><div class="req">Required</div></div>
+            <button class="btn addbtn" onclick="addRecipient()">＋ Add recipient</button>
+          </div>
+          <div class="linknote">
+            <span>When you send an invite, it links to their personal page:</span>
+            <span class="chip">https://gwtg2.simplicityniw.com</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd"><div><h2>Recipients to invite <span class="badge-ct" id="ct-draft">0</span></h2><div class="sub">Added but not yet sent — review, then send the invitation.</div></div></div>
+        <div class="bd" style="padding:8px 20px 12px"><div id="tbl-draft"></div></div>
+      </section>
+
+      <section class="card mgmt">
+        <div class="hd">
+          <div><h2><span class="dot"></span>Invited loved ones <span class="badge-ct" id="ct-invited">0</span></h2><div class="sub">Everyone you've invited — track how far along each loved one's application is.</div></div>
+          <button class="btn ghost sm" onclick="toast('Export started')">⤓ Export list</button>
+        </div>
+        <div class="bd" style="padding:6px 20px 12px">
+          <div class="toolbar">
+            <input class="search" id="inv-search" placeholder="Search by name or email" oninput="filterInvited()">
+            <select id="inv-status" onchange="filterInvited()">
+              <option value="all">All statuses</option>
+              <option value="notstarted">Not started</option>
+              <option value="created">Account created</option>
+              <option value="progress">Application started</option>
+              <option value="submitted">Submitted for review</option>
+              <option value="approved">Approved / active</option>
+            </select>
+          </div>
+          <div id="tbl-invited"></div>
+          <div class="foot"><div class="legend">
+            <span><i style="background:#8A94A3"></i>Not started</span>
+            <span><i style="background:#2F6FE0"></i>Account created</span>
+            <span><i style="background:#C08A1A"></i>Application started</span>
+            <span><i style="background:#7A5CC7"></i>Submitted</span>
+            <span><i style="background:#1B7F4B"></i>Approved / active</span>
+          </div></div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="editOverlay">
+  <div class="modal">
+    <div class="mh"><h3>Edit recipient</h3><button class="x" onclick="closeEdit()">✕</button></div>
+    <div class="mb">
+      <div class="mrow">
+        <div class="mf"><label>First name</label><input id="e-first"></div>
+        <div class="mf"><label>Last name</label><input id="e-last"></div>
+      </div>
+      <div class="mf"><label>Email address</label><input id="e-email"></div>
+      <div class="mf"><label>Gift amount</label><input id="e-amt"></div>
+      <div class="exp-note" style="grid-column:auto">ⓘ If this recipient is already invited, saving a new gift amount refreshes their invite link automatically.</div>
+    </div>
+    <div class="mfoot"><button class="btn ghost" onclick="closeEdit()">Cancel</button><button class="btn" onclick="saveEdit()">Save changes</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="delOverlay">
+  <div class="modal sm">
+    <div class="mh"><h3>Remove recipient?</h3><button class="x" onclick="closeDel()">✕</button></div>
+    <div class="mb">
+      <div class="del-warn">⚠</div>
+      <p id="del-msg" style="color:var(--muted)"></p>
+    </div>
+    <div class="mfoot"><button class="btn ghost" onclick="closeDel()">Cancel</button><button class="btn danger" onclick="confirmDel()">Remove recipient</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="dsOverlay">
+  <div class="modal">
+    <div class="mh"><h3>Sign your giftor documents <span class="ds-brand">DocuSign</span></h3><button class="x" onclick="closeDs()">✕</button></div>
+    <div class="mb">
+      <p class="ds-intro">To send this invitation, please review and sign the giftor authorization for <b id="ds-name">your recipient</b>.</p>
+      <div class="ds-doc">
+        <div class="ds-line" style="width:55%"></div>
+        <div class="ds-line"></div>
+        <div class="ds-line" style="width:88%"></div>
+        <div class="ds-line" style="width:78%"></div>
+        <div class="ds-sign"><span class="ds-tab">SIGN</span><span class="ds-sigtext">Jamin Austin</span></div>
+        <div class="ds-cap">Greatest Wealth Transfer — Giftor authorization</div>
+      </div>
+    </div>
+    <div class="mfoot"><button class="btn ghost" onclick="closeDs()">Cancel</button><button class="btn" onclick="confirmSign()">Adopt and sign</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="illOverlay">
+  <div class="modal">
+    <div class="mh"><h3 id="ill-title">Kai-Zen illustration</h3><button class="x" onclick="closeIll()">✕</button></div>
+    <div class="mb">
+      <div class="ill-head">
+        <div class="ill-metric">Annual gift<br><b id="ill-gift">$25,000</b></div>
+        <div class="ill-metric">Contributions<br><b>5 years</b></div>
+        <div class="ill-metric">Distributions<br><b>Ages 65–90</b></div>
+        <span class="sample-tag">Sample</span>
+      </div>
+      <div class="bars" id="ill-bars"></div>
+      <div class="barlabels"><span>Yr 1</span><span>Yr 2</span><span>Yr 3</span><span>Yr 4</span><span>Yr 5</span></div>
+      <table class="ill-tbl">
+        <tr><td>Total contributions (giftor)</td><td id="ill-total">$125,000</td></tr>
+        <tr><td>Projected policy value at 65</td><td id="ill-cv">$612,400</td></tr>
+        <tr><td>Projected income (ages 65–90)</td><td id="ill-inc">$41,900 / yr</td></tr>
+        <tr><td>Projected death benefit</td><td id="ill-db">$980,000</td></tr>
+      </table>
+      <p style="color:var(--faint);font-size:12px;margin-top:14px">Illustrative values for demonstration only — not a guarantee of future results.</p>
+    </div>
+    <div class="mfoot"><button class="btn" onclick="closeIll()">Close</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><span class="tk">✔</span><span id="toast-msg"></span></div>
+
+<script>
+  var SAMPLES=[
+    {first:'Taylor',last:'Morgan',email:'taylor.morgan@example.com',rel:'Daughter',amount:'25,000'},
+    {first:'Jamie',last:'Brooks',email:'jamie.brooks@example.com',rel:'Son',amount:'15,000'},
+    {first:'Casey',last:'Bennett',email:'casey.bennett@example.com',rel:'Grandchild',amount:'20,000'},
+    {first:'Riley',last:'Foster',email:'riley.foster@example.com',rel:'Nephew',amount:'30,000'}
+  ];
+  var sampleIx=0, editId=null, delId=null, dsId=null, seq=100;
+  var invF={q:'',status:'all'};
+  var state=[
+    {id:1,first:'Jordan',last:'Rivera',email:'jordan.rivera@example.com',amount:'25,000',rel:'Daughter',status:'invited',invitedOn:'Jul 12, 2026',pstat:'progress'},
+    {id:2,first:'Morgan',last:'Ellis',email:'morgan.ellis@example.com',amount:'25,000',rel:'Son',status:'invited',invitedOn:'Jul 10, 2026',pstat:'created'},
+    {id:3,first:'Priya',last:'Shah',email:'priya.shah@example.com',amount:'15,000',rel:'Granddaughter',status:'invited',invitedOn:'Jun 28, 2026',pstat:'approved'},
+    {id:4,first:'Chris',last:'Diaz',email:'chris.diaz@example.com',amount:'10,000',rel:'Nephew',status:'invited',invitedOn:'Jul 14, 2026',pstat:'notstarted'},
+    {id:5,first:'Sam',last:'Carter',email:'sam.carter@example.com',amount:'25,000',rel:'Son',status:'draft'},
+    {id:6,first:'Alex',last:'Nguyen',email:'alex.nguyen@example.com',amount:'10,000',rel:'Grandchild',status:'draft'}
+  ];
+
+  ['first','last','email','amt'].forEach(function(k){
+    var el=document.getElementById('i-'+k);
+    el.addEventListener('focus',function(){
+      if(!el.value){ el.value=SAMPLES[sampleIx][k==='amt'?'amount':k]; document.getElementById('f-'+k).classList.remove('err');
+        if(!document.getElementById('i-rel').value){ document.getElementById('i-rel').value=SAMPLES[sampleIx].rel; } }
+    });
+  });
+
+  function addRecipient(){
+    var f={first:val('i-first'),last:val('i-last'),email:val('i-email'),amt:val('i-amt')};
+    var ok=true;
+    [['first','f-first'],['last','f-last'],['email','f-email'],['amt','f-amt']].forEach(function(p){
+      if(!f[p[0]]){ document.getElementById(p[1]).classList.add('err'); ok=false; }
+      else document.getElementById(p[1]).classList.remove('err');
+    });
+    if(!ok) return;
+    state.push({id:++seq,first:f.first,last:f.last,email:f.email,amount:f.amt.replace(/^\$/,''),rel:document.getElementById('i-rel').value,status:'draft'});
+    ['i-first','i-last','i-email','i-amt'].forEach(function(id){document.getElementById(id).value='';});
+    document.getElementById('i-rel').value='';
+    sampleIx=(sampleIx+1)%SAMPLES.length;
+    render(); toast(f.first+' added to your recipients');
+  }
+  function val(id){return document.getElementById(id).value.trim();}
+  function find(id){ return state.filter(function(r){return r.id===id;})[0]; }
+  function linkFor(r){ return r.link||('https://gwtg2.simplicityniw.com/i/'+r.id); }
+
+  function sendInvite(id){ dsId=id; var r=find(id);
+    document.getElementById('ds-name').textContent=r.first+' '+r.last;
+    document.getElementById('dsOverlay').classList.add('show'); }
+  function closeDs(){ document.getElementById('dsOverlay').classList.remove('show'); dsId=null; }
+  function confirmSign(){ var r=find(dsId); r.status='invited'; r.invitedOn='Jul 15, 2026'; r.pstat='notstarted'; r.link=linkFor(r);
+    document.getElementById('dsOverlay').classList.remove('show'); var nm=r.first; dsId=null; render(); toast('Documents signed — invitation sent to '+nm); }
+
+  function copyLink(id){
+    var r=find(id); var link=linkFor(r);
+    if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(link).catch(function(){fallbackCopy(link);}); }
+    else fallbackCopy(link);
+    toast('Invitation link copied — you can paste it into an email');
+  }
+  function fallbackCopy(t){ var ta=document.createElement('textarea'); ta.value=t; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.focus(); ta.select(); try{document.execCommand('copy');}catch(e){} document.body.removeChild(ta); }
+
+  function resend(id){ toast('Invitation resent to '+find(id).first); }
+
+  function del(id){ delId=id; var r=find(id);
+    document.getElementById('del-msg').innerHTML="You're about to remove <b>"+r.first+" "+r.last+"</b> from your recipients. This can't be undone.";
+    document.getElementById('delOverlay').classList.add('show'); }
+  function closeDel(){ document.getElementById('delOverlay').classList.remove('show'); delId=null; }
+  function confirmDel(){ var r=find(delId); state=state.filter(function(x){return x.id!==delId;}); document.getElementById('delOverlay').classList.remove('show'); render(); toast((r?r.first:'Recipient')+' removed'); delId=null; }
+
+  function openEdit(id){ var r=find(id); editId=id;
+    document.getElementById('e-first').value=r.first; document.getElementById('e-last').value=r.last;
+    document.getElementById('e-email').value=r.email; document.getElementById('e-amt').value=r.amount;
+    document.getElementById('editOverlay').classList.add('show'); }
+  function closeEdit(){ document.getElementById('editOverlay').classList.remove('show'); }
+  function saveEdit(){ var r=find(editId);
+    r.first=document.getElementById('e-first').value; r.last=document.getElementById('e-last').value;
+    r.email=document.getElementById('e-email').value; r.amount=document.getElementById('e-amt').value.replace(/^\$/,'');
+    closeEdit(); render(); toast(r.status==='invited'?'Saved — invite link refreshed':'Changes saved'); }
+
+  function viewIll(id){ var r=find(id); var g=parseInt(r.amount.replace(/[^0-9]/g,''))||25000;
+    document.getElementById('ill-title').textContent=r.first+' '+r.last+" — Kai-Zen illustration";
+    document.getElementById('ill-gift').textContent='$'+g.toLocaleString();
+    document.getElementById('ill-total').textContent='$'+(g*5).toLocaleString();
+    document.getElementById('ill-cv').textContent='$'+Math.round(g*24.5).toLocaleString();
+    document.getElementById('ill-inc').textContent='$'+Math.round(g*1.68).toLocaleString()+' / yr';
+    document.getElementById('ill-db').textContent='$'+Math.round(g*39.2).toLocaleString();
+    var bars=document.getElementById('ill-bars'); bars.innerHTML='';
+    for(var y=1;y<=5;y++){ var h=30+y*13; bars.innerHTML+='<div class="bar"><div class="col" style="height:'+h+'%"></div></div>'; }
+    document.getElementById('illOverlay').classList.add('show'); }
+  function closeIll(){ document.getElementById('illOverlay').classList.remove('show'); }
+
+  function toggleExp(id){ var d=document.getElementById('exp-'+id); var c=document.getElementById('chev-'+id);
+    if(!d) return; var open=d.style.display==='table-row'; d.style.display=open?'none':'table-row'; c.classList.toggle('open',!open); }
+
+  var PSTAT={notstarted:['Not started','ps-gray'],created:['Account created','ps-blue'],progress:['Application started','ps-amber'],submitted:['Submitted for review','ps-purple'],approved:['Approved / active','ps-green']};
+  function pstatPill(p){ var m=PSTAT[p]||PSTAT.notstarted; return '<span class="pill '+m[1]+'"><i></i>'+m[0]+'</span>'; }
+  function draftRow(r){
+    var relTxt=r.rel?r.rel:'Not set';
+    var acts='<button class="btn sm" onclick="sendInvite('+r.id+')">Send invite</button>'
+      +'<button class="ia" onclick="copyLink('+r.id+')">⧉ Copy invitation link</button>'
+      +'<button class="ia" onclick="openEdit('+r.id+')">✎ Edit</button>'
+      +'<button class="ia del" onclick="del('+r.id+')">🗑 Delete</button>';
+    var main='<tr class="rrow">'
+      +'<td style="width:22px"><button class="expand" id="chev-'+r.id+'" onclick="toggleExp('+r.id+')">›</button></td>'
+      +'<td><div class="rname">'+r.first+' '+r.last+'</div><div class="rrel">'+(r.rel||'')+'</div></td>'
+      +'<td class="email">'+r.email+'</td>'
+      +'<td class="amt">$'+r.amount+'</td>'
+      +'<td><span class="pill draft"><i></i>Draft</span></td>'
+      +'<td><div class="acts">'+acts+'</div></td></tr>';
+    var det='<tr class="exp-row" id="exp-'+r.id+'" style="display:none"><td colspan="6"><div class="exp-in">'
+      +'<div><div class="k">Relationship</div><div class="v">'+relTxt+'</div></div>'
+      +'<div><div class="k">Status</div><div class="v"><span class="pill draft"><i></i>Draft</span></div></div>'
+      +'<div><div class="k">Illustration</div><div class="v"><button class="linkcell" onclick="viewIll('+r.id+')">▤ View illustration</button></div></div>'
+      +'<div class="exp-note">ⓘ Sending the invite opens DocuSign for you to sign the giftor documents. If the email doesn\'t arrive, use Copy invitation link to send it yourself.</div>'
+      +'</div></td></tr>';
+    return main+det;
+  }
+
+  function invitedRow(r){
+    var relTxt=r.rel?r.rel:'Not set';
+    var acts='<button class="ia" onclick="resend('+r.id+')">↻ Resend</button>'
+      +'<button class="ia" onclick="openEdit('+r.id+')">✎ Edit</button>';
+    var main='<tr class="rrow">'
+      +'<td style="width:22px"><button class="expand" id="chev-'+r.id+'" onclick="toggleExp('+r.id+')">›</button></td>'
+      +'<td><div class="rname">'+r.first+' '+r.last+'</div><div class="rrel">'+(r.rel||'')+'</div></td>'
+      +'<td class="email">'+r.email+'</td>'
+      +'<td class="amt">$'+r.amount+'</td>'
+      +'<td>'+pstatPill(r.pstat)+'</td>'
+      +'<td><div class="acts">'+acts+'</div></td></tr>';
+    var det='<tr class="exp-row" id="exp-'+r.id+'" style="display:none"><td colspan="6"><div class="exp-in">'
+      +'<div><div class="k">Relationship</div><div class="v">'+relTxt+'</div></div>'
+      +'<div><div class="k">Invited on</div><div class="v">'+r.invitedOn+'</div></div>'
+      +'<div><div class="k">Illustration</div><div class="v"><button class="linkcell" onclick="viewIll('+r.id+')">▤ View illustration</button></div></div>'
+      +'<div class="exp-note">ⓘ Participant status updates automatically as your loved one creates their account and completes their application.</div>'
+      +'</div></td></tr>';
+    return main+det;
+  }
+
+  function renderDraft(){
+    var rows=state.filter(function(r){return r.status==='draft';});
+    var el=document.getElementById('tbl-draft');
+    if(!rows.length){ el.innerHTML='<div class="empty">No recipients waiting. Add a loved one above to get started.</div>'; return; }
+    var head='<table><thead><tr><th style="width:22px"></th><th>Recipient</th><th>Email</th><th>Gift amount</th><th>Status</th><th style="text-align:right">Actions</th></tr></thead><tbody>';
+    el.innerHTML=head+rows.map(draftRow).join('')+'</tbody></table>';
+  }
+
+  function renderInvited(){
+    var q=invF.q.toLowerCase(), st=invF.status;
+    var rows=state.filter(function(r){return r.status==='invited';}).filter(function(r){
+      var hay=(r.first+' '+r.last+' '+r.email).toLowerCase();
+      var okq=!q||hay.indexOf(q)>=0; var oks=st==='all'||r.pstat===st; return okq&&oks;
+    });
+    var el=document.getElementById('tbl-invited');
+    if(!rows.length){ el.innerHTML='<div class="empty">No loved ones match. Try clearing the search or filter.</div>'; return; }
+    var head='<table><thead><tr><th style="width:22px"></th><th>Recipient</th><th>Email</th><th>Gift amount</th><th>Participant status</th><th style="text-align:right">Actions</th></tr></thead><tbody>';
+    el.innerHTML=head+rows.map(invitedRow).join('')+'</tbody></table>';
+  }
+  function filterInvited(){ invF.q=document.getElementById('inv-search').value; invF.status=document.getElementById('inv-status').value; renderInvited(); }
+
+  function render(){
+    renderDraft(); renderInvited();
+    document.getElementById('ct-draft').textContent=state.filter(function(r){return r.status==='draft';}).length;
+    document.getElementById('ct-invited').textContent=state.filter(function(r){return r.status==='invited';}).length;
+  }
+  var toastT;
+  function toast(m){ document.getElementById('toast-msg').textContent=m; var t=document.getElementById('toast');
+    t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(function(){t.classList.remove('show');},2400); }
+  render();
+</script>
+</body>
+</html>
