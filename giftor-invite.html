@@ -101,6 +101,10 @@
   .ropt{display:flex;align-items:center;gap:7px;font-size:14px;color:var(--ink);font-weight:400}
   .ropt input{width:16px;height:16px;accent-color:var(--blue);margin:0}
   .est-note{background:#FBF7EC;border:1px solid #F0E4C4;border-radius:9px;padding:11px 13px;color:#6B5A2E;font-size:12.5px;line-height:1.5;margin-bottom:16px}
+  .pbar{height:6px;background:#E7EBF1;border-radius:4px;margin:16px auto 0;max-width:320px;overflow:hidden}
+  .pbar i{display:block;height:100%;width:40%;background:var(--blue);border-radius:4px;animation:pb 1.1s linear infinite}
+  @keyframes pb{0%{margin-left:-40%}100%{margin-left:100%}}
+  .stress{font-size:15px;font-weight:600}
   .clr-demo{background:none;border:none;color:var(--red);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
   .clr-demo:hover{text-decoration:underline}
   .card.locked .bd{opacity:.5;pointer-events:none}
@@ -362,15 +366,11 @@
       <div class="lockbar" id="lockbar">🔒 Verify your giftor details above to unlock adding and inviting recipients.</div>
 
       <section class="card" id="addCard">
-        <div class="hd"><div><h2>Add a recipient <span class="lockchip">🔒 Complete giftor details first</span></h2><div class="sub">Enter the essentials — click any field to auto-fill sample data.</div></div></div>
+        <div class="hd"><div><h2>Add a recipient <span class="lockchip">🔒 Complete giftor details first</span></h2><div class="sub">Provide the recipient's details, run their sample illustration, then confirm to add them.</div></div></div>
         <div class="bd">
-          <div class="form">
-            <div class="fld" id="f-first"><label>First name</label><input id="i-first" placeholder="First name"><div class="req">Required</div></div>
-            <div class="fld" id="f-last"><label>Last name</label><input id="i-last" placeholder="Last name"><div class="req">Required</div></div>
-            <div class="fld" id="f-rel"><label>Relationship</label><select id="i-rel"><option value="">Optional</option><option>Son</option><option>Daughter</option><option>Grandson</option><option>Granddaughter</option><option>Grandchild</option><option>Nephew</option><option>Niece</option><option>Other</option></select></div>
-            <div class="fld" id="f-email"><label>Email address</label><input id="i-email" placeholder="name@example.com"><div class="req">Required</div></div>
-            <div class="fld money" id="f-amt"><label>Gift amount</label><span>$</span><input id="i-amt" placeholder="25,000"><div class="req">Required</div></div>
-            <button class="btn addbtn" onclick="addRecipient()">＋ Add recipient</button>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+            <div style="color:var(--muted);font-size:13px;max-width:600px">Add a loved one and run their <b>sample illustration</b>. We collect the details the carrier needs, run the illustration, and once you confirm the results they move to <b>Recipients to invite</b> below.</div>
+            <button class="btn" onclick="openAdd()">＋ Add recipient</button>
           </div>
         </div>
       </section>
@@ -418,6 +418,50 @@
         </div>
       </section>
 
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="addOverlay">
+  <div class="modal" style="width:640px">
+    <div class="mh"><h3>Add a recipient</h3><button class="clr-demo" style="color:var(--blue-d);margin-left:auto" onclick="addAutofill()">⚡ Auto-fill (demo)</button><button class="x" onclick="closeAdd()">✕</button></div>
+    <div class="mb">
+      <div id="add-step1">
+        <p class="ds-intro">Provide your loved one's details so we can run their sample illustration. Fields marked * are required to run it.</p>
+        <div class="mrow"><div class="mf"><label>First name *</label><input id="ar-first"></div><div class="mf"><label>Last name *</label><input id="ar-last"></div></div>
+        <div class="mrow"><div class="mf"><label>Cell number *</label><input id="ar-cell" placeholder="(000) 000-0000"></div><div class="mf"><label>Email address *</label><input id="ar-email" placeholder="name@example.com"></div></div>
+        <div class="mrow"><div class="mf"><label>Date of birth *</label><input id="ar-dob" placeholder="MM/DD/YYYY"></div><div class="mf"><label>Gender *</label><select id="ar-gender"><option value="">Select</option><option>Female</option><option>Male</option><option>Other</option></select></div></div>
+        <div class="mrow"><div class="mf"><label>Expected contribution for this gift *</label><input id="ar-amt" placeholder="$25,000"></div><div class="mf"><label>Health *</label><select id="ar-health"><option value="">Select</option><option>Preferred Plus</option><option>Preferred</option><option>Standard Plus</option><option>Standard</option><option>Average health</option></select></div></div>
+        <div class="mrow"><div class="mf"><label>Relationship to recipient *</label><select id="ar-rel"><option value="">Select</option><option>Son</option><option>Daughter</option><option>Grandson</option><option>Granddaughter</option><option>Grandchild</option><option>Nephew</option><option>Niece</option><option>Other</option></select></div><div class="mf"></div></div>
+        <div class="mf"><label>What ages would you like the recipient to receive distributions? <span title="The age range your recipient receives income from the policy (65-90 by default). You can change it." style="cursor:help;color:var(--blue)">ⓘ</span></label>
+          <div class="mrow" style="margin-top:4px"><div class="mf"><label style="font-weight:400;color:var(--faint)">Begin distributions age *</label><input id="ar-begin" value="65"></div><div class="mf"><label style="font-weight:400;color:var(--faint)">Ending distributions age *</label><input id="ar-end" value="90"></div></div>
+        </div>
+        <div class="mf" style="margin-bottom:14px"><label>Does the recipient use tobacco or marijuana products? *</label><div class="rgroup"><label class="ropt"><input type="radio" name="ar-tob"> Yes</label><label class="ropt"><input type="radio" name="ar-tob" checked> No</label></div></div>
+        <div class="mf" style="margin-bottom:0"><label>Is the recipient financially independent, or your dependent? *</label><div class="rgroup"><label class="ropt"><input type="radio" name="ar-dep"> Financially independent</label><label class="ropt"><input type="radio" name="ar-dep" checked> My financial dependent</label></div></div>
+      </div>
+      <div id="add-loading" style="display:none;text-align:center;padding:36px 0">
+        <div class="stress">Stress testing your illustration…</div>
+        <div style="color:var(--faint);font-size:12.5px;margin-top:6px">Please be patient — this can take up to a minute.</div>
+        <div class="pbar"><i></i></div>
+      </div>
+      <div id="add-step2" style="display:none">
+        <div class="ill-head"><div class="ill-metric">Annual gift<br><b id="ar-ill-gift">$25,000</b></div><div class="ill-metric">Contributions<br><b>5 years</b></div><div class="ill-metric">Distributions<br><b id="ar-ill-ages">Ages 65-90</b></div><span class="sample-tag">Sample</span></div>
+        <div class="bars" id="ar-bars"></div>
+        <div class="barlabels"><span>Yr 1</span><span>Yr 2</span><span>Yr 3</span><span>Yr 4</span><span>Yr 5</span></div>
+        <table class="ill-tbl">
+          <tr><td>Your contribution (years 1-5)</td><td id="ar-ill-you">$125,000</td></tr>
+          <tr><td>Lender contributes up to</td><td id="ar-ill-lender">$344,410</td></tr>
+          <tr><td>Total combined contributions</td><td id="ar-ill-total">$519,410</td></tr>
+          <tr><td>Projected income (ages 65-90)</td><td id="ar-ill-income">$30,000 / yr</td></tr>
+        </table>
+        <p style="color:var(--faint);font-size:12px;margin-top:14px">Illustrative values for demonstration only — not a guarantee of future results. A sample to review before you invite; not saved to the invitation.</p>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn ghost" id="add-cancel" onclick="closeAdd()">Cancel</button>
+      <button class="btn ghost" id="add-recalc" onclick="addBack()" style="display:none">← Recalculate</button>
+      <button class="btn" id="add-run" onclick="runAddIll()">Run illustration</button>
+      <button class="btn" id="add-confirm" onclick="confirmAdd()" style="display:none">Confirm results</button>
     </div>
   </div>
 </div>
@@ -538,27 +582,50 @@
     {id:7,first:'Dana',last:'Kim',email:'dana.kim@example.com',amount:'5,000',rel:'Granddaughter',status:'later'}
   ];
 
-  ['first','last','email','amt'].forEach(function(k){
-    var el=document.getElementById('i-'+k);
-    el.addEventListener('focus',function(){
-      if(!el.value){ el.value=SAMPLES[sampleIx][k==='amt'?'amount':k]; document.getElementById('f-'+k).classList.remove('err');
-        if(!document.getElementById('i-rel').value){ document.getElementById('i-rel').value=SAMPLES[sampleIx].rel; } }
-    });
-  });
-
-  function addRecipient(){
-    var f={first:val('i-first'),last:val('i-last'),email:val('i-email'),amt:val('i-amt')};
-    var ok=true;
-    [['first','f-first'],['last','f-last'],['email','f-email'],['amt','f-amt']].forEach(function(p){
-      if(!f[p[0]]){ document.getElementById(p[1]).classList.add('err'); ok=false; }
-      else document.getElementById(p[1]).classList.remove('err');
-    });
-    if(!ok) return;
-    state.push({id:++seq,first:f.first,last:f.last,email:f.email,amount:fmtMoney(f.amt),rel:document.getElementById('i-rel').value,status:'draft'});
-    ['i-first','i-last','i-email','i-amt'].forEach(function(id){document.getElementById(id).value='';});
-    document.getElementById('i-rel').value='';
-    sampleIx=(sampleIx+1)%SAMPLES.length;
-    render(); toast(f.first+' added to your recipients');
+  var addIx=0;
+  function openAdd(){
+    ['ar-first','ar-last','ar-email','ar-cell','ar-dob','ar-amt'].forEach(function(id){var e=document.getElementById(id); if(e){e.value='';e.style.borderColor='';}});
+    ['ar-gender','ar-health','ar-rel'].forEach(function(id){document.getElementById(id).selectedIndex=0;});
+    document.getElementById('ar-begin').value='65'; document.getElementById('ar-end').value='90';
+    addBack(); document.getElementById('addOverlay').classList.add('show');
+  }
+  function closeAdd(){ document.getElementById('addOverlay').classList.remove('show'); }
+  function addAutofill(){ var sp=SAMPLES[addIx%SAMPLES.length]; addIx++;
+    document.getElementById('ar-first').value=sp.first; document.getElementById('ar-last').value=sp.last;
+    document.getElementById('ar-email').value=sp.email; document.getElementById('ar-cell').value='(555) 010-'+(1000+addIx);
+    document.getElementById('ar-dob').value='08/14/2001'; document.getElementById('ar-gender').value='Female';
+    document.getElementById('ar-amt').value='$'+sp.amount; document.getElementById('ar-health').value='Average health';
+    document.getElementById('ar-rel').value=sp.rel; }
+  function addBack(){ document.getElementById('add-step1').style.display='block'; document.getElementById('add-step2').style.display='none'; document.getElementById('add-loading').style.display='none';
+    document.getElementById('add-cancel').style.display='inline-flex'; document.getElementById('add-run').style.display='inline-flex';
+    document.getElementById('add-recalc').style.display='none'; document.getElementById('add-confirm').style.display='none'; }
+  function runAddIll(){
+    var req=['ar-first','ar-last','ar-email','ar-amt','ar-dob','ar-gender','ar-health','ar-rel']; var ok=true;
+    req.forEach(function(id){ var el=document.getElementById(id); if(!el.value.trim()){ el.style.borderColor='var(--red)'; ok=false; } else el.style.borderColor=''; });
+    if(!ok){ toast('Fill the required fields to run the illustration'); return; }
+    document.getElementById('add-step1').style.display='none';
+    document.getElementById('add-cancel').style.display='none'; document.getElementById('add-run').style.display='none';
+    document.getElementById('add-loading').style.display='block';
+    setTimeout(function(){
+      var g=parseInt(document.getElementById('ar-amt').value.replace(/[^0-9]/g,''))||25000;
+      document.getElementById('ar-ill-gift').textContent='$'+g.toLocaleString();
+      document.getElementById('ar-ill-ages').textContent='Ages '+(document.getElementById('ar-begin').value||'65')+'-'+(document.getElementById('ar-end').value||'90');
+      document.getElementById('ar-ill-you').textContent='$'+(g*5).toLocaleString();
+      document.getElementById('ar-ill-lender').textContent='$'+Math.round(g*9.84).toLocaleString();
+      document.getElementById('ar-ill-total').textContent='$'+Math.round(g*14.84).toLocaleString();
+      document.getElementById('ar-ill-income').textContent='$'+Math.round(g*1.2).toLocaleString()+' / yr';
+      var bars=document.getElementById('ar-bars'); bars.innerHTML=''; for(var y=1;y<=5;y++){ bars.innerHTML+='<div class="bar"><div class="col" style="height:'+(34+y*12)+'%"></div></div>'; }
+      document.getElementById('add-loading').style.display='none';
+      document.getElementById('add-step2').style.display='block';
+      document.getElementById('add-recalc').style.display='inline-flex'; document.getElementById('add-confirm').style.display='inline-flex';
+    },1100);
+  }
+  function confirmAdd(){
+    var nm=document.getElementById('ar-first').value.trim();
+    state.push({id:++seq, first:nm, last:document.getElementById('ar-last').value.trim(),
+      email:document.getElementById('ar-email').value.trim(), amount:fmtMoney(document.getElementById('ar-amt').value),
+      rel:document.getElementById('ar-rel').value, status:'draft', illRun:true, illDate:'Jul 15, 2026' });
+    closeAdd(); render(); toast(nm+' added — illustration confirmed');
   }
   function val(id){return document.getElementById(id).value.trim();}
   function fmtMoney(s){var n=(''+s).replace(/[^0-9]/g,'');return n?parseInt(n,10).toLocaleString():'0';}
