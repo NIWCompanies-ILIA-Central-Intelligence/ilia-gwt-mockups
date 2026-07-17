@@ -481,8 +481,9 @@
 
 <div class="overlay" id="proposalOverlay">
   <div class="modal" style="width:680px">
-    <div class="mh"><h3>Client Proposal</h3><span class="sample-tag" style="margin-left:10px">Sample</span><button class="x" style="margin-left:auto" onclick="closeProposal()">✕</button></div>
+    <div class="mh"><h3>Client Proposal</h3><span class="sample-tag" style="margin-left:10px">Sample</span><button class="secdev" style="margin-left:8px" onclick="toggleSecDev('sd-proposal')" title="Dev-facing — impact on JIRA">🛠 Dev notes</button><button class="x" style="margin-left:auto" onclick="closeProposal()">✕</button></div>
     <div class="mb">
+      <div class="secdev-panel" id="sd-proposal" style="display:none"><div class="t">🛠 Dev note — for the build team</div>These three tabs — <b>Proposal Summary</b>, <b>Kai-Zen Proposal</b>, and <b>Carrier Illustration</b> — should render using ILIA's <b>current / existing illustration &amp; proposal displays</b>, not new mock layouts. The content shown here is placeholder only; reuse the production proposal/illustration components rather than rebuilding these views.</div>
       <div class="ptabs">
         <button class="ptab active" id="pt-sum" onclick="showPropTab('sum')">Proposal Summary</button>
         <button class="ptab" id="pt-kz" onclick="showPropTab('kz')">Kai-Zen Proposal</button>
