@@ -35,6 +35,20 @@
   .reqgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px 26px}
   .reqitem{display:flex;gap:10px;font-size:13px;color:var(--muted);line-height:1.55}
   .reqitem .ri{color:var(--blue);flex-shrink:0;margin-top:1px;font-size:13px}
+  .devnotes{margin-top:18px;border:1px dashed #C9B37A;background:#FCFAF3;border-radius:12px}
+  .devnotes>summary{list-style:none;cursor:pointer;padding:12px 16px;display:flex;align-items:center;gap:10px;font-size:13px;color:#8A6D1F}
+  .devnotes>summary::-webkit-details-marker{display:none}
+  .devnotes .dn-tag{background:#EFE4C4;color:#7A5E12;font-size:10.5px;font-weight:700;letter-spacing:.4px;padding:2px 7px;border-radius:5px;text-transform:uppercase}
+  .devnotes>summary .chev{margin-left:auto;transition:transform .15s;color:#B79A55;font-size:15px}
+  .devnotes[open]>summary .chev{transform:rotate(90deg)}
+  .devnotes .dn-body{padding:0 16px 14px 16px;color:#5F5320;font-size:12.5px;line-height:1.65}
+  .dn-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:11.5px}
+  .dn-table th{text-align:left;color:#7A5E12;font-weight:700;border-bottom:1px solid #E7D9AE;padding:6px 8px;background:#FBF3DC}
+  .dn-table td{border-bottom:1px solid #EFE4C4;padding:6px 8px;vertical-align:top;color:#5F5320}
+  .dn-yes{color:#1B7F4B;font-weight:700}
+  .dn-no{color:#C0392B;font-weight:700}
+  .dn-part{color:#9A6B10;font-weight:700}
+  .dn-h{font-weight:700;margin-top:14px}
 
   .card{background:var(--card);border:1px solid var(--border);border-radius:14px;margin-top:18px}
   .card>summary,.card .hd{padding:15px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:11px}
@@ -119,6 +133,31 @@
       <div class="crumb">Client Management · Create invitation · Individual</div>
       <h1>Create a new invitation</h1>
       <p class="lede">Choose the carrier and product to invite your client. When you select the Greatest Wealth Transfer, we'll guide you through the giftor setup below.</p>
+
+      <details class="devnotes">
+        <summary><span class="dn-tag">Dev notes</span> For the build team — not shown to agents <span class="chev">›</span></summary>
+        <div class="dn-body">
+          <div class="dn-h">NIWD-1889 feedback &harr; mock coverage (snapshot as of Jul 15, 2026)</div>
+          <table class="dn-table">
+          <thead><tr><th>Ticket</th><th>In mock?</th><th>If not</th><th>Note</th></tr></thead>
+          <tbody>
+          <tr><td>1871 Auto-populate Kai-Zen policy</td><td class="dn-part">Partial</td><td>&mdash;</td><td>Prefilled but editable; add read-only + multi-policy dropdown.</td></tr>
+          <tr><td>1872 Relabel insurable &rarr; uninsurable</td><td class="dn-no">No</td><td>Should be in mock</td><td>Add the uninsurable question to the no-policy qualification path.</td></tr>
+          <tr><td>1874 Default distribution ages 65/90 + info icon</td><td class="dn-part">Partial</td><td>Should be in mock</td><td>Result shows 65&ndash;90; add editable Begin/End age fields + info icon in the estimator.</td></tr>
+          <tr><td>1875 Remove animated borders</td><td class="dn-yes">Yes</td><td>&mdash;</td><td>Redesign uses static borders throughout.</td></tr>
+          <tr><td>1876 &quot;Waiting to load&quot; note by Confirm</td><td class="dn-no">No</td><td>Should (light)</td><td>Add the approved loading note where an action waits on illustration/docs.</td></tr>
+          <tr><td>1877 Align Confirm/Recalculate/Previous</td><td class="dn-no">No</td><td>Mostly outside</td><td>Old proposal screen not in redesign; estimator buttons already aligned.</td></tr>
+          <tr><td>1878 Confirm illustration auto-sends</td><td class="dn-yes">Yes*</td><td>&mdash;</td><td>One Send &rarr; DocuSign (extra checkbox removed); confirm intent alignment.</td></tr>
+          <tr><td>1879 Dependent recipient &rarr; license only</td><td class="dn-no">No</td><td>Truly outside</td><td>Gen-2 application / document-requirement logic.</td></tr>
+          <tr><td>1881 Pre-fill DocuSign with ILIA data</td><td class="dn-no">No</td><td>Truly outside</td><td>Backend integration; DocuSign modal is a placeholder.</td></tr>
+          <tr><td>1882 Resend + copy invitation link</td><td class="dn-part">Partial</td><td>&mdash;</td><td>Resend on invited rows; copy-link on to-invite rows. Ticket wants copy-link on invited too &mdash; reconcile.</td></tr>
+          <tr><td>1883 Empty state for status list</td><td class="dn-no">No</td><td>Should be in mock</td><td>Add empty state: hide filters/table/Export + note when no recipients.</td></tr>
+          <tr><td>Bug 1832 session-timeout data loss</td><td class="dn-no">No</td><td>Truly outside</td><td>Session/backend behavior.</td></tr>
+          <tr><td>Bug 1833 DocuSign re-sign loop</td><td class="dn-no">No</td><td>Truly outside</td><td>Backend (already Done).</td></tr>
+          </tbody></table>
+          <div style="margin-top:8px;font-size:11px;color:#93865E">Snapshot as of Jul 15, 2026 &mdash; refresh if NIWD-1889 items change. * intent match; confirm explicit-Send vs auto-send-on-confirm.</div>
+        </div>
+      </details>
 
       <div class="reqcard">
         <h3>ⓘ What your client may need</h3>

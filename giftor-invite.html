@@ -133,6 +133,13 @@
   .devnotes .dn-body{padding:0 16px 14px 16px;color:#5F5320;font-size:12.5px;line-height:1.65}
   .devnotes .dn-body ul{margin:4px 0 0 18px}
   .devnotes .dn-body li{margin-bottom:6px}
+  .dn-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:11.5px}
+  .dn-table th{text-align:left;color:#7A5E12;font-weight:700;border-bottom:1px solid #E7D9AE;padding:6px 8px;background:#FBF3DC}
+  .dn-table td{border-bottom:1px solid #EFE4C4;padding:6px 8px;vertical-align:top;color:#5F5320}
+  .dn-yes{color:#1B7F4B;font-weight:700}
+  .dn-no{color:#C0392B;font-weight:700}
+  .dn-part{color:#9A6B10;font-weight:700}
+  .dn-h{font-weight:700;margin-top:14px}
   .pill.ps-gray{background:#EEF1F5;color:#5A6472}
   .pill.ps-blue{background:#EAF1FD;color:#245BC0}
   .pill.ps-amber{background:#FBF0DA;color:#9A6B10}
@@ -242,6 +249,25 @@
           <ul>
             <li><b>Invite link &harr; contribution amount:</b> if a recipient's details (e.g. gift amount) are edited after the invite link has been generated, confirm the update <b>reissues a fresh link</b> carrying the new amount and <b>auto-replaces</b> the previous one — the old link must not resolve to a stale contribution.</li>
           </ul>
+          <div class="dn-h">NIWD-1889 feedback &harr; mock coverage (snapshot as of Jul 15, 2026)</div>
+          <table class="dn-table">
+          <thead><tr><th>Ticket</th><th>In mock?</th><th>If not</th><th>Note</th></tr></thead>
+          <tbody>
+          <tr><td>1871 Auto-populate Kai-Zen policy</td><td class="dn-part">Partial</td><td>&mdash;</td><td>Prefilled but editable; add read-only + multi-policy dropdown.</td></tr>
+          <tr><td>1872 Relabel insurable &rarr; uninsurable</td><td class="dn-no">No</td><td>Should be in mock</td><td>Add the uninsurable question to the no-policy qualification path.</td></tr>
+          <tr><td>1874 Default distribution ages 65/90 + info icon</td><td class="dn-part">Partial</td><td>Should be in mock</td><td>Result shows 65&ndash;90; add editable Begin/End age fields + info icon in the estimator.</td></tr>
+          <tr><td>1875 Remove animated borders</td><td class="dn-yes">Yes</td><td>&mdash;</td><td>Redesign uses static borders throughout.</td></tr>
+          <tr><td>1876 &quot;Waiting to load&quot; note by Confirm</td><td class="dn-no">No</td><td>Should (light)</td><td>Add the approved loading note where an action waits on illustration/docs.</td></tr>
+          <tr><td>1877 Align Confirm/Recalculate/Previous</td><td class="dn-no">No</td><td>Mostly outside</td><td>Old proposal screen not in redesign; estimator buttons already aligned.</td></tr>
+          <tr><td>1878 Confirm illustration auto-sends</td><td class="dn-yes">Yes*</td><td>&mdash;</td><td>One Send &rarr; DocuSign (extra checkbox removed); confirm intent alignment.</td></tr>
+          <tr><td>1879 Dependent recipient &rarr; license only</td><td class="dn-no">No</td><td>Truly outside</td><td>Gen-2 application / document-requirement logic.</td></tr>
+          <tr><td>1881 Pre-fill DocuSign with ILIA data</td><td class="dn-no">No</td><td>Truly outside</td><td>Backend integration; DocuSign modal is a placeholder.</td></tr>
+          <tr><td>1882 Resend + copy invitation link</td><td class="dn-part">Partial</td><td>&mdash;</td><td>Resend on invited rows; copy-link on to-invite rows. Ticket wants copy-link on invited too &mdash; reconcile.</td></tr>
+          <tr><td>1883 Empty state for status list</td><td class="dn-no">No</td><td>Should be in mock</td><td>Add empty state: hide filters/table/Export + note when no recipients.</td></tr>
+          <tr><td>Bug 1832 session-timeout data loss</td><td class="dn-no">No</td><td>Truly outside</td><td>Session/backend behavior.</td></tr>
+          <tr><td>Bug 1833 DocuSign re-sign loop</td><td class="dn-no">No</td><td>Truly outside</td><td>Backend (already Done).</td></tr>
+          </tbody></table>
+          <div style="margin-top:8px;font-size:11px;color:#93865E">Snapshot as of Jul 15, 2026 &mdash; refresh if NIWD-1889 items change. * intent match; confirm explicit-Send vs auto-send-on-confirm.</div>
         </div>
       </details>
 
