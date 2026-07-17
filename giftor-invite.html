@@ -110,6 +110,7 @@
   .secdev:hover{background:#E7D9AE}
   .secdev-panel{background:#FCFAF3;border:1px dashed #C9B37A;border-radius:10px;padding:12px 14px;margin:0 0 14px;color:#5F5320;font-size:12.5px;line-height:1.6}
   .secdev-panel .t{font-weight:700;color:#7A5E12;margin-bottom:4px}
+  .dn-body a,.secdev-panel a{color:#245BC0}
   .lockbar{display:none;align-items:center;gap:9px;background:#FFF7ED;border:1px solid #F3D9A8;color:#8A5A12;border-radius:12px;padding:12px 16px;margin-top:20px;font-size:13px;font-weight:500}
   .lockbar.show{display:flex}
   .gsec .hd{cursor:pointer}
@@ -252,25 +253,25 @@
         <div class="dn-body">
           <ul>
             <li><b>Invite link &harr; contribution amount:</b> if a recipient's details (e.g. gift amount) are edited after the invite link has been generated, confirm the update <b>reissues a fresh link</b> carrying the new amount and <b>auto-replaces</b> the previous one — the old link must not resolve to a stale contribution.</li>
-            <li><b>Invited loved ones — empty state (NIWD-1883):</b> while no recipients are invited, hide the search, status filter, results table, and Export; keep the section title and show the approved note — <i>"When your recipients create accounts and start enrollment, you'll be able to view their activity here."</i> (ILIA name for this section: "Invited Recipient Application Status.")</li>
+            <li><b>Invited loved ones — empty state (<a href="https://simplicitygh.atlassian.net/browse/NIWD-1883" target="_blank">NIWD-1883</a>):</b> while no recipients are invited, hide the search, status filter, results table, and Export; keep the section title and show the approved note — <i>"When your recipients create accounts and start enrollment, you'll be able to view their activity here."</i> (ILIA name for this section: "Invited Recipient Application Status.")</li>
           </ul>
           <div class="dn-h">NIWD-1889 feedback &harr; mock coverage (snapshot as of Jul 15, 2026)</div>
           <table class="dn-table">
           <thead><tr><th>Ticket</th><th>In mock?</th><th>If not</th><th>Note</th></tr></thead>
           <tbody>
-          <tr><td>1871 Auto-populate Kai-Zen policy</td><td class="dn-part">Partial</td><td>&mdash;</td><td>Prefilled but editable; add read-only + multi-policy dropdown.</td></tr>
-          <tr><td>1872 Relabel insurable &rarr; uninsurable</td><td class="dn-no">No</td><td>Should be in mock</td><td>Add the uninsurable question to the no-policy qualification path.</td></tr>
-          <tr><td>1874 Default distribution ages 65/90 + info icon</td><td class="dn-part">Partial</td><td>Should be in mock</td><td>Result shows 65&ndash;90; add editable Begin/End age fields + info icon in the estimator.</td></tr>
-          <tr><td>1875 Remove animated borders</td><td class="dn-yes">Yes</td><td>&mdash;</td><td>Redesign uses static borders throughout.</td></tr>
-          <tr><td>1876 &quot;Waiting to load&quot; note by Confirm</td><td class="dn-no">No</td><td>Should (light)</td><td>Add the approved loading note where an action waits on illustration/docs.</td></tr>
-          <tr><td>1877 Align Confirm/Recalculate/Previous</td><td class="dn-no">No</td><td>Mostly outside</td><td>Old proposal screen not in redesign; estimator buttons already aligned.</td></tr>
-          <tr><td>1878 Confirm illustration auto-sends</td><td class="dn-yes">Yes*</td><td>&mdash;</td><td>One Send &rarr; DocuSign (extra checkbox removed); confirm intent alignment.</td></tr>
-          <tr><td>1879 Dependent recipient &rarr; license only</td><td class="dn-no">No</td><td>Truly outside</td><td>Gen-2 application / document-requirement logic.</td></tr>
-          <tr><td>1881 Pre-fill DocuSign with ILIA data</td><td class="dn-no">No</td><td>Truly outside</td><td>Backend integration; DocuSign modal is a placeholder.</td></tr>
-          <tr><td>1882 Resend + copy invitation link</td><td class="dn-part">Partial</td><td>&mdash;</td><td>Resend on invited rows; copy-link on to-invite rows. Ticket wants copy-link on invited too &mdash; reconcile.</td></tr>
-          <tr><td>1883 Empty state for status list</td><td class="dn-no">No</td><td>Should be in mock</td><td>Add empty state: hide filters/table/Export + note when no recipients.</td></tr>
-          <tr><td>Bug 1832 session-timeout data loss</td><td class="dn-no">No</td><td>Truly outside</td><td>Session/backend behavior.</td></tr>
-          <tr><td>Bug 1833 DocuSign re-sign loop</td><td class="dn-no">No</td><td>Truly outside</td><td>Backend (already Done).</td></tr>
+          <tr><td><a href="https://simplicitygh.atlassian.net/browse/NIWD-1871" target="_blank">NIWD-1871</a> Auto-populate Kai-Zen policy</td><td class="dn-part">Partial</td><td>&mdash;</td><td>Prefilled but editable; add read-only + multi-policy dropdown.</td></tr>
+          <tr><td><a href="https://simplicitygh.atlassian.net/browse/NIWD-1872" target="_blank">NIWD-1872</a> Relabel insurable &rarr; uninsurable</td><td class="dn-no">No</td><td>Should be in mock</td><td>Add the uninsurable question to the no-policy qualification path.</td></tr>
+          <tr><td><a href="https://simplicitygh.atlassian.net/browse/NIWD-1874" target="_blank">NIWD-1874</a> Default distribution ages 65/90 + info icon</td><td class="dn-part">Partial</td><td>Should be in mock</td><td>Result shows 65&ndash;90; add editable Begin/End age fields + info icon in the estimator.</td></tr>
+          <tr><td><a href="https://simplicitygh.atlassian.net/browse/NIWD-1875" target="_blank">NIWD-1875</a> Remove animated borders</td><td class="dn-yes">Yes</td><td>&mdash;</td><td>Redesign uses static borders throughout.</td></tr>
+          <tr><td><a href="https://simplicitygh.atlassian.net/browse/NIWD-1876" target="_blank">NIWD-1876</a> &quot;Waiting to load&quot; note by Confirm</td><td class="dn-no">No</td><td>Should (light)</td><td>Add the approved loading note where an action waits on illustration/docs.</td></tr>
+          <tr><td><a href="https://simplicitygh.atlassian.net/browse/NIWD-1877" target="_blank">NIWD-1877</a> Align Confirm/Recalculate/Previous</td><td class="dn-no">No</td><td>Mostly outside</td><td>Old proposal screen not in redesign; estimator buttons already aligned.</td></tr>
+          <tr><td><a href="https://simplicitygh.atlassian.net/browse/NIWD-1878" target="_blank">NIWD-1878</a> Confirm illustration auto-sends</td><td class="dn-yes">Yes*</td><td>&mdash;</td><td>One Send &rarr; DocuSign (extra checkbox removed); confirm intent alignment.</td></tr>
+          <tr><td><a href="https://simplicitygh.atlassian.net/browse/NIWD-1879" target="_blank">NIWD-1879</a> Dependent recipient &rarr; license only</td><td class="dn-no">No</td><td>Truly outside</td><td>Gen-2 application / document-requirement logic.</td></tr>
+          <tr><td><a href="https://simplicitygh.atlassian.net/browse/NIWD-1881" target="_blank">NIWD-1881</a> Pre-fill DocuSign with ILIA data</td><td class="dn-no">No</td><td>Truly outside</td><td>Backend integration; DocuSign modal is a placeholder.</td></tr>
+          <tr><td><a href="https://simplicitygh.atlassian.net/browse/NIWD-1882" target="_blank">NIWD-1882</a> Resend + copy invitation link</td><td class="dn-part">Partial</td><td>&mdash;</td><td>Resend on invited rows; copy-link on to-invite rows. Ticket wants copy-link on invited too &mdash; reconcile.</td></tr>
+          <tr><td><a href="https://simplicitygh.atlassian.net/browse/NIWD-1883" target="_blank">NIWD-1883</a> Empty state for status list</td><td class="dn-no">No</td><td>Should be in mock</td><td>Add empty state: hide filters/table/Export + note when no recipients.</td></tr>
+          <tr><td>Bug <a href="https://simplicitygh.atlassian.net/browse/NIWD-1832" target="_blank">NIWD-1832</a> session-timeout data loss</td><td class="dn-no">No</td><td>Truly outside</td><td>Session/backend behavior.</td></tr>
+          <tr><td>Bug <a href="https://simplicitygh.atlassian.net/browse/NIWD-1833" target="_blank">NIWD-1833</a> DocuSign re-sign loop</td><td class="dn-no">No</td><td>Truly outside</td><td>Backend (already Done).</td></tr>
           </tbody></table>
           <div style="margin-top:8px;font-size:11px;color:#93865E">Snapshot as of Jul 15, 2026 &mdash; refresh if NIWD-1889 items change. * intent match; confirm explicit-Send vs auto-send-on-confirm.</div>
         </div>
@@ -391,9 +392,9 @@
         </div>
         <div class="bd" style="padding:6px 20px 12px">
           <div class="secdev-panel" id="sd-invited" style="display:none">
-            <div class="t">🛠 Dev note — this section (NIWD-1883 + 1882)</div>
-            <b>NIWD-1883 (empty state):</b> while no recipients are invited, hide the search, status filter, results table, and Export; keep the title and show the approved note — <i>"When your recipients create accounts and start enrollment, you'll be able to view their activity here."</i><br>
-            <b>NIWD-1882:</b> Resend + <b>copy invitation link</b> belong on invited recipients here (reconcile — copy-link currently on the to-invite rows only). ILIA name: "Invited Recipient Application Status."
+            <div class="t">🛠 Dev note — this section</div>
+            <b><a href="https://simplicitygh.atlassian.net/browse/NIWD-1883" target="_blank">NIWD-1883</a> — empty state:</b> while no recipients are invited, hide the search, status filter, results table, and Export; keep the title and show the approved note — <i>"When your recipients create accounts and start enrollment, you'll be able to view their activity here."</i><br>
+            <b><a href="https://simplicitygh.atlassian.net/browse/NIWD-1882" target="_blank">NIWD-1882</a> — Resend:</b> Resend lives here (invited recipients). <b>Copy invitation link</b> now lives in the "Recipients to invite" section above (before the invite is sent) — not in this section. <i>Note: ticket 1882 originally lists copy-link on invited recipients too — confirm which is correct.</i>
           </div>
           <div class="toolbar">
             <input class="search" id="inv-search" placeholder="Search by name or email" oninput="filterInvited()">
