@@ -107,6 +107,13 @@
   .stress{font-size:15px;font-weight:600}
   .confirm-check{width:58px;height:58px;border-radius:50%;background:var(--g-bg);color:var(--g-tx);display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:700;margin:0 auto}
   .gro{background:#F1F4F8;border:1px solid var(--border);border-radius:8px;padding:9px 11px;font-size:13.5px;color:var(--ink);font-weight:600}
+  .kebab{font-size:18px;line-height:1;padding:2px 8px}
+  .rowmenu{position:absolute;right:0;top:calc(100% + 4px);z-index:40;background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px rgba(16,30,60,.16);padding:6px;min-width:196px;display:none;text-align:left}
+  .rowmenu.show{display:block}
+  .rowmenu button{display:flex;align-items:center;gap:9px;width:100%;text-align:left;background:none;border:none;padding:8px 10px;font-size:13px;color:var(--ink);cursor:pointer;border-radius:7px;font-family:inherit}
+  .rowmenu button:hover{background:#F2F5F9}
+  .rowmenu button.del{color:var(--red)}
+  .rowmenu .sepm{height:1px;background:var(--border);margin:5px 2px}
   .ptabs{display:flex;gap:2px;border-bottom:1px solid var(--border);margin-bottom:16px}
   .ptab{padding:10px 14px;font-size:11.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--muted);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;font-family:inherit}
   .ptab:hover{color:var(--ink)}
@@ -166,6 +173,7 @@
   .pill.ps-amber{background:#FBF0DA;color:#9A6B10}
   .pill.ps-purple{background:#EFEAF9;color:#5B3FA6}
   .pill.ps-green{background:#E7F6EE;color:#1B7F4B}
+  .pill.ps-red{background:#FBE9EA;color:#B4231F}
   .acts{display:flex;gap:10px;align-items:center;justify-content:flex-end;flex-wrap:wrap}
   .ia{color:var(--muted);cursor:pointer;font-size:13px;text-decoration:none;display:inline-flex;align-items:center;gap:5px;background:none;border:none;font-family:inherit}
   .ia:hover{color:var(--blue)}
@@ -284,7 +292,7 @@
           <tr><td><a href="https://simplicitygh.atlassian.net/browse/NIWD-1878" target="_blank">NIWD-1878</a> Confirm illustration auto-sends</td><td class="dn-yes">Yes*</td><td>&mdash;</td><td>One Send &rarr; DocuSign (extra checkbox removed); confirm intent alignment.</td></tr>
           <tr><td><a href="https://simplicitygh.atlassian.net/browse/NIWD-1879" target="_blank">NIWD-1879</a> Dependent recipient &rarr; license only</td><td class="dn-no">No</td><td>Truly outside</td><td>Gen-2 application / document-requirement logic.</td></tr>
           <tr><td><a href="https://simplicitygh.atlassian.net/browse/NIWD-1881" target="_blank">NIWD-1881</a> Pre-fill DocuSign with ILIA data</td><td class="dn-no">No</td><td>Truly outside</td><td>Backend integration; DocuSign modal is a placeholder.</td></tr>
-          <tr><td><a href="https://simplicitygh.atlassian.net/browse/NIWD-1882" target="_blank">NIWD-1882</a> Resend + copy invitation link</td><td class="dn-part">Partial</td><td>&mdash;</td><td>Resend on invited rows; copy-link on to-invite rows. Ticket wants copy-link on invited too &mdash; reconcile.</td></tr>
+          <tr><td><a href="https://simplicitygh.atlassian.net/browse/NIWD-1882" target="_blank">NIWD-1882</a> Resend + copy invitation link</td><td class="dn-yes">Yes</td><td>&mdash;</td><td>Resend + copy invitation link both on Invited loved ones (post-approval) per AC#3; removed from pre-send rows to prevent bypassing the NIW admin-approval gate.</td></tr>
           <tr><td><a href="https://simplicitygh.atlassian.net/browse/NIWD-1883" target="_blank">NIWD-1883</a> Empty state for status list</td><td class="dn-yes">Yes</td><td>&mdash;</td><td>Empty state added: hides search, status filter, table, and Export and shows the approved note when no recipients are invited.</td></tr>
           <tr><td>Bug <a href="https://simplicitygh.atlassian.net/browse/NIWD-1832" target="_blank">NIWD-1832</a> session-timeout data loss</td><td class="dn-no">No</td><td>Truly outside</td><td>Session/backend behavior.</td></tr>
           <tr><td>Bug <a href="https://simplicitygh.atlassian.net/browse/NIWD-1833" target="_blank">NIWD-1833</a> DocuSign re-sign loop</td><td class="dn-no">No</td><td>Truly outside</td><td>Backend (already Done).</td></tr>
@@ -404,7 +412,7 @@
 
       <section class="card" id="draftCard">
         <div class="hd"><div><h2>Recipients to invite <span class="badge-ct" id="ct-draft">0</span> <span class="lockchip">🔒 Complete giftor details first</span> <button class="secdev" onclick="event.stopPropagation();toggleSecDev('sd-draft')" title="Dev-facing — impact on JIRA">🛠 Dev notes</button></h2><div class="sub">Confirm each loved one's details, check the box next to the ones you're ready to invite, then send. You'll sign once in DocuSign to send the whole batch — even for several at a time.</div></div><button class="clr-demo" title="Demo control — clears sample rows" onclick="clearData('draft')">🗑 Clear section</button></div>
-        <div class="bd" style="padding:8px 20px 12px"><div class="secdev-panel" id="sd-draft" style="display:none"><div class="t">🛠 Dev note — this section</div><b>View illustration + edit contribution:</b> from each row the giftor can open the illustration (3-tab Client Proposal) and change <b>only the contribution amount</b>; updating recomputes the illustration and the row amount.<br><b><a href="https://simplicitygh.atlassian.net/browse/NIWD-1882" target="_blank">NIWD-1882</a> — invite-link impact:</b> changing the contribution invalidates any invitation link generated with the old amount → the system should regenerate a new link and relabel it as updated.<br><b>⚠ Open requirement (confirm with team):</b> recipient invites are not sent until <b>NIW admin approval</b> (Send → DocuSign → admin review → invited). If invites only fire post-approval, should <b>copy invitation link</b> exist on these pre-send rows at all? Not resolved — pending team confirmation.</div><div id="tbl-draft"></div></div>
+        <div class="bd" style="padding:8px 20px 12px"><div class="secdev-panel" id="sd-draft" style="display:none"><div class="t">🛠 Dev note — this section</div><b>View illustration + edit contribution:</b> from each row the giftor can open the illustration (3-tab Client Proposal) and change <b>only the contribution amount</b>; updating recomputes the illustration and the row amount.<br>(No live invite link exists at this stage — the link is generated when the giftor signs DocuSign.)<br><b>✔ Copy invitation link — removed from these rows (<a href="https://simplicitygh.atlassian.net/browse/NIWD-1882" target="_blank">NIWD-1882</a> AC#3):</b> the ⋮ More-actions menu on the pre-send rows <b>intentionally omits Copy invitation link</b>. It — and Resend — now live only on <b>Invited loved ones</b>, after admin approval / invite sent, when the link is actually live. <b>Why:</b> Send only signs DocuSign and queues the batch for NIW admin review; it does not email the recipient. Leaving a copy-link here would let a giftor Send, then copy a not-yet-approved link and email the recipient directly, <b>bypassing the NIW admin-approval gate</b>. Removing it closes that hole.</div><div id="tbl-draft"></div></div>
       </section>
 
       <section class="card" id="laterCard">
@@ -414,34 +422,51 @@
 
       <section class="card mgmt">
         <div class="hd">
-          <div><h2><span class="dot"></span>Invited loved ones <span class="badge-ct" id="ct-invited">0</span> <button class="secdev" onclick="event.stopPropagation();toggleSecDev('sd-invited')" title="Dev-facing — impact on JIRA">🛠 Dev notes</button></h2><div class="sub">Everyone you've invited — track how far along each loved one's application is.</div></div>
+          <div><h2><span class="dot"></span>Invited loved ones <span class="badge-ct" id="ct-invited">0</span> <button class="secdev" onclick="event.stopPropagation();toggleSecDev('sd-invited')" title="Dev-facing — impact on JIRA">🛠 Dev notes</button></h2><div class="sub">Everyone you've invited — track their account, enrollment, and policy status.</div></div>
           <div style="display:flex;gap:12px;align-items:center"><button class="clr-demo" title="Demo control — clears sample rows" onclick="clearData('invited')">🗑 Clear section</button><button class="btn ghost sm" id="inv-export" onclick="toast('Export started')">⤓ Export list</button></div>
         </div>
         <div class="bd" style="padding:6px 20px 12px">
           <div class="secdev-panel" id="sd-invited" style="display:none">
             <div class="t">🛠 Dev note — this section</div>
             <b><a href="https://simplicitygh.atlassian.net/browse/NIWD-1883" target="_blank">NIWD-1883</a> — empty state (implemented):</b> while no recipients are invited, the search, status filter, results table, and Export are hidden and this approved note shows — <i>"When your recipients create accounts and start enrollment, you'll be able to view their activity here."</i> (Use "Clear section" to preview.)<br>
-            <b><a href="https://simplicitygh.atlassian.net/browse/NIWD-1882" target="_blank">NIWD-1882</a> — Resend:</b> Resend lives here (invited recipients). <b>Copy invitation link</b> now lives in the "Recipients to invite" section above (before the invite is sent) — not in this section. <i>Note: ticket 1882 originally lists copy-link on invited recipients too — confirm which is correct.</i>
+            <b><a href="https://simplicitygh.atlassian.net/browse/NIWD-1882" target="_blank">NIWD-1882</a> — Resend + copy invitation link (resolved, AC#3):</b> both live here on invited recipients (after admin approval / invite sent), where the link is actually live. Removed from the pre-send "Recipients to invite" section so a giftor cannot bypass the NIW admin-approval gate.<br><b>QD-3 (Q-DESK) — status model:</b> this tracker now shows the <b>three independent tracks</b> Q-DESK is splitting the ILIA blended status into — <b>Account</b> (Invited to Opened Invite to Account Created to Disabled), <b>Enrollment</b> (product-dynamic, rolls up to Enrollment Completed), and <b>Policy</b> (cleaned carrier enum: added Medically Declined, Client Declined, Inactive; removed the account/enrollment values). The old single "Participant status" ladder + naming are retired in favor of "Statuses." Design + log only — Q-DESK still at mock/impact stage (no Jira yet).
           </div>
           <div class="toolbar" id="inv-toolbar">
             <input class="search" id="inv-search" placeholder="Search by name or email" oninput="filterInvited()">
             <select id="inv-status" onchange="filterInvited()">
               <option value="all">All statuses</option>
-              <option value="notstarted">Not started</option>
-              <option value="created">Account created</option>
-              <option value="progress">Application started</option>
-              <option value="submitted">Submitted for review</option>
-              <option value="approved">Approved / active</option>
+              <optgroup label="Account status">
+                <option value="acct:invited">Invited</option>
+                <option value="acct:opened">Opened Invite</option>
+                <option value="acct:created">Account Created</option>
+                <option value="acct:disabled">Disabled</option>
+              </optgroup>
+              <optgroup label="Enrollment status">
+                <option value="enr:none">Not Started</option>
+                <option value="enr:progress">In Progress</option>
+                <option value="enr:submitted">Submitted</option>
+                <option value="enr:complete">Enrollment Completed</option>
+              </optgroup>
+              <optgroup label="Policy status">
+                <option value="pol:none">Not Started</option>
+                <option value="pol:pending">Pending</option>
+                <option value="pol:active">Approved / Active</option>
+                <option value="pol:inactive">Inactive</option>
+                <option value="pol:meddecline">Medically Declined</option>
+                <option value="pol:cltdecline">Client Declined</option>
+              </optgroup>
             </select>
           </div>
           <div id="tbl-invited"></div>
           <div class="empty" id="inv-empty" style="display:none;padding:34px 26px"><div style="font-size:26px;margin-bottom:8px">📋</div>When your recipients create accounts and start enrollment, you'll be able to view their activity here.</div>
-          <div class="foot" id="inv-foot"><div class="legend">
+          <div class="foot" id="inv-foot"><div class="legend" style="flex-wrap:wrap">
+            <span style="font-weight:600;color:var(--muted);margin-right:2px">Statuses (Account · Enrollment · Policy):</span>
             <span><i style="background:#8A94A3"></i>Not started</span>
-            <span><i style="background:#2F6FE0"></i>Account created</span>
-            <span><i style="background:#C08A1A"></i>Application started</span>
+            <span><i style="background:#2F6FE0"></i>Opened / created</span>
+            <span><i style="background:#C08A1A"></i>In progress / pending</span>
             <span><i style="background:#7A5CC7"></i>Submitted</span>
-            <span><i style="background:#1B7F4B"></i>Approved / active</span>
+            <span><i style="background:#1B7F4B"></i>Completed / active</span>
+            <span><i style="background:#B4231F"></i>Declined / disabled</span>
           </div></div>
         </div>
       </section>
@@ -505,10 +530,15 @@
         <div style="font-size:12.5px;color:var(--muted);margin-bottom:9px">You can adjust the <b>contribution amount</b> for this recipient. Updating recomputes the illustration.</div>
         <div style="display:flex;gap:10px;align-items:flex-end">
           <div class="mf" style="margin:0;flex:1"><label>Contribution amount</label><input id="pp-amt-input" placeholder="$25,000"></div>
-          <button class="btn" onclick="updateContribution()">Update contribution</button>
+          <button class="btn" id="pp-update" onclick="updateContribution()">Update contribution</button>
         </div>
       </div>
-      <div class="ptabs">
+      <div id="pp-loading" style="display:none;text-align:center;padding:40px 0">
+        <div class="stress">Recalculating illustration…</div>
+        <div style="color:var(--faint);font-size:12.5px;margin-top:6px">Please be patient — this can take up to a minute.</div>
+        <div class="pbar"><i></i></div>
+      </div>
+      <div class="ptabs" id="pp-ptabs">
         <button class="ptab active" id="pt-sum" onclick="showPropTab('sum')">Proposal Summary</button>
         <button class="ptab" id="pt-kz" onclick="showPropTab('kz')">Kai-Zen Proposal</button>
         <button class="ptab" id="pt-ci" onclick="showPropTab('ci')">Carrier Illustration</button>
@@ -536,7 +566,7 @@
       </div>
       <p style="color:var(--faint);font-size:12px;margin-top:16px">Illustrative values for demonstration only &mdash; not a guarantee of future results. Sample data, not saved to the invitation.</p>
     </div>
-    <div class="mfoot"><button class="btn" onclick="closeProposal()">Close</button></div>
+    <div class="mfoot"><button class="btn ghost" id="pp-goback" onclick="revertContrib()" style="display:none">← Go back (keep original)</button><button class="btn" id="pp-confirm" onclick="confirmContribResults()" style="display:none">Confirm results</button><button class="btn" id="pp-close" onclick="closeProposal()">Close</button></div>
   </div>
 </div>
 
@@ -669,10 +699,10 @@
   var selected=[]; var pendingBatch=[]; var pendingTip=[]; var estId=null; var giftorDone=false;
   var invF={q:'',status:'all'};
   var state=[
-    {id:1,first:'Jordan',last:'Rivera',email:'jordan.rivera@example.com',amount:'25,000',rel:'Daughter',status:'invited',invitedOn:'Jul 12, 2026',pstat:'progress',illRun:true,illDate:'Jul 12, 2026'},
-    {id:2,first:'Morgan',last:'Ellis',email:'morgan.ellis@example.com',amount:'25,000',rel:'Son',status:'invited',invitedOn:'Jul 10, 2026',pstat:'created'},
-    {id:3,first:'Priya',last:'Shah',email:'priya.shah@example.com',amount:'15,000',rel:'Granddaughter',status:'invited',invitedOn:'Jun 28, 2026',pstat:'approved'},
-    {id:4,first:'Chris',last:'Diaz',email:'chris.diaz@example.com',amount:'10,000',rel:'Nephew',status:'invited',invitedOn:'Jul 14, 2026',pstat:'notstarted'},
+    {id:1,first:'Jordan',last:'Rivera',email:'jordan.rivera@example.com',amount:'25,000',rel:'Daughter',status:'invited',invitedOn:'Jul 12, 2026',acct:'created',enr:'progress',pol:'pending',illRun:true,illDate:'Jul 12, 2026'},
+    {id:2,first:'Morgan',last:'Ellis',email:'morgan.ellis@example.com',amount:'25,000',rel:'Son',status:'invited',invitedOn:'Jul 10, 2026',acct:'created',enr:'none',pol:'none'},
+    {id:3,first:'Priya',last:'Shah',email:'priya.shah@example.com',amount:'15,000',rel:'Granddaughter',status:'invited',invitedOn:'Jun 28, 2026',acct:'created',enr:'complete',pol:'active'},
+    {id:4,first:'Chris',last:'Diaz',email:'chris.diaz@example.com',amount:'10,000',rel:'Nephew',status:'invited',invitedOn:'Jul 14, 2026',acct:'invited',enr:'none',pol:'none'},
     {id:5,first:'Sam',last:'Carter',email:'sam.carter@example.com',amount:'25,000',rel:'Son',status:'draft'},
     {id:6,first:'Alex',last:'Nguyen',email:'alex.nguyen@example.com',amount:'10,000',rel:'Grandchild',status:'draft'},
     {id:7,first:'Dana',last:'Kim',email:'dana.kim@example.com',amount:'5,000',rel:'Granddaughter',status:'later'}
@@ -728,7 +758,7 @@
     document.getElementById('confirmedOverlay').classList.add('show');
   }
   function closeConfirmed(){ document.getElementById('confirmedOverlay').classList.remove('show'); }
-  var propEditId=null;
+  var propEditId=null, propOrig=null, propPending=null, ppTab='sum';
   function fillProposal(g,nm,ages){
     document.getElementById('pp-client').textContent=nm||'—';
     document.getElementById('pp-db').textContent='$'+(g*40).toLocaleString();
@@ -753,32 +783,67 @@
       var g=parseInt(document.getElementById('ar-amt').value.replace(/[^0-9]/g,''))||25000;
       var nm=(document.getElementById('ar-first').value.trim()+' '+document.getElementById('ar-last').value.trim()).trim()||'—';
       var ages='Ages '+(document.getElementById('ar-begin').value||'65')+'–'+(document.getElementById('ar-end').value||'90');
-      fillProposal(g,nm,ages); showPropTab('sum');
+      fillProposal(g,nm,ages); showPropTab('sum'); ppSetLoading(false); ppFooter('view');
       document.getElementById('proposalOverlay').classList.add('show');
     }, 900);
+  }
+  function ppSetLoading(on){
+    document.getElementById('pp-loading').style.display=on?'block':'none';
+    document.getElementById('pp-ptabs').style.display=on?'none':'flex';
+    ['sum','kz','ci'].forEach(function(x){ document.getElementById('pp-'+x).style.display=(on?'none':(x===ppTab?'block':'none')); });
+  }
+  function ppFooter(mode){
+    document.getElementById('pp-goback').style.display=mode==='pending'?'inline-flex':'none';
+    document.getElementById('pp-confirm').style.display=mode==='pending'?'inline-flex':'none';
+    document.getElementById('pp-close').style.display=mode==='view'?'inline-flex':'none';
   }
   function openProposalFor(id){
     var r=find(id); propEditId=id;
     var g=parseInt((''+r.amount).replace(/[^0-9]/g,''))||25000;
+    propOrig=g; propPending=null;
     fillProposal(g,(r.first+' '+r.last).trim(),'Ages 65–90');
     document.getElementById('pp-amt-input').value='$'+g.toLocaleString();
     document.getElementById('pp-edit').style.display='block';
-    showPropTab('sum');
+    document.getElementById('pp-update').disabled=false;
+    showPropTab('sum'); ppSetLoading(false); ppFooter('view');
     document.getElementById('proposalOverlay').classList.add('show');
   }
   function updateContribution(){
     if(propEditId==null) return;
     var g=parseInt(document.getElementById('pp-amt-input').value.replace(/[^0-9]/g,''))||0;
     if(!g){ toast('Enter a contribution amount'); return; }
+    propPending=g;
+    document.getElementById('pp-update').disabled=true;
+    ppSetLoading(true); ppFooter('recalc');
+    setTimeout(function(){
+      var r=find(propEditId);
+      fillProposal(g,(r.first+' '+r.last).trim(),'Ages 65–90');
+      ppSetLoading(false); ppFooter('pending');
+      document.getElementById('pp-update').disabled=false;
+    }, 1000);
+  }
+  function confirmContribResults(){
+    if(propEditId==null||propPending==null) return;
+    var g=propPending;
     var r=find(propEditId); r.amount=g.toLocaleString(); r.illRun=true; r.illDate='Jul 15, 2026'; r.linkStale=true;
-    fillProposal(g,(r.first+' '+r.last).trim(),'Ages 65–90');
+    var nm=(r.first||'This recipient');
+    propPending=null;
     closeProposal(); render();
-    document.getElementById('ct-body').innerHTML=(r.first||'This recipient')+"'s contribution is now <b>$"+g.toLocaleString()+"</b> and the sample illustration has been updated to match. They remain in <b>Recipients to invite</b>.";
+    document.getElementById('ct-body').innerHTML="<b>"+nm+"</b>'s contribution has been updated to <b>$"+g.toLocaleString()+"</b>. Their sample illustration was recalculated to match, and the new amount now shows on their row in <b>Recipients to invite</b>.<br><br><b>Nothing has been sent yet.</b> When you're ready, check the box next to their name and send the invitation — you'll sign once in DocuSign, then it goes to NIW for admin review before your loved one is notified.";
     document.getElementById('contribOverlay').classList.add('show');
   }
+  function revertContrib(){
+    var r=find(propEditId); propPending=null;
+    fillProposal(propOrig,(r.first+' '+r.last).trim(),'Ages 65–90');
+    document.getElementById('pp-amt-input').value='$'+propOrig.toLocaleString();
+    showPropTab('sum'); ppSetLoading(false); ppFooter('view');
+  }
   function closeContrib(){ document.getElementById('contribOverlay').classList.remove('show'); }
-  function closeProposal(){ document.getElementById('proposalOverlay').classList.remove('show'); }
-  function showPropTab(t){ ['sum','kz','ci'].forEach(function(x){ document.getElementById('pp-'+x).style.display=x===t?'block':'none'; document.getElementById('pt-'+x).classList.toggle('active',x===t); }); }
+  function toggleRowMenu(id,e){ if(e){e.stopPropagation();} var m=document.getElementById('menu-'+id); var open=m.classList.contains('show'); closeRowMenus(); if(!open) m.classList.add('show'); }
+  function closeRowMenus(){ var ms=document.querySelectorAll('.rowmenu.show'); for(var i=0;i<ms.length;i++) ms[i].classList.remove('show'); }
+  document.addEventListener('click',function(e){ if(!e.target.closest || !e.target.closest('.kwrap')) closeRowMenus(); });
+  function closeProposal(){ document.getElementById('proposalOverlay').classList.remove('show'); propPending=null; }
+  function showPropTab(t){ ppTab=t; ['sum','kz','ci'].forEach(function(x){ document.getElementById('pp-'+x).style.display=x===t?'block':'none'; document.getElementById('pt-'+x).classList.toggle('active',x===t); }); }
   function val(id){return document.getElementById(id).value.trim();}
   function fmtMoney(s){var n=(''+s).replace(/[^0-9]/g,'');return n?parseInt(n,10).toLocaleString():'0';}
   function find(id){ return state.filter(function(r){return r.id===id;})[0]; }
@@ -802,7 +867,7 @@
   function closeDs(){ document.getElementById('dsOverlay').classList.remove('show'); pendingBatch=[]; }
   function confirmSign(){ var n=pendingBatch.length; pendingBatch.forEach(function(id){var r=find(id); if(!r)return; r.status='review'; r.signedOn='Jul 15, 2026'; r.link=linkFor(r);});
     document.getElementById('dsOverlay').classList.remove('show'); pendingBatch=[]; selected=[]; render(); toast(n>1?(n+' sent to our team for review'):'Signed — sent to our team for review'); }
-  function clearedByAdmin(id){ var r=find(id); r.status='invited'; r.invitedOn='Jul 15, 2026'; r.pstat='notstarted'; render(); toast(r.first+' cleared — moved to Invited loved ones'); }
+  function clearedByAdmin(id){ var r=find(id); r.status='invited'; r.invitedOn='Jul 15, 2026'; r.acct='invited'; r.enr='none'; r.pol='none'; render(); toast(r.first+' cleared — moved to Invited loved ones'); }
   function toggleSel(id){ var i=selected.indexOf(id); if(i>=0)selected.splice(i,1); else selected.push(id); render(); }
   function selAllSection(status,chk){ var ids=state.filter(function(r){return r.status===status;}).map(function(r){return r.id;});
     ids.forEach(function(id){ var i=selected.indexOf(id); if(chk&&i<0)selected.push(id); if(!chk&&i>=0)selected.splice(i,1); }); render(); }
@@ -839,7 +904,7 @@
   function demoToggle(){ if(!giftorDone){ fillGiftorFields(); markComplete(); toast('Auto-filled — giftor details completed'); } else { clearGiftorFields(); markIncomplete(); toast('Giftor data removed'); } }
   function moveLater(id){ find(id).status='later'; render(); toast('Moved to Invite later'); }
   function moveDraft(id){ find(id).status='draft'; render(); toast('Moved to Recipients to invite'); }
-  function selBarHtml(){ return selected.length?('<div class="selbar"><span class="st">'+selected.length+' selected</span><span class="sr"><button class="clr" onclick="clearSel()">Clear</button><button class="btn sm" onclick="sendSelected()">Send '+selected.length+' invitation'+(selected.length>1?'s':'')+'</button></span></div>'):''; }
+  function selBarHtml(){ return selected.length?('<div class="selbar"><span class="st">'+selected.length+' selected</span><span class="sr"><button class="clr" onclick="clearSel()">Clear selection'+(selected.length>1?'s':'')+'</button><button class="btn sm" onclick="sendSelected()">Send '+selected.length+' invitation'+(selected.length>1?'s':'')+'</button></span></div>'):''; }
 
   function copyLink(id){
     var r=find(id); var link=linkFor(r);
@@ -892,6 +957,10 @@
 
   var PSTAT={notstarted:['Not started','ps-gray'],created:['Account created','ps-blue'],progress:['Application started','ps-amber'],submitted:['Submitted for review','ps-purple'],approved:['Approved / active','ps-green']};
   function pstatPill(p){ var m=PSTAT[p]||PSTAT.notstarted; return '<span class="pill '+m[1]+'"><i></i>'+m[0]+'</span>'; }
+  var ACCT={invited:['Invited','ps-gray'],opened:['Opened Invite','ps-blue'],created:['Account Created','ps-green'],disabled:['Disabled','ps-red']};
+  var ENR={none:['Not Started','ps-gray'],progress:['In Progress','ps-amber'],submitted:['Submitted','ps-purple'],complete:['Enrollment Completed','ps-green']};
+  var POL={none:['Not Started','ps-gray'],pending:['Pending','ps-amber'],active:['Approved / Active','ps-green'],inactive:['Inactive','ps-gray'],meddecline:['Medically Declined','ps-red'],cltdecline:['Client Declined','ps-red']};
+  function stPill(map,k){ var m=map[k]||map[Object.keys(map)[0]]; return '<span class="pill '+m[1]+'"><i></i>'+m[0]+'</span>'; }
   function illCell(r){ return r.illRun
     ? '<button class="linkcell" onclick="viewIll('+r.id+')">▤ View sample illustration</button><div style="color:var(--faint);font-size:11.5px;margin-top:3px">Sample · '+r.illDate+'</div>'
     : '<button class="linkcell" onclick="openEst('+r.id+')">▤ Run illustration</button>'; }
@@ -901,23 +970,23 @@
     var later=r.status==='later';
     var pill=later?'<span class="pill later"><i></i>Invite later</span>':'<span class="pill draft"><i></i>Draft</span>';
     var mover=later?'<button class="ia" onclick="moveDraft('+r.id+')">↑ Move to Recipients</button>':'<button class="ia" onclick="moveLater('+r.id+')">◷ Invite later</button>';
+    var menu='<div class="rowmenu" id="menu-'+r.id+'">'
+      +'<button onclick="openEdit('+r.id+');closeRowMenus()">✎ Edit</button>'
+      +'<button onclick="'+(later?'moveDraft':'moveLater')+'('+r.id+');closeRowMenus()">'+(later?'↑ Move to Recipients':'◷ Invite later')+'</button>'
+      +'<div class="sepm"></div>'
+      +'<button class="del" onclick="del('+r.id+');closeRowMenus()">🗑 Delete</button></div>';
     var acts='<button class="ia" onclick="openProposalFor('+r.id+')">▤ View illustration</button>'
       +'<button class="btn sm"'+(sel?'':' disabled title="Check the box to enable"')+' onclick="sendInvite('+r.id+')">Send invite</button>'
-      +'<button class="ia" onclick="copyLink('+r.id+')">⧉ Copy invitation link</button>'
-      +'<button class="ia" onclick="openEdit('+r.id+')">✎ Edit</button>'
-      +mover
-      +'<button class="ia del" onclick="del('+r.id+')">🗑 Delete</button>';
+      +'<span class="kwrap" style="position:relative"><button class="ia kebab" onclick="toggleRowMenu('+r.id+',event)" title="More actions">⋮</button>'+menu+'</span>';
     var main='<tr class="rrow">'
       +'<td style="width:26px"><input type="checkbox" class="cbx" '+(sel?'checked':'')+' onclick="toggleSel('+r.id+')"></td>'
       +'<td style="width:22px"><button class="expand" id="chev-'+r.id+'" onclick="toggleExp('+r.id+')">›</button></td>'
       +'<td><div class="rname">'+r.first+' '+r.last+'</div><div class="rrel">'+(r.rel||'')+'</div></td>'
       +'<td class="email">'+r.email+'</td>'
       +'<td class="amt">$'+r.amount+'</td>'
-      +'<td>'+pill+'</td>'
       +'<td><div class="acts">'+acts+'</div></td></tr>';
-    var det='<tr class="exp-row" id="exp-'+r.id+'" style="display:none"><td colspan="7"><div class="exp-in">'
+    var det='<tr class="exp-row" id="exp-'+r.id+'" style="display:none"><td colspan="6"><div class="exp-in">'
       +'<div><div class="k">Relationship</div><div class="v">'+relTxt+'</div></div>'
-      +'<div><div class="k">Status</div><div class="v">'+pill+'</div></div>'
       +'<div><div class="k">Illustration</div><div class="v">'+illCell(r)+'</div></div>'
       +'<div class="exp-note">ⓘ Sending the invite opens DocuSign for you to sign the giftor documents. If the email does not arrive, use Copy invitation link to send it yourself.</div>'
       +'</div></td></tr>';
@@ -926,26 +995,29 @@
 
   function invitedRow(r){
     var relTxt=r.rel?r.rel:'Not set';
-    var acts='<button class="ia" onclick="resend('+r.id+')">↻ Resend</button>'
+    var acts='<button class="ia" onclick="copyLink('+r.id+')">⧉ Copy invitation link</button>'
+      +'<button class="ia" onclick="resend('+r.id+')">↻ Resend</button>'
       +'<button class="ia" onclick="openEdit('+r.id+')">✎ Edit</button>';
     var main='<tr class="rrow">'
       +'<td style="width:22px"><button class="expand" id="chev-'+r.id+'" onclick="toggleExp('+r.id+')">›</button></td>'
       +'<td><div class="rname">'+r.first+' '+r.last+'</div><div class="rrel">'+(r.rel||'')+'</div></td>'
       +'<td class="email">'+r.email+'</td>'
       +'<td class="amt">$'+r.amount+'</td>'
-      +'<td>'+pstatPill(r.pstat)+'</td>'
+      +'<td>'+stPill(ACCT,r.acct)+'</td>'
+      +'<td>'+stPill(ENR,r.enr)+'</td>'
+      +'<td>'+stPill(POL,r.pol)+'</td>'
       +'<td><div class="acts">'+acts+'</div></td></tr>';
-    var det='<tr class="exp-row" id="exp-'+r.id+'" style="display:none"><td colspan="6"><div class="exp-in">'
+    var det='<tr class="exp-row" id="exp-'+r.id+'" style="display:none"><td colspan="8"><div class="exp-in">'
       +'<div><div class="k">Relationship</div><div class="v">'+relTxt+'</div></div>'
       +'<div><div class="k">Invited on</div><div class="v">'+r.invitedOn+'</div></div>'
       +'<div><div class="k">Illustration</div><div class="v">'+illCell(r)+'</div></div>'
-      +'<div class="exp-note">ⓘ Participant status updates automatically as your loved one creates their account and completes their application.</div>'
+      +'<div class="exp-note">ⓘ Account, enrollment, and policy statuses update automatically as your loved one opens the invite, creates an account, completes enrollment, and their policy is issued.</div>'
       +'</div></td></tr>';
     return main+det;
   }
 
   function reviewRow(r){
-    return '<tr class="rrow"><td colspan="7" style="padding:0">'
+    return '<tr class="rrow"><td colspan="6" style="padding:0">'
       +'<div class="review-cell"><span class="rev-ic">◷</span>'
       +'<div class="rev-tx"><b>'+r.first+' '+r.last+'</b> — pending admin review. We are reviewing this invitation before it goes to your loved one. Once cleared, they will appear under Invited loved ones below. Questions? Contact your Kai-Zen service team at <a href="mailto:niw.info@simplicitygroup.com">niw.info@simplicitygroup.com</a>.</div>'
       +'<button class="btn ghost sm" onclick="clearedByAdmin('+r.id+')" title="Demo control">Cleared by admin</button>'
@@ -955,7 +1027,7 @@
     var selectable=rows.filter(function(r){return r.status!=='review';});
     var allsel=selectable.length&&selectable.every(function(r){return selected.indexOf(r.id)>=0;});
     var onchange=section==='later'?'selAllLater(this.checked)':'selAllDraft(this.checked)';
-    var head='<table><thead><tr><th style="width:26px"><input type="checkbox" class="cbx" '+(allsel?'checked':'')+' onclick="'+onchange+'"></th><th style="width:22px"></th><th>Recipient</th><th>Email</th><th>Gift amount</th><th>Status</th><th style="text-align:right">Actions</th></tr></thead><tbody>';
+    var head='<table><thead><tr><th style="width:26px"><input type="checkbox" class="cbx" '+(allsel?'checked':'')+' onclick="'+onchange+'"></th><th style="width:22px"></th><th>Recipient</th><th>Email</th><th>Gift amount</th><th style="text-align:right">Actions</th></tr></thead><tbody>';
     return selBarHtml()+head+rows.map(function(r){return r.status==='review'?reviewRow(r):inviteRow(r);}).join('')+'</tbody></table>';
   }
   function renderDraft(){
@@ -979,12 +1051,12 @@
     var q=invF.q.toLowerCase(), st=invF.status;
     var rows=state.filter(function(r){return r.status==='invited';}).filter(function(r){
       var hay=(r.first+' '+r.last+' '+r.email).toLowerCase();
-      var okq=!q||hay.indexOf(q)>=0; var oks=st==='all'||r.pstat===st; return okq&&oks;
+      var okq=!q||hay.indexOf(q)>=0; var oks=true; if(st!=='all'){ var pp=st.split(':'); oks=(r[pp[0]]===pp[1]); } return okq&&oks;
     });
     var el=document.getElementById('tbl-invited');
     if(!rows.length){ el.innerHTML='<div class="empty">No loved ones match. Try clearing the search or filter.</div>'; return; }
-    var head='<table><thead><tr><th style="width:22px"></th><th>Recipient</th><th>Email</th><th>Gift amount</th><th>Participant status</th><th style="text-align:right">Actions</th></tr></thead><tbody>';
-    el.innerHTML=head+rows.map(invitedRow).join('')+'</tbody></table>';
+    var head='<table><thead><tr><th style="width:22px"></th><th>Recipient</th><th>Email</th><th>Gift amount</th><th>Account status</th><th>Enrollment status</th><th>Policy status</th><th style="text-align:right">Actions</th></tr></thead><tbody>';
+    el.innerHTML='<div style="overflow-x:auto">'+head+rows.map(invitedRow).join('')+'</tbody></table></div>';
   }
   function filterInvited(){ invF.q=document.getElementById('inv-search').value; invF.status=document.getElementById('inv-status').value; renderInvited(); }
 
@@ -1014,7 +1086,7 @@
   render();
   initPolicies();
   giftorSaved=document.getElementById('giftorBody').innerHTML;
-  setLock(!giftorDone);
+  markComplete();  // default: giftor details Completed + collapsed on load
 </script>
 </body>
 </html>
