@@ -106,6 +106,7 @@
   @keyframes pb{0%{margin-left:-40%}100%{margin-left:100%}}
   .stress{font-size:15px;font-weight:600}
   .confirm-check{width:58px;height:58px;border-radius:50%;background:var(--g-bg);color:var(--g-tx);display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:700;margin:0 auto}
+  .gro{background:#F1F4F8;border:1px solid var(--border);border-radius:8px;padding:9px 11px;font-size:13.5px;color:var(--ink);font-weight:600}
   .ptabs{display:flex;gap:2px;border-bottom:1px solid var(--border);margin-bottom:16px}
   .ptab{padding:10px 14px;font-size:11.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--muted);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;font-family:inherit}
   .ptab:hover{color:var(--ink)}
@@ -314,16 +315,31 @@
             <div class="gfield"><label>Social Security number</label><input placeholder="•••-••-••••"></div>
             <div></div>
           </div>
-          <div style="margin-top:16px;font-size:13.5px;color:var(--ink)">Do you currently have a Kai-Zen policy?
-            <div class="rgroup"><label class="ropt"><input type="radio" name="g-kz" checked> Yes</label><label class="ropt"><input type="radio" name="g-kz"> No</label></div>
+          <div style="margin-top:16px;font-size:13.5px;color:var(--ink)">Do you currently have a Kai-Zen policy? <button class="secdev" onclick="toggleSecDev('sd-kz')" title="Dev-facing — impact on JIRA">🛠 Dev notes</button>
+            <div class="rgroup"><label class="ropt"><input type="radio" name="g-kz" checked onclick="setKzMode('yes')"> Yes</label><label class="ropt"><input type="radio" name="g-kz" onclick="setKzMode('no')"> No</label></div>
           </div>
-          <div class="grid2" style="margin-top:14px">
-            <div class="gfield"><label>Tranche #</label><input value="34"></div>
-            <div class="gfield"><label>Policy number</label><input value="E123123123"></div>
+          <div class="secdev-panel" id="sd-kz" style="display:none"><div class="t">🛠 Dev note — this section</div><b><a href="https://simplicitygh.atlassian.net/browse/NIWD-1871" target="_blank">NIWD-1871</a> — auto-populate Kai-Zen policy:</b> When the giftor has a policy on file, ILIA pulls tranche #, policy #, carrier, and death benefit and shows them <b>read-only</b>. If more than one policy exists, the <b>Select policy</b> dropdown lets the giftor choose and the fields update. With no policy on file, these become manual-entry fields. (Live data pull depends on ILIA read access — currently gated.)</div>
+          <div id="kz-yes">
+            <div class="gfield" style="margin-top:14px" id="kz-picker"><label>Select policy <span style="font-weight:400;color:var(--faint)">(more than one on file)</span></label><select id="kz-select" onchange="pickPolicy()"></select></div>
+            <div class="grid2" style="margin-top:14px">
+              <div class="gfield"><label>Tranche #</label><div class="gro" id="kz-tranche">34</div></div>
+              <div class="gfield"><label>Policy number</label><div class="gro" id="kz-policy">E123123123</div></div>
+            </div>
+            <div class="grid2" style="margin-top:14px">
+              <div class="gfield"><label>Insurance carrier</label><div class="gro" id="kz-carrier">National Life (LSW)</div></div>
+              <div class="gfield"><label>Death benefit amount</label><div class="gro" id="kz-db">$12,123,131</div></div>
+            </div>
+            <div style="margin-top:8px;font-size:11.5px;color:var(--faint)">🔒 Pulled from your ILIA record — read-only.</div>
           </div>
-          <div class="grid2" style="margin-top:14px">
-            <div class="gfield"><label>Insurance carrier</label><input value="National Life (LSW)"></div>
-            <div class="gfield"><label>Death benefit amount</label><input value="$12,123,131"></div>
+          <div id="kz-no" style="display:none">
+            <div class="grid2" style="margin-top:14px">
+              <div class="gfield"><label>Tranche #</label><input placeholder="Tranche #"></div>
+              <div class="gfield"><label>Policy number</label><input placeholder="Policy number"></div>
+            </div>
+            <div class="grid2" style="margin-top:14px">
+              <div class="gfield"><label>Insurance carrier</label><input placeholder="Carrier"></div>
+              <div class="gfield"><label>Death benefit amount</label><input placeholder="$"></div>
+            </div>
           </div>
 
           <div class="gsub">Giftor income</div>
@@ -939,7 +955,21 @@
   var toastT;
   function toast(m){ document.getElementById('toast-msg').textContent=m; var t=document.getElementById('toast');
     t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(function(){t.classList.remove('show');},2400); }
+  var POLICIES=[
+    {label:'Policy E123123123 — Tranche 34 (National Life)', tranche:'34', policy:'E123123123', carrier:'National Life (LSW)', db:'$12,123,131'},
+    {label:'Policy E778905512 — Tranche 12 (Allianz)', tranche:'12', policy:'E778905512', carrier:'Allianz', db:'$5,400,000'},
+    {label:'Policy E640021783 — Tranche 7 (National Life)', tranche:'7', policy:'E640021783', carrier:'National Life (LSW)', db:'$8,250,000'}
+  ];
+  function initPolicies(){ var sel=document.getElementById('kz-select'); if(!sel) return;
+    sel.innerHTML=POLICIES.map(function(p,i){return '<option value="'+i+'">'+p.label+'</option>';}).join(''); pickPolicy();
+    document.getElementById('kz-picker').style.display=POLICIES.length>1?'':'none'; }
+  function pickPolicy(){ var p=POLICIES[+document.getElementById('kz-select').value||0];
+    document.getElementById('kz-tranche').textContent=p.tranche; document.getElementById('kz-policy').textContent=p.policy;
+    document.getElementById('kz-carrier').textContent=p.carrier; document.getElementById('kz-db').textContent=p.db; }
+  function setKzMode(m){ document.getElementById('kz-yes').style.display=m==='yes'?'block':'none';
+    document.getElementById('kz-no').style.display=m==='yes'?'none':'block'; }
   render();
+  initPolicies();
   giftorSaved=document.getElementById('giftorBody').innerHTML;
   setLock(!giftorDone);
 </script>
