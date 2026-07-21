@@ -133,6 +133,12 @@
   .secdev:hover{background:#E7D9AE}
   .secdev-panel{background:#FCFAF3;border:1px dashed #C9B37A;border-radius:10px;padding:12px 14px;margin:0 0 14px;color:#5F5320;font-size:12.5px;line-height:1.6}
   .secdev-panel .t{font-weight:700;color:#7A5E12;margin-bottom:4px}
+  .optbadge{background:#EEF2FF;color:#3452B4;border:1px solid #D6DEF8;border-radius:20px;font-size:11.5px;font-weight:700;padding:3px 12px;cursor:pointer;font-family:inherit}
+  .optbadge:hover{background:#E1E8FF}
+  .optbadge.active{background:#3452B4;color:#fff;border-color:#3452B4}
+  .opta-label{background:#EEF2FF;border:1px solid #D6DEF8;border-radius:9px;padding:9px 13px;color:#3452B4;font-size:12.5px;margin-bottom:12px}
+  .saved-sub{margin-top:18px;border-top:2px dashed #E2D9F2;padding-top:12px}
+  .saved-sub-h{font-size:13px;font-weight:700;color:#5B3FA6;display:flex;align-items:center;gap:8px;margin:0 0 6px}
   .dn-body a,.secdev-panel a{color:#245BC0}
   .lockbar{display:none;align-items:center;gap:9px;background:#FFF7ED;border:1px solid #F3D9A8;color:#8A5A12;border-radius:12px;padding:12px 16px;margin-top:20px;font-size:13px;font-weight:500}
   .lockbar.show{display:flex}
@@ -178,6 +184,8 @@
   .ia{color:var(--muted);cursor:pointer;font-size:13px;text-decoration:none;display:inline-flex;align-items:center;gap:5px;background:none;border:none;font-family:inherit}
   .ia:hover{color:var(--blue)}
   .ia.del:hover{color:var(--red)}
+  .amtlink{background:none;border:none;font:inherit;color:inherit;cursor:pointer;padding:0;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}
+  .amtlink:hover{color:var(--blue-d)}
   .linkcell{color:var(--blue);cursor:pointer;font-size:13px;display:inline-flex;align-items:center;gap:5px;background:none;border:none;font-family:inherit;padding:0}
   .linkcell:hover{text-decoration:underline}
   .dash{color:#C4CCD8}
@@ -268,6 +276,7 @@
     </div>
 
     <div class="wrap">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:2px"><button class="clr-demo" style="color:var(--blue-d)" onclick="agentKidsDemo()" title="Demo — simulate an agent adding Gen-2 kids at onboarding">⚡ Agent-added kids (demo)</button></div>
       <div class="crumb">Giftor Portal</div>
       <h1>Invite your loved ones</h1>
       <p class="lede">Add a loved one below and we'll email them a personal invitation to begin their Greatest Wealth Transfer with Kai-Zen. All we need to send it is their name, email, and the gift amount.</p>
@@ -277,7 +286,7 @@
         <div class="dn-body">
           <ul>
             <li><b>Invite link &harr; contribution amount:</b> if a recipient's details (e.g. gift amount) are edited after the invite link has been generated, confirm the update <b>reissues a fresh link</b> carrying the new amount and <b>auto-replaces</b> the previous one — the old link must not resolve to a stale contribution.</li>
-            <li><b>Invited loved ones — empty state (<a href="https://simplicitygh.atlassian.net/browse/NIWD-1883" target="_blank">NIWD-1883</a>):</b> while no recipients are invited, hide the search, status filter, results table, and Export; keep the section title and show the approved note — <i>"When your recipients create accounts and start enrollment, you'll be able to view their activity here."</i> (ILIA name for this section: "Invited Recipient Application Status.")</li>
+            <li><b>Invited loved ones — empty state (<a href="https://simplicitygh.atlassian.net/browse/NIWD-1883" target="_blank">NIWD-1883</a>):</b> while no recipients are invited, hide the search, status filter, results table, and Export; keep the section title and show the approved note — <i>"When your loved ones create accounts and start enrollment, you'll be able to view their activity here."</i> (ILIA name for this section: "Invited Recipient Application Status.")</li>
           </ul>
           <div class="dn-h">NIWD-1889 feedback &harr; mock coverage (snapshot as of Jul 17, 2026)</div>
           <table class="dn-table">
@@ -304,7 +313,7 @@
       <section class="card gsec" id="giftorCard">
         <div class="hd" onclick="toggleGiftor()">
           <div><h2>Your details (Giftor) <span id="g-status" class="pill later"><i></i>Missing information</span></h2><div class="sub" id="g-sub">Confirm your information — required before you can send any invitations. Your agent pre-filled what we have on file.</div></div>
-          <button class="clr-demo" id="g-demo" style="color:var(--blue-d)" onclick="event.stopPropagation();demoToggle()" title="Demo control — toggles giftor data">⚡ Auto-fill (demo)</button><button class="expand open" id="g-chev">›</button>
+          <button class="clr-demo" id="g-demo" style="color:var(--blue-d)" onclick="event.stopPropagation();demoToggle()" title="Demo control — toggles giftor data">⚡ Auto-fill (demo)</button><button class="btn" id="g-signbtn" style="margin-right:12px;display:none" onclick="event.stopPropagation();openSignDocs()">✍ Sign in DocuSign</button><span id="g-signed" class="g-done" style="display:none;margin-right:12px"><i></i>Documents signed</span><button class="expand open" id="g-chev">›</button>
         </div>
         <div class="bd" id="giftorBody">
           <div class="grid2">
@@ -398,26 +407,20 @@
         </div>
       </section>
 
-      <div class="lockbar" id="lockbar">🔒 Verify your giftor details above to unlock adding and inviting recipients.</div>
-
-      <section class="card" id="addCard">
-        <div class="hd"><div><h2>Add a recipient <span class="lockchip">🔒 Complete giftor details first</span></h2><div class="sub">Provide the recipient's details, run their sample illustration, then confirm to add them.</div></div></div>
-        <div class="bd">
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
-            <div style="color:var(--muted);font-size:13px;max-width:600px">Add a loved one and run their <b>sample illustration</b>. We collect the details the carrier needs, run the illustration, and once you confirm the results they move to <b>Recipients to invite</b> below.</div>
-            <button class="btn" onclick="openAdd()">＋ Add recipient</button>
-          </div>
-        </div>
-      </section>
+      <div class="lockbar" id="lockbar">🔒 Sign your documents above to unlock adding and inviting your loved ones.</div>
 
       <section class="card" id="draftCard">
-        <div class="hd"><div><h2>Recipients to invite <span class="badge-ct" id="ct-draft">0</span> <span class="lockchip">🔒 Complete giftor details first</span> <button class="secdev" onclick="event.stopPropagation();toggleSecDev('sd-draft')" title="Dev-facing — impact on JIRA">🛠 Dev notes</button></h2><div class="sub">Confirm each loved one's details, check the box next to the ones you're ready to invite, then send. You'll sign once in DocuSign to send the whole batch — even for several at a time.</div></div><button class="clr-demo" title="Demo control — clears sample rows" onclick="clearData('draft')">🗑 Clear section</button></div>
+        <div style="padding:14px 20px 0;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <span style="font-size:11.5px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;color:var(--faint)">Card behavior — concepts:</span>
+          <button class="optbadge" id="optb-a" onclick="showOpt('a')">Check Box Select</button>
+          <button class="optbadge" id="optb-b" onclick="showOpt('b')">One Send Button</button>
+          <button class="optbadge" id="optb-c" onclick="showOpt('c')">Save for Later</button>
+        </div>
+        <div class="secdev-panel" id="opt-a" style="display:none;margin:10px 20px 0"><div class="t">Option A — Check Box Select</div><b>Active.</b> Check the box next to each loved one you want to invite (or use <b>Select all</b> at the top of the column), then Send.</div>
+        <div class="secdev-panel" id="opt-b" style="display:none;margin:10px 20px 0"><div class="t">Option B — One Check Option</div><b>Active.</b> One combined <b>＋ Send Invites</b> button at the top of this card; per-row Send buttons and checkboxes are removed. Clicking it opens a popup to check which loved ones to invite (name + contribution) with <b>Select all</b>, then <b>Confirm send</b> → a confirmation listing who was invited and the next steps.</div>
+        <div class="secdev-panel" id="opt-c" style="display:none;margin:10px 20px 0"><div class="t">Option C — Save for Later</div><b>Active.</b> Each loved one has a <b>Save for later</b> action; saved loved ones drop into a <b>Saved for later</b> sub-section (below the ready list, shown in a different color). From there they can be pushed back up to ready-to-invite.</div>
+        <div class="hd"><div><h2>Loved ones to invite <span class="badge-ct" id="ct-draft">0</span> <span class="lockchip">🔒 Complete giftor details first</span> <button class="secdev" onclick="event.stopPropagation();toggleSecDev('sd-draft')" title="Dev-facing — impact on JIRA">🛠 Dev notes</button></h2><div class="sub">Confirm each loved one's details, check the box next to the ones you're ready to invite, then send. You'll sign once in DocuSign to send the whole batch — even for several at a time.</div></div><div style="display:flex;gap:12px;align-items:center"><button class="btn sm" id="add-loved-btn" onclick="openAdd()">＋ Add a loved one</button><button class="clr-demo" title="Demo control — clears sample rows" onclick="clearData('draft')">🗑 Clear section</button></div></div>
         <div class="bd" style="padding:8px 20px 12px"><div class="secdev-panel" id="sd-draft" style="display:none"><div class="t">🛠 Dev note — this section</div><b>View illustration + edit contribution:</b> from each row the giftor can open the illustration (3-tab Client Proposal) and change <b>only the contribution amount</b>; updating recomputes the illustration and the row amount.<br>(No live invite link exists at this stage — the link is generated when the giftor signs DocuSign.)<br><b>✔ Copy invitation link — removed from these rows (<a href="https://simplicitygh.atlassian.net/browse/NIWD-1882" target="_blank">NIWD-1882</a> AC#3):</b> the ⋮ More-actions menu on the pre-send rows <b>intentionally omits Copy invitation link</b>. It — and Resend — now live only on <b>Invited loved ones</b>, after admin approval / invite sent, when the link is actually live. <b>Why:</b> Send only signs DocuSign and queues the batch for NIW admin review; it does not email the recipient. Leaving a copy-link here would let a giftor Send, then copy a not-yet-approved link and email the recipient directly, <b>bypassing the NIW admin-approval gate</b>. Removing it closes that hole.</div><div id="tbl-draft"></div></div>
-      </section>
-
-      <section class="card" id="laterCard">
-        <div class="hd"><div><h2>Invite later <span class="badge-ct" id="ct-later">0</span> <span class="lockchip">🔒 Complete giftor details first</span></h2><div class="sub">Set aside for now — still fully editable. Check the box to include anyone here in a current invitation.</div></div><button class="clr-demo" title="Demo control — clears sample rows" onclick="clearData('later')">🗑 Clear section</button></div>
-        <div class="bd" style="padding:8px 20px 12px"><div id="tbl-later"></div></div>
       </section>
 
       <section class="card mgmt">
@@ -428,45 +431,59 @@
         <div class="bd" style="padding:6px 20px 12px">
           <div class="secdev-panel" id="sd-invited" style="display:none">
             <div class="t">🛠 Dev note — this section</div>
-            <b><a href="https://simplicitygh.atlassian.net/browse/NIWD-1883" target="_blank">NIWD-1883</a> — empty state (implemented):</b> while no recipients are invited, the search, status filter, results table, and Export are hidden and this approved note shows — <i>"When your recipients create accounts and start enrollment, you'll be able to view their activity here."</i> (Use "Clear section" to preview.)<br>
-            <b><a href="https://simplicitygh.atlassian.net/browse/NIWD-1882" target="_blank">NIWD-1882</a> — Resend + copy invitation link (resolved, AC#3):</b> both live here on invited recipients (after admin approval / invite sent), where the link is actually live. Removed from the pre-send "Recipients to invite" section so a giftor cannot bypass the NIW admin-approval gate.<br><b>QD-3 (Q-DESK) — status model:</b> this tracker now shows the <b>three independent tracks</b> Q-DESK is splitting the ILIA blended status into — <b>Account</b> (Invited to Opened Invite to Account Created to Disabled), <b>Enrollment</b> (product-dynamic, rolls up to Enrollment Completed), and <b>Policy</b> (cleaned carrier enum: added Medically Declined, Client Declined, Inactive; removed the account/enrollment values). The old single "Participant status" ladder + naming are retired in favor of "Statuses." Design + log only — Q-DESK still at mock/impact stage (no Jira yet).
+            <b><a href="https://simplicitygh.atlassian.net/browse/NIWD-1883" target="_blank">NIWD-1883</a> — empty state (implemented):</b> while no recipients are invited, the search, status filter, results table, and Export are hidden and this approved note shows — <i>"When your loved ones create accounts and start enrollment, you'll be able to view their activity here."</i> (Use "Clear section" to preview.)<br>
+            <b><a href="https://simplicitygh.atlassian.net/browse/NIWD-1882" target="_blank">NIWD-1882</a> — Resend + copy invitation link (resolved, AC#3):</b> both live here on invited recipients (after admin approval / invite sent), where the link is actually live. Removed from the pre-send "Loved ones to invite" section so a giftor cannot bypass the NIW admin-approval gate.<br><b>QD-3 (Q-DESK) — status model:</b> this tracker now shows the <b>three independent tracks</b> Q-DESK is splitting the ILIA blended status into — <b>Account</b> (<b>In Review</b> — GWT default on giftor signature → Invited → Opened Invite → Account Created → Disabled), <b>Enrollment</b> (product-dynamic, rolls up to Enrollment Completed), and <b>Policy</b> (cleaned carrier enum: added Medically Declined, Client Declined, Inactive; removed the account/enrollment values). The old single "Participant status" ladder + naming are retired in favor of "Statuses." Design + log only — Q-DESK still at mock/impact stage (no Jira yet).
           </div>
           <div class="toolbar" id="inv-toolbar">
             <input class="search" id="inv-search" placeholder="Search by name or email" oninput="filterInvited()">
             <select id="inv-status" onchange="filterInvited()">
               <option value="all">All statuses</option>
               <optgroup label="Account status">
+                <option value="acct:inreview">In Review</option>
                 <option value="acct:invited">Invited</option>
                 <option value="acct:opened">Opened Invite</option>
                 <option value="acct:created">Account Created</option>
                 <option value="acct:disabled">Disabled</option>
               </optgroup>
               <optgroup label="Enrollment status">
-                <option value="enr:none">Not Started</option>
-                <option value="enr:progress">In Progress</option>
-                <option value="enr:submitted">Submitted</option>
+                <option value="enr:notstarted">Not Started</option>
+                <option value="enr:step1">In Progress — Basic Info</option>
+                <option value="enr:step2">In Progress — Application</option>
+                <option value="enr:step3">In Progress — Proposal</option>
+                <option value="enr:step4">In Progress — Final Docs</option>
                 <option value="enr:complete">Enrollment Completed</option>
               </optgroup>
-              <optgroup label="Policy status">
-                <option value="pol:none">Not Started</option>
-                <option value="pol:pending">Pending</option>
-                <option value="pol:active">Approved / Active</option>
-                <option value="pol:inactive">Inactive</option>
+              <optgroup label="Policy — Pre-issue">
+                <option value="pol:proposed">Proposed</option>
+                <option value="pol:design">Design</option>
+                <option value="pol:quoted">Quoted</option>
+                <option value="pol:paymentrec">Payment Received</option>
+                <option value="pol:casesubmitted">Case Submitted</option>
+              </optgroup>
+              <optgroup label="Policy — Issued">
+                <option value="pol:inforce">In-Force</option>
+                <option value="pol:inforceoverride">In-Force-Override</option>
+              </optgroup>
+              <optgroup label="Policy — Did not issue">
                 <option value="pol:meddecline">Medically Declined</option>
                 <option value="pol:cltdecline">Client Declined</option>
+                <option value="pol:inactive">Inactive</option>
+              </optgroup>
+              <optgroup label="Policy — Terminated">
+                <option value="pol:surrendered">Surrendered</option>
+                <option value="pol:deceased">Deceased</option>
               </optgroup>
             </select>
           </div>
           <div id="tbl-invited"></div>
-          <div class="empty" id="inv-empty" style="display:none;padding:34px 26px"><div style="font-size:26px;margin-bottom:8px">📋</div>When your recipients create accounts and start enrollment, you'll be able to view their activity here.</div>
+          <div class="empty" id="inv-empty" style="display:none;padding:34px 26px"><div style="font-size:26px;margin-bottom:8px">📋</div>When your loved ones create accounts and start enrollment, you'll be able to view their activity here.</div>
           <div class="foot" id="inv-foot"><div class="legend" style="flex-wrap:wrap">
             <span style="font-weight:600;color:var(--muted);margin-right:2px">Statuses (Account · Enrollment · Policy):</span>
-            <span><i style="background:#8A94A3"></i>Not started</span>
-            <span><i style="background:#2F6FE0"></i>Opened / created</span>
-            <span><i style="background:#C08A1A"></i>In progress / pending</span>
-            <span><i style="background:#7A5CC7"></i>Submitted</span>
-            <span><i style="background:#1B7F4B"></i>Completed / active</span>
-            <span><i style="background:#B4231F"></i>Declined / disabled</span>
+            <span><i style="background:#8A94A3"></i>Not started / terminated</span>
+            <span><i style="background:#2F6FE0"></i>Opened / account created</span>
+            <span><i style="background:#C08A1A"></i>In progress / pre-issue</span>
+            <span><i style="background:#1B7F4B"></i>Completed / in-force</span>
+            <span><i style="background:#B4231F"></i>Declined / disabled / inactive</span>
           </div></div>
         </div>
       </section>
@@ -477,7 +494,7 @@
 
 <div class="overlay" id="addOverlay">
   <div class="modal" style="width:640px">
-    <div class="mh"><h3>Add a recipient</h3><button class="clr-demo" style="color:var(--blue-d);margin-left:auto" onclick="addAutofill()">⚡ Auto-fill (demo)</button><button class="x" onclick="closeAdd()">✕</button></div>
+    <div class="mh"><h3 id="add-title">Add a loved one</h3><button class="clr-demo" style="color:var(--blue-d);margin-left:auto" onclick="addAutofill()">⚡ Auto-fill (demo)</button><button class="x" onclick="closeAdd()">✕</button></div>
     <div class="mb">
       <div id="add-step1">
         <p class="ds-intro">Provide your loved one's details so we can run their sample illustration. Fields marked * are required to run it.</p>
@@ -485,13 +502,13 @@
         <div class="mrow"><div class="mf"><label>Cell number *</label><input id="ar-cell" placeholder="(000) 000-0000"></div><div class="mf"><label>Email address *</label><input id="ar-email" placeholder="name@example.com"></div></div>
         <div class="mrow"><div class="mf"><label>Date of birth *</label><input id="ar-dob" placeholder="MM/DD/YYYY"></div><div class="mf"><label>Gender *</label><select id="ar-gender"><option value="">Select</option><option>Female</option><option>Male</option><option>Other</option></select></div></div>
         <div class="mrow"><div class="mf"><label>Expected contribution for this gift *</label><input id="ar-amt" placeholder="$25,000"></div><div class="mf"><label>Health *</label><select id="ar-health"><option value="">Select</option><option>Preferred Plus</option><option>Preferred</option><option>Standard Plus</option><option>Standard</option><option>Average health</option></select></div></div>
-        <div class="mrow"><div class="mf"><label>Relationship to recipient *</label><select id="ar-rel"><option value="">Select</option><option>Son</option><option>Daughter</option><option>Grandson</option><option>Granddaughter</option><option>Grandchild</option><option>Nephew</option><option>Niece</option><option>Other</option></select></div><div class="mf"></div></div>
-        <div class="mf"><label>What ages would you like the recipient to receive distributions? <span title="The age range your recipient receives income from the policy (65-90 by default). You can change it." style="cursor:help;color:var(--blue)">ⓘ</span> <button class="secdev" onclick="toggleSecDev('sd-distage')" title="Dev-facing — impact on JIRA">🛠 Dev notes</button></label>
+        <div class="mrow"><div class="mf"><label>Relationship to loved one *</label><select id="ar-rel"><option value="">Select</option><option>Son</option><option>Daughter</option><option>Grandson</option><option>Granddaughter</option><option>Grandchild</option><option>Nephew</option><option>Niece</option><option>Other</option></select></div><div class="mf"></div></div>
+        <div class="mf"><label>What ages would you like your loved one to receive distributions? <span title="The age range your loved one receives income from the policy (65-90 by default). You can change it." style="cursor:help;color:var(--blue)">ⓘ</span> <button class="secdev" onclick="toggleSecDev('sd-distage')" title="Dev-facing — impact on JIRA">🛠 Dev notes</button></label>
           <div class="secdev-panel" id="sd-distage" style="display:none"><div class="t">🛠 Dev note — for the build team</div><b><a href="https://simplicitygh.atlassian.net/browse/NIWD-1874" target="_blank">NIWD-1874</a> — default distribution ages:</b> Begin and Ending distribution ages default to <b>65</b> and <b>90</b>, with an info icon explaining the range. Both remain editable by the user.</div>
           <div class="mrow" style="margin-top:4px"><div class="mf"><label style="font-weight:400;color:var(--faint)">Begin distributions age *</label><input id="ar-begin" value="65"></div><div class="mf"><label style="font-weight:400;color:var(--faint)">Ending distributions age *</label><input id="ar-end" value="90"></div></div>
         </div>
-        <div class="mf" style="margin-bottom:14px"><label>Does the recipient use tobacco or marijuana products? *</label><div class="rgroup"><label class="ropt"><input type="radio" name="ar-tob"> Yes</label><label class="ropt"><input type="radio" name="ar-tob" checked> No</label></div></div>
-        <div class="mf" style="margin-bottom:0"><label>Is the recipient financially independent, or your dependent? *</label><div class="rgroup"><label class="ropt"><input type="radio" name="ar-dep"> Financially independent</label><label class="ropt"><input type="radio" name="ar-dep" checked> My financial dependent</label></div></div>
+        <div class="mf" style="margin-bottom:14px"><label>Does your loved one use tobacco or marijuana products? *</label><div class="rgroup"><label class="ropt"><input type="radio" name="ar-tob"> Yes</label><label class="ropt"><input type="radio" name="ar-tob" checked> No</label></div></div>
+        <div class="mf" style="margin-bottom:0"><label>Is your loved one financially independent, or your dependent? *</label><div class="rgroup"><label class="ropt"><input type="radio" name="ar-dep"> Financially independent</label><label class="ropt"><input type="radio" name="ar-dep" checked> My financial dependent</label></div></div>
       </div>
       <div id="add-loading" style="display:none;text-align:center;padding:36px 0">
         <div class="stress">Stress testing your illustration…</div>
@@ -527,7 +544,7 @@
     <div class="mb">
       <div class="secdev-panel" id="sd-proposal" style="display:none"><div class="t">🛠 Dev note — for the build team</div>These three tabs — <b>Proposal Summary</b>, <b>Kai-Zen Proposal</b>, and <b>Carrier Illustration</b> — should render using ILIA's <b>current / existing illustration &amp; proposal displays</b>, not new mock layouts. The content shown here is placeholder only; reuse the production proposal/illustration components rather than rebuilding these views.</div>
       <div id="pp-edit" style="display:none;background:#F1F6FF;border:1px solid #D6E4FB;border-radius:10px;padding:12px 14px;margin-bottom:16px">
-        <div style="font-size:12.5px;color:var(--muted);margin-bottom:9px">You can adjust the <b>contribution amount</b> for this recipient. Updating recomputes the illustration.</div>
+        <div style="font-size:12.5px;color:var(--muted);margin-bottom:9px">You can adjust the <b>contribution amount</b> for this loved one. Updating recomputes the illustration.</div>
         <div style="display:flex;gap:10px;align-items:flex-end">
           <div class="mf" style="margin:0;flex:1"><label>Contribution amount</label><input id="pp-amt-input" placeholder="$25,000"></div>
           <button class="btn" id="pp-update" onclick="updateContribution()">Update contribution</button>
@@ -574,7 +591,7 @@
   <div class="modal" style="width:452px;text-align:center">
     <div class="mb" style="padding-top:30px">
       <div class="confirm-check">✓</div>
-      <h3 style="margin:16px 0 10px;font-size:19px"><span id="cf-name">This recipient</span> is confirmed &amp; ready to invite</h3>
+      <h3 style="margin:16px 0 10px;font-size:19px"><span id="cf-name">This loved one</span> is confirmed &amp; ready to invite</h3>
       <p style="color:var(--muted);font-size:14px;line-height:1.65;margin:0 auto;max-width:372px" id="cf-body"></p>
     </div>
     <div class="mfoot" style="justify-content:center"><button class="btn" onclick="closeConfirmed()">Got it</button></div>
@@ -592,9 +609,32 @@
   </div>
 </div>
 
+<div class="overlay" id="signedOverlay" onclick="if(event.target===this)closeSigned()">
+  <div class="modal" style="width:468px;text-align:center">
+    <div class="mb" style="padding-top:30px">
+      <div class="confirm-check">✓</div>
+      <h3 id="sg-title" style="margin:16px 0 10px;font-size:19px">Signed — sent for review</h3>
+      <p style="color:var(--muted);font-size:14px;line-height:1.65;margin:0 auto;max-width:396px" id="sg-body"></p>
+    </div>
+    <div class="mfoot" style="justify-content:center"><button class="btn" onclick="closeSigned()">Got it</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="sendModalOverlay">
+  <div class="modal" style="width:530px">
+    <div class="mh"><h3>Send invitations</h3><button class="x" onclick="closeSendModal()">✕</button></div>
+    <div class="mb">
+      <p class="ds-intro">Select the loved ones you'd like to invite now — you'll send them together.</p>
+      <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin-bottom:8px;cursor:pointer"><input type="checkbox" id="sm-all" onclick="smToggleAll(this.checked)"> Select all</label>
+      <div id="sm-list" style="border:1px solid var(--border);border-radius:10px;overflow:hidden"></div>
+    </div>
+    <div class="mfoot"><button class="btn ghost" onclick="closeSendModal()">Cancel</button><button class="btn" id="sm-confirm" onclick="confirmSendModal()" disabled>Confirm send</button></div>
+  </div>
+</div>
+
 <div class="overlay" id="editOverlay">
   <div class="modal">
-    <div class="mh"><h3>Edit recipient</h3><button class="x" onclick="closeEdit()">✕</button></div>
+    <div class="mh"><h3>Edit loved one</h3><button class="x" onclick="closeEdit()">✕</button></div>
     <div class="mb">
       <div class="mrow">
         <div class="mf"><label>First name</label><input id="e-first"></div>
@@ -602,7 +642,7 @@
       </div>
       <div class="mf"><label>Email address</label><input id="e-email"></div>
       <div class="mf"><label>Gift amount</label><input id="e-amt"></div>
-      <div class="exp-note" style="grid-column:auto">ⓘ If this recipient is already invited, saving a new gift amount refreshes their invite link automatically.</div>
+      <div class="exp-note" style="grid-column:auto">ⓘ If this loved one is already invited, saving a new gift amount refreshes their invite link automatically.</div>
     </div>
     <div class="mfoot"><button class="btn ghost" onclick="closeEdit()">Cancel</button><button class="btn" onclick="saveEdit()">Save changes</button></div>
   </div>
@@ -610,12 +650,12 @@
 
 <div class="overlay" id="delOverlay">
   <div class="modal sm">
-    <div class="mh"><h3>Remove recipient?</h3><button class="x" onclick="closeDel()">✕</button></div>
+    <div class="mh"><h3>Remove loved one?</h3><button class="x" onclick="closeDel()">✕</button></div>
     <div class="mb">
       <div class="del-warn">⚠</div>
       <p id="del-msg" style="color:var(--muted)"></p>
     </div>
-    <div class="mfoot"><button class="btn ghost" onclick="closeDel()">Cancel</button><button class="btn danger" onclick="confirmDel()">Remove recipient</button></div>
+    <div class="mfoot"><button class="btn ghost" onclick="closeDel()">Cancel</button><button class="btn danger" onclick="confirmDel()">Remove loved one</button></div>
   </div>
 </div>
 
@@ -631,9 +671,13 @@
   <div class="modal">
     <div class="mh"><h3>Sign your giftor documents <span class="ds-brand">DocuSign</span></h3><button class="x" onclick="closeDs()">✕</button></div>
     <div class="mb">
-      <p class="ds-intro" id="ds-intro">Review and sign the giftor authorization to send this invitation.</p>
-      <div style="font-size:11.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--faint);font-weight:600;margin-bottom:6px">Invitations covered by this signature</div>
-      <div id="ds-list" style="margin-bottom:16px;border:1px solid var(--border);border-radius:10px;padding:2px 12px"></div>
+      <p class="ds-intro">Sign your Kai-Zen giftor documents. This one-time signature lets you add and invite your loved ones — you won't need to sign again when you send.</p>
+      <div style="font-size:11.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--faint);font-weight:600;margin-bottom:6px">Documents in this envelope</div>
+      <div style="margin-bottom:16px;border:1px solid var(--border);border-radius:10px;padding:2px 12px">
+        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #F0F3F7;font-size:13.5px"><span>Giftor authorization</span><span style="color:var(--faint)">Required</span></div>
+        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #F0F3F7;font-size:13.5px"><span>Trust acknowledgment</span><span style="color:var(--faint)">Required</span></div>
+        <div style="display:flex;justify-content:space-between;padding:7px 0;font-size:13.5px"><span>Funding agreement</span><span style="color:var(--faint)">Required</span></div>
+      </div>
       <div class="ds-doc">
         <div class="ds-line" style="width:55%"></div>
         <div class="ds-line"></div>
@@ -643,7 +687,7 @@
         <div class="ds-cap">Greatest Wealth Transfer — Giftor authorization</div>
       </div>
     </div>
-    <div class="mfoot"><button class="btn ghost" onclick="closeDs()">Cancel</button><button class="btn" onclick="confirmSign()">Adopt and sign</button></div>
+    <div class="mfoot"><button class="btn ghost" onclick="closeDs()">Cancel</button><button class="btn" onclick="signDocsComplete()">Adopt and sign</button></div>
   </div>
 </div>
 
@@ -696,16 +740,16 @@
     {first:'Riley',last:'Foster',email:'riley.foster@example.com',rel:'Nephew',amount:'30,000'}
   ];
   var sampleIx=0, editId=null, delId=null, seq=100;
-  var selected=[]; var pendingBatch=[]; var pendingTip=[]; var estId=null; var giftorDone=false;
+  var selected=[]; var pendingBatch=[]; var pendingTip=[]; var estId=null; var giftorDone=false; var docsSigned=false; var cardMode='default'; var smSel=[];
   var invF={q:'',status:'all'};
   var state=[
-    {id:1,first:'Jordan',last:'Rivera',email:'jordan.rivera@example.com',amount:'25,000',rel:'Daughter',status:'invited',invitedOn:'Jul 12, 2026',acct:'created',enr:'progress',pol:'pending',illRun:true,illDate:'Jul 12, 2026'},
-    {id:2,first:'Morgan',last:'Ellis',email:'morgan.ellis@example.com',amount:'25,000',rel:'Son',status:'invited',invitedOn:'Jul 10, 2026',acct:'created',enr:'none',pol:'none'},
-    {id:3,first:'Priya',last:'Shah',email:'priya.shah@example.com',amount:'15,000',rel:'Granddaughter',status:'invited',invitedOn:'Jun 28, 2026',acct:'created',enr:'complete',pol:'active'},
-    {id:4,first:'Chris',last:'Diaz',email:'chris.diaz@example.com',amount:'10,000',rel:'Nephew',status:'invited',invitedOn:'Jul 14, 2026',acct:'invited',enr:'none',pol:'none'},
+    {id:1,first:'Jordan',last:'Rivera',email:'jordan.rivera@example.com',amount:'25,000',rel:'Daughter',status:'invited',invitedOn:'Jul 12, 2026',acct:'created',enr:'step2',pol:'quoted',illRun:true,illDate:'Jul 12, 2026'},
+    {id:2,first:'Morgan',last:'Ellis',email:'morgan.ellis@example.com',amount:'25,000',rel:'Son',status:'invited',invitedOn:'Jul 10, 2026',acct:'created',enr:'step1',pol:'proposed'},
+    {id:3,first:'Priya',last:'Shah',email:'priya.shah@example.com',amount:'15,000',rel:'Granddaughter',status:'invited',invitedOn:'Jun 28, 2026',acct:'created',enr:'complete',pol:'inforce'},
+    {id:4,first:'Chris',last:'Diaz',email:'chris.diaz@example.com',amount:'10,000',rel:'Nephew',status:'invited',invitedOn:'Jul 14, 2026',acct:'inreview',enr:'notstarted',pol:'proposed'},
     {id:5,first:'Sam',last:'Carter',email:'sam.carter@example.com',amount:'25,000',rel:'Son',status:'draft'},
     {id:6,first:'Alex',last:'Nguyen',email:'alex.nguyen@example.com',amount:'10,000',rel:'Grandchild',status:'draft'},
-    {id:7,first:'Dana',last:'Kim',email:'dana.kim@example.com',amount:'5,000',rel:'Granddaughter',status:'later'}
+    {id:7,first:'Dana',last:'Kim',email:'dana.kim@example.com',amount:'5,000',rel:'Granddaughter',status:'draft'}
   ];
 
   var addIx=0;
@@ -713,9 +757,10 @@
     ['ar-first','ar-last','ar-email','ar-cell','ar-dob','ar-amt'].forEach(function(id){var e=document.getElementById(id); if(e){e.value='';e.style.borderColor='';}});
     ['ar-gender','ar-health','ar-rel'].forEach(function(id){document.getElementById(id).selectedIndex=0;});
     document.getElementById('ar-begin').value='65'; document.getElementById('ar-end').value='90';
+    editId=null; document.getElementById('add-title').textContent='Add a loved one';
     addBack(); document.getElementById('addOverlay').classList.add('show');
   }
-  function closeAdd(){ document.getElementById('addOverlay').classList.remove('show'); }
+  function closeAdd(){ document.getElementById('addOverlay').classList.remove('show'); editId=null; }
   function addAutofill(){ var sp=SAMPLES[addIx%SAMPLES.length]; addIx++;
     document.getElementById('ar-first').value=sp.first; document.getElementById('ar-last').value=sp.last;
     document.getElementById('ar-email').value=sp.email; document.getElementById('ar-cell').value='(555) 010-'+(1000+addIx);
@@ -747,14 +792,18 @@
     },1100);
   }
   function confirmAdd(){
-    var nm=document.getElementById('ar-first').value.trim();
-    state.push({id:++seq, first:nm, last:document.getElementById('ar-last').value.trim(),
-      email:document.getElementById('ar-email').value.trim(), amount:fmtMoney(document.getElementById('ar-amt').value),
-      rel:document.getElementById('ar-rel').value, status:'draft', illRun:true, illDate:'Jul 15, 2026' });
+    var eid=editId;
+    var rec={ first:val('ar-first'), last:val('ar-last'), email:val('ar-email'),
+      amount:fmtMoney(document.getElementById('ar-amt').value), rel:document.getElementById('ar-rel').value,
+      cell:val('ar-cell'), dob:val('ar-dob'), gender:document.getElementById('ar-gender').value,
+      health:document.getElementById('ar-health').value, begin:document.getElementById('ar-begin').value,
+      end:document.getElementById('ar-end').value, illRun:true, illDate:'Jul 15, 2026' };
+    if(eid!=null){ var r=find(eid); for(var k in rec){ r[k]=rec[k]; } closeAdd(); render(); toast((r.first||'Loved one')+"'s details updated"); return; }
+    rec.id=++seq; rec.status='draft'; state.push(rec);
     closeAdd(); render();
-    var disp=nm||'This recipient';
+    var disp=rec.first||'This loved one';
     document.getElementById('cf-name').textContent=disp;
-    document.getElementById('cf-body').innerHTML="You've reviewed <b>"+disp+"</b>'s details and their sample illustration. They've now moved to your <b>Recipients to invite</b> list below. When you're ready, check the box next to their name and send the invitation \u2014 you'll sign once in DocuSign to send. <b>Nothing has been sent yet.</b>";
+    document.getElementById('cf-body').innerHTML="You've reviewed <b>"+disp+"</b>'s details and their sample illustration. They've now moved to your <b>Loved ones to invite</b> list below. When you're ready, check the box next to their name and send the invitation \u2014 you'll sign once in DocuSign to send. <b>Nothing has been sent yet.</b>";
     document.getElementById('confirmedOverlay').classList.add('show');
   }
   function closeConfirmed(){ document.getElementById('confirmedOverlay').classList.remove('show'); }
@@ -826,10 +875,10 @@
     if(propEditId==null||propPending==null) return;
     var g=propPending;
     var r=find(propEditId); r.amount=g.toLocaleString(); r.illRun=true; r.illDate='Jul 15, 2026'; r.linkStale=true;
-    var nm=(r.first||'This recipient');
+    var nm=(r.first||'This loved one');
     propPending=null;
     closeProposal(); render();
-    document.getElementById('ct-body').innerHTML="<b>"+nm+"</b>'s contribution has been updated to <b>$"+g.toLocaleString()+"</b>. Their sample illustration was recalculated to match, and the new amount now shows on their row in <b>Recipients to invite</b>.<br><br><b>Nothing has been sent yet.</b> When you're ready, check the box next to their name and send the invitation — you'll sign once in DocuSign, then it goes to NIW for admin review before your loved one is notified.";
+    document.getElementById('ct-body').innerHTML="<b>"+nm+"</b>'s contribution has been updated to <b>$"+g.toLocaleString()+"</b>. Their sample illustration was recalculated to match, and the new amount now shows on their row in <b>Loved ones to invite</b>.<br><br><b>Nothing has been sent yet.</b> When you're ready, check the box next to their name and send the invitation — you'll sign once in DocuSign, then it goes to NIW for admin review before your loved one is notified.";
     document.getElementById('contribOverlay').classList.add('show');
   }
   function revertContrib(){
@@ -849,25 +898,40 @@
   function find(id){ return state.filter(function(r){return r.id===id;})[0]; }
   function linkFor(r){ return r.link||('https://gwtg2.simplicityniw.com/i/'+r.id); }
 
-  function openDs(ids){ pendingBatch=ids.slice();
-    document.getElementById('ds-list').innerHTML=pendingBatch.map(function(id){var r=find(id);return '<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #F0F3F7;font-size:13.5px"><span>'+r.first+' '+r.last+' <span style="color:var(--faint)">('+(r.rel||'recipient')+')</span></span><span style="font-weight:600">$'+r.amount+'</span></div>';}).join('');
-    document.getElementById('ds-intro').textContent=pendingBatch.length>1?('Review and sign one authorization to send all '+pendingBatch.length+' invitations at once.'):'Review and sign the giftor authorization to send this invitation.';
-    document.getElementById('dsOverlay').classList.add('show'); }
+  function openSignDocs(){ if(!giftorDone){ toast('Complete your giftor details first'); return; } document.getElementById('dsOverlay').classList.add('show'); }
+  function signDocsComplete(){ docsSigned=true;
+    document.getElementById('dsOverlay').classList.remove('show');
+    applyGates(); render();
+    document.getElementById('sg-title').textContent='Documents signed';
+    document.getElementById('sg-body').innerHTML="You've signed your Kai-Zen giftor documents.<br><br>You can now <b>add your loved ones</b> and <b>send invitations</b> with one click — no more signing needed. When you send, each invitation goes to <b>NIW for admin review</b> before your loved one is notified.";
+    document.getElementById('signedOverlay').classList.add('show'); }
+  function sendNow(ids){ var n=ids.length; ids.forEach(function(id){var r=find(id); if(!r)return; r.status='invited'; r.acct='inreview'; r.enr='notstarted'; r.pol='proposed'; r.invitedOn='Jul 15, 2026'; r.link=linkFor(r);});
+    pendingTip=[]; selected=[]; render();
+    var who=n>1?(n+' loved ones'):'your loved one';
+    document.getElementById('sg-title').textContent='Sent for review';
+    document.getElementById('sg-body').innerHTML="Your invitation for <b>"+who+"</b> is now with <b>NIW for admin review</b> — shown under <b>Invited loved ones</b> as <b>In Review</b>. Nothing is sent to "+(n>1?'your loved ones':'your loved one')+" until we approve it. Once approved, we email "+(n>1?'each of them':'them')+" to begin their Kai-Zen application and the status moves to <b>Invited</b>.";
+    document.getElementById('signedOverlay').classList.add('show'); }
   function pendingCount(){ return state.filter(function(r){return r.status==='draft'||r.status==='later';}).length; }
   function requestSend(ids){
-    if(!giftorDone){ openGiftor(); toast('Please verify your giftor details first'); return; }
+    if(!docsSigned){ toast('Sign your documents first'); var sc=document.getElementById('signCard'); if(sc) sc.scrollIntoView({behavior:'smooth',block:'center'}); return; }
     if(ids.length===1 && pendingCount()>1){ pendingTip=ids.slice(); var r=find(ids[0]);
-      document.getElementById('tip-msg').innerHTML='You have <b>'+pendingCount()+'</b> loved ones lined up. You can check the box next to several — including anyone in Invite later — and send them together, signing in DocuSign only <b>once</b> for the whole group.<br><br>Continue with just <b>'+r.first+' '+r.last+'</b>, or go back and select more?';
+      document.getElementById('tip-msg').innerHTML='You have <b>'+pendingCount()+'</b> loved ones lined up. Check the box next to several and send them together.<br><br>Continue with just <b>'+r.first+' '+r.last+'</b>, or go back and select more?';
       document.getElementById('tipOverlay').classList.add('show'); }
-    else { openDs(ids); } }
-  function tipContinue(){ document.getElementById('tipOverlay').classList.remove('show'); openDs(pendingTip); }
+    else { sendNow(ids); } }
+  function tipContinue(){ document.getElementById('tipOverlay').classList.remove('show'); sendNow(pendingTip); }
   function closeTip(){ document.getElementById('tipOverlay').classList.remove('show'); pendingTip=[]; }
   function sendInvite(id){ requestSend([id]); }
   function sendSelected(){ if(!selected.length) return; requestSend(selected); }
-  function closeDs(){ document.getElementById('dsOverlay').classList.remove('show'); pendingBatch=[]; }
-  function confirmSign(){ var n=pendingBatch.length; pendingBatch.forEach(function(id){var r=find(id); if(!r)return; r.status='review'; r.signedOn='Jul 15, 2026'; r.link=linkFor(r);});
-    document.getElementById('dsOverlay').classList.remove('show'); pendingBatch=[]; selected=[]; render(); toast(n>1?(n+' sent to our team for review'):'Signed — sent to our team for review'); }
-  function clearedByAdmin(id){ var r=find(id); r.status='invited'; r.invitedOn='Jul 15, 2026'; r.acct='invited'; r.enr='none'; r.pol='none'; render(); toast(r.first+' cleared — moved to Invited loved ones'); }
+  function closeDs(){ document.getElementById('dsOverlay').classList.remove('show'); }
+  function closeSigned(){ document.getElementById('signedOverlay').classList.remove('show'); }
+  var KIDDOS=[{first:'Ethan',rel:'Son'},{first:'Ava',rel:'Daughter'},{first:'Liam',rel:'Son'},{first:'Mia',rel:'Daughter'},{first:'Noah',rel:'Grandson'},{first:'Sofia',rel:'Granddaughter'},{first:'Olivia',rel:'Daughter'},{first:'Lucas',rel:'Son'}];
+  function agentKidsDemo(){
+    var pool=KIDDOS.slice(), amts=['10,000','15,000','20,000','25,000'];
+    for(var i=0;i<2;i++){ var k=pool.splice(Math.floor(Math.random()*pool.length),1)[0];
+      state.push({id:++seq,first:k.first,last:'Austin',email:(k.first+'.austin@example.com').toLowerCase(),amount:amts[Math.floor(Math.random()*amts.length)],rel:k.rel,status:'draft',illRun:true,illDate:'Jul 15, 2026'}); }
+    render(); toast('Agent added 2 loved ones to invite');
+  }
+  function clearedByAdmin(id){ var r=find(id); r.acct='invited'; render(); toast(r.first+' approved by admin — invitation sent'); }
   function toggleSel(id){ var i=selected.indexOf(id); if(i>=0)selected.splice(i,1); else selected.push(id); render(); }
   function selAllSection(status,chk){ var ids=state.filter(function(r){return r.status===status;}).map(function(r){return r.id;});
     ids.forEach(function(id){ var i=selected.indexOf(id); if(chk&&i<0)selected.push(id); if(!chk&&i>=0)selected.splice(i,1); }); render(); }
@@ -875,6 +939,10 @@
   function selAllLater(chk){ selAllSection('later',chk); }
   function clearSel(){ selected=[]; render(); }
   function toggleSecDev(id){ var p=document.getElementById(id); if(p) p.style.display=p.style.display==='none'?'block':'none'; }
+  function showOpt(x){ var t=document.getElementById('opt-'+x); var open=t.style.display!=='none';
+    ['a','b','c'].forEach(function(k){ document.getElementById('opt-'+k).style.display='none'; document.getElementById('optb-'+k).classList.remove('active'); });
+    if(!open){ t.style.display='block'; document.getElementById('optb-'+x).classList.add('active'); }
+    cardMode = !open ? ('opt'+x.toUpperCase()) : 'default'; render(); }
   function clearData(section){
     if(section==='draft'){ state=state.filter(function(r){return !(r.status==='draft'||r.status==='review');}); }
     else if(section==='later'){ state=state.filter(function(r){return r.status!=='later';}); }
@@ -884,8 +952,16 @@
   function toggleGiftor(){ setGiftorOpen(document.getElementById('giftorBody').style.display==='none'); }
   function openGiftor(){ setGiftorOpen(true); document.getElementById('giftorCard').scrollIntoView({behavior:'smooth',block:'start'}); }
   var giftorSaved='';
-  function setLock(locked){ var lb=document.getElementById('lockbar'); if(lb) lb.classList.toggle('show',locked);
-    ['addCard','draftCard','laterCard'].forEach(function(id){ var el=document.getElementById(id); if(el) el.classList.toggle('locked',locked); }); }
+  function applyGates(){
+    var ac=document.getElementById('addCard'); if(ac) ac.classList.toggle('locked', !(giftorDone&&docsSigned));
+    var alb=document.getElementById('add-loved-btn'); if(alb) alb.disabled=!(giftorDone&&docsSigned);
+    ['draftCard','laterCard'].forEach(function(id){ var el=document.getElementById(id); if(el) el.classList.remove('locked'); });
+    var sb=document.getElementById('g-signbtn'); if(sb) sb.style.display=(giftorDone&&!docsSigned)?'inline-flex':'none';
+    var sg=document.getElementById('g-signed'); if(sg) sg.style.display=docsSigned?'inline-flex':'none';
+    var lb=document.getElementById('lockbar');
+    if(lb){ if(!giftorDone){ lb.textContent='🔒 Complete your giftor details above to continue.'; lb.classList.add('show'); }
+      else if(!docsSigned){ lb.textContent='🔒 Sign your documents on the details card above to unlock adding and inviting your loved ones.'; lb.classList.add('show'); }
+      else { lb.classList.remove('show'); } } }
   function fillGiftorFields(){ if(giftorSaved) document.getElementById('giftorBody').innerHTML=giftorSaved; }
   function clearGiftorFields(){ var b=document.getElementById('giftorBody');
     b.querySelectorAll('input').forEach(function(i){ if(i.type==='checkbox') i.checked=false; else i.value=''; });
@@ -894,16 +970,16 @@
     var st=document.getElementById('g-status'); st.className='g-done'; st.innerHTML='<i></i>Completed';
     document.getElementById('g-sub').textContent='Completed Jul 15, 2026 — click to review or update.';
     var d=document.getElementById('g-demo'); if(d) d.innerHTML='🗑 Remove data (demo)';
-    setGiftorOpen(false); setLock(false); }
+    setGiftorOpen(false); applyGates(); }
   function markIncomplete(){ giftorDone=false;
     var st=document.getElementById('g-status'); st.className='pill later'; st.innerHTML='<i></i>Missing information';
     document.getElementById('g-sub').textContent='Confirm your information — required before you can send any invitations. Your agent pre-filled what we have on file.';
     var d=document.getElementById('g-demo'); if(d) d.innerHTML='⚡ Auto-fill (demo)';
-    setGiftorOpen(true); setLock(true); }
+    docsSigned=false; setGiftorOpen(true); applyGates(); }
   function verifyGiftor(){ markComplete(); toast('Giftor details verified'); }
   function demoToggle(){ if(!giftorDone){ fillGiftorFields(); markComplete(); toast('Auto-filled — giftor details completed'); } else { clearGiftorFields(); markIncomplete(); toast('Giftor data removed'); } }
   function moveLater(id){ find(id).status='later'; render(); toast('Moved to Invite later'); }
-  function moveDraft(id){ find(id).status='draft'; render(); toast('Moved to Recipients to invite'); }
+  function moveDraft(id){ find(id).status='draft'; render(); toast('Moved to Loved ones to invite'); }
   function selBarHtml(){ return selected.length?('<div class="selbar"><span class="st">'+selected.length+' selected</span><span class="sr"><button class="clr" onclick="clearSel()">Clear selection'+(selected.length>1?'s':'')+'</button><button class="btn sm" onclick="sendSelected()">Send '+selected.length+' invitation'+(selected.length>1?'s':'')+'</button></span></div>'):''; }
 
   function copyLink(id){
@@ -917,15 +993,20 @@
   function resend(id){ toast('Invitation resent to '+find(id).first); }
 
   function del(id){ delId=id; var r=find(id);
-    document.getElementById('del-msg').innerHTML="You're about to remove <b>"+r.first+" "+r.last+"</b> from your recipients. This can't be undone.";
+    document.getElementById('del-msg').innerHTML="You're about to remove <b>"+r.first+" "+r.last+"</b> from your loved ones. This can't be undone.";
     document.getElementById('delOverlay').classList.add('show'); }
   function closeDel(){ document.getElementById('delOverlay').classList.remove('show'); delId=null; }
-  function confirmDel(){ var r=find(delId); state=state.filter(function(x){return x.id!==delId;}); document.getElementById('delOverlay').classList.remove('show'); render(); toast((r?r.first:'Recipient')+' removed'); delId=null; }
+  function confirmDel(){ var r=find(delId); state=state.filter(function(x){return x.id!==delId;}); document.getElementById('delOverlay').classList.remove('show'); render(); toast((r?r.first:'Loved one')+' removed'); delId=null; }
 
   function openEdit(id){ var r=find(id); editId=id;
-    document.getElementById('e-first').value=r.first; document.getElementById('e-last').value=r.last;
-    document.getElementById('e-email').value=r.email; document.getElementById('e-amt').value='$'+r.amount;
-    document.getElementById('editOverlay').classList.add('show'); }
+    document.getElementById('ar-first').value=r.first||''; document.getElementById('ar-last').value=r.last||'';
+    document.getElementById('ar-email').value=r.email||''; document.getElementById('ar-cell').value=r.cell||'';
+    document.getElementById('ar-dob').value=r.dob||''; document.getElementById('ar-gender').value=r.gender||'';
+    document.getElementById('ar-amt').value=r.amount?('$'+r.amount):''; document.getElementById('ar-health').value=r.health||'';
+    document.getElementById('ar-rel').value=r.rel||''; document.getElementById('ar-begin').value=r.begin||'65';
+    document.getElementById('ar-end').value=r.end||'90';
+    document.getElementById('add-title').textContent="Edit loved one's details";
+    addBack(); document.getElementById('addOverlay').classList.add('show'); }
   function closeEdit(){ document.getElementById('editOverlay').classList.remove('show'); }
   function saveEdit(){ var r=find(editId);
     r.first=document.getElementById('e-first').value; r.last=document.getElementById('e-last').value;
@@ -957,10 +1038,11 @@
 
   var PSTAT={notstarted:['Not started','ps-gray'],created:['Account created','ps-blue'],progress:['Application started','ps-amber'],submitted:['Submitted for review','ps-purple'],approved:['Approved / active','ps-green']};
   function pstatPill(p){ var m=PSTAT[p]||PSTAT.notstarted; return '<span class="pill '+m[1]+'"><i></i>'+m[0]+'</span>'; }
-  var ACCT={invited:['Invited','ps-gray'],opened:['Opened Invite','ps-blue'],created:['Account Created','ps-green'],disabled:['Disabled','ps-red']};
-  var ENR={none:['Not Started','ps-gray'],progress:['In Progress','ps-amber'],submitted:['Submitted','ps-purple'],complete:['Enrollment Completed','ps-green']};
-  var POL={none:['Not Started','ps-gray'],pending:['Pending','ps-amber'],active:['Approved / Active','ps-green'],inactive:['Inactive','ps-gray'],meddecline:['Medically Declined','ps-red'],cltdecline:['Client Declined','ps-red']};
+  var ACCT={inreview:['In Review','ps-amber'],invited:['Invited','ps-gray'],opened:['Opened Invite','ps-blue'],created:['Account Created','ps-green'],disabled:['Disabled','ps-red']};
+  var ENR={notstarted:['Not Started','ps-gray'],step1:['In Progress — Basic Info','ps-amber'],step2:['In Progress — Application','ps-amber'],step3:['In Progress — Proposal','ps-amber'],step4:['In Progress — Final Docs','ps-amber'],complete:['Enrollment Completed','ps-green']};
+  var POL={proposed:['Proposed','ps-amber'],design:['Design','ps-amber'],quoted:['Quoted','ps-amber'],paymentrec:['Payment Received','ps-amber'],casesubmitted:['Case Submitted','ps-amber'],inforce:['In-Force','ps-green'],inforceoverride:['In-Force-Override','ps-green'],meddecline:['Medically Declined','ps-red'],cltdecline:['Client Declined','ps-red'],inactive:['Inactive','ps-red'],surrendered:['Surrendered','ps-gray'],deceased:['Deceased','ps-gray']};
   function stPill(map,k){ var m=map[k]||map[Object.keys(map)[0]]; return '<span class="pill '+m[1]+'"><i></i>'+m[0]+'</span>'; }
+  function policyCell(r){ var pre=['proposed','design','quoted','paymentrec','casesubmitted']; return pre.indexOf(r.pol)>=0 ? '' : stPill(POL,r.pol); }
   function illCell(r){ return r.illRun
     ? '<button class="linkcell" onclick="viewIll('+r.id+')">▤ View sample illustration</button><div style="color:var(--faint);font-size:11.5px;margin-top:3px">Sample · '+r.illDate+'</div>'
     : '<button class="linkcell" onclick="openEst('+r.id+')">▤ Run illustration</button>'; }
@@ -969,21 +1051,15 @@
     var sel=selected.indexOf(r.id)>=0;
     var later=r.status==='later';
     var pill=later?'<span class="pill later"><i></i>Invite later</span>':'<span class="pill draft"><i></i>Draft</span>';
-    var mover=later?'<button class="ia" onclick="moveDraft('+r.id+')">↑ Move to Recipients</button>':'<button class="ia" onclick="moveLater('+r.id+')">◷ Invite later</button>';
-    var menu='<div class="rowmenu" id="menu-'+r.id+'">'
-      +'<button onclick="openEdit('+r.id+');closeRowMenus()">✎ Edit</button>'
-      +'<button onclick="'+(later?'moveDraft':'moveLater')+'('+r.id+');closeRowMenus()">'+(later?'↑ Move to Recipients':'◷ Invite later')+'</button>'
-      +'<div class="sepm"></div>'
-      +'<button class="del" onclick="del('+r.id+');closeRowMenus()">🗑 Delete</button></div>';
-    var acts='<button class="ia" onclick="openProposalFor('+r.id+')">▤ View illustration</button>'
-      +'<button class="btn sm"'+(sel?'':' disabled title="Check the box to enable"')+' onclick="sendInvite('+r.id+')">Send invite</button>'
-      +'<span class="kwrap" style="position:relative"><button class="ia kebab" onclick="toggleRowMenu('+r.id+',event)" title="More actions">⋮</button>'+menu+'</span>';
+    var acts='<button class="ia" onclick="openProposalFor('+r.id+')">▤ View / edit illustration</button>'
+      +'<button class="btn sm"'+(docsSigned?'':' disabled title="Sign your documents first"')+' onclick="sendInvite('+r.id+')">Send invite</button>'
+      +'<button class="ia del" onclick="del('+r.id+')">🗑 Delete</button>';
     var main='<tr class="rrow">'
       +'<td style="width:26px"><input type="checkbox" class="cbx" '+(sel?'checked':'')+' onclick="toggleSel('+r.id+')"></td>'
       +'<td style="width:22px"><button class="expand" id="chev-'+r.id+'" onclick="toggleExp('+r.id+')">›</button></td>'
-      +'<td><div class="rname">'+r.first+' '+r.last+'</div><div class="rrel">'+(r.rel||'')+'</div></td>'
+      +'<td><div class="rname">'+r.first+' '+r.last+'</div><div class="rrel">'+(r.rel||'')+'</div><button class="ia" style="font-size:12px;margin-top:3px" onclick="openEdit('+r.id+')">✎ Edit</button></td>'
       +'<td class="email">'+r.email+'</td>'
-      +'<td class="amt">$'+r.amount+'</td>'
+      +'<td class="amt"><button class="amtlink" onclick="openProposalFor('+r.id+')" title="View / edit illustration">$'+r.amount+'</button></td>'
       +'<td><div class="acts">'+acts+'</div></td></tr>';
     var det='<tr class="exp-row" id="exp-'+r.id+'" style="display:none"><td colspan="6"><div class="exp-in">'
       +'<div><div class="k">Relationship</div><div class="v">'+relTxt+'</div></div>'
@@ -995,9 +1071,12 @@
 
   function invitedRow(r){
     var relTxt=r.rel?r.rel:'Not set';
-    var acts='<button class="ia" onclick="copyLink('+r.id+')">⧉ Copy invitation link</button>'
-      +'<button class="ia" onclick="resend('+r.id+')">↻ Resend</button>'
-      +'<button class="ia" onclick="openEdit('+r.id+')">✎ Edit</button>';
+    var acts = (r.acct==='inreview')
+      ? '<button class="btn ghost sm" onclick="clearedByAdmin('+r.id+')" title="Demo — simulate NIW admin approval">✓ Cleared by admin</button>'
+        +'<button class="ia" onclick="openEdit('+r.id+')">✎ Edit</button>'
+      : '<button class="ia" onclick="copyLink('+r.id+')">⧉ Copy invitation link</button>'
+        +'<button class="ia" onclick="resend('+r.id+')">↻ Resend</button>'
+        +'<button class="ia" onclick="openEdit('+r.id+')">✎ Edit</button>';
     var main='<tr class="rrow">'
       +'<td style="width:22px"><button class="expand" id="chev-'+r.id+'" onclick="toggleExp('+r.id+')">›</button></td>'
       +'<td><div class="rname">'+r.first+' '+r.last+'</div><div class="rrel">'+(r.rel||'')+'</div></td>'
@@ -1005,7 +1084,7 @@
       +'<td class="amt">$'+r.amount+'</td>'
       +'<td>'+stPill(ACCT,r.acct)+'</td>'
       +'<td>'+stPill(ENR,r.enr)+'</td>'
-      +'<td>'+stPill(POL,r.pol)+'</td>'
+      +'<td>'+policyCell(r)+'</td>'
       +'<td><div class="acts">'+acts+'</div></td></tr>';
     var det='<tr class="exp-row" id="exp-'+r.id+'" style="display:none"><td colspan="8"><div class="exp-in">'
       +'<div><div class="k">Relationship</div><div class="v">'+relTxt+'</div></div>'
@@ -1027,13 +1106,93 @@
     var selectable=rows.filter(function(r){return r.status!=='review';});
     var allsel=selectable.length&&selectable.every(function(r){return selected.indexOf(r.id)>=0;});
     var onchange=section==='later'?'selAllLater(this.checked)':'selAllDraft(this.checked)';
-    var head='<table><thead><tr><th style="width:26px"><input type="checkbox" class="cbx" '+(allsel?'checked':'')+' onclick="'+onchange+'"></th><th style="width:22px"></th><th>Recipient</th><th>Email</th><th>Gift amount</th><th style="text-align:right">Actions</th></tr></thead><tbody>';
+    var head='<table><thead><tr><th style="white-space:nowrap"><label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-size:10.5px;font-weight:700;letter-spacing:.3px;color:var(--faint)"><input type="checkbox" class="cbx" '+(allsel?'checked':'')+' onclick="'+onchange+'"> SELECT ALL</label></th><th style="width:22px"></th><th>Loved one</th><th>Email</th><th>Gift amount</th><th style="text-align:right">Actions</th></tr></thead><tbody>';
     return selBarHtml()+head+rows.map(function(r){return r.status==='review'?reviewRow(r):inviteRow(r);}).join('')+'</tbody></table>';
   }
   function renderDraft(){
     var rows=state.filter(function(r){return r.status==='draft'||r.status==='review';});
     var el=document.getElementById('tbl-draft');
-    el.innerHTML=rows.length?sectionTable(rows,'draft'):'<div class="empty">No recipients waiting. Add a loved one above, or move someone up from Invite later.</div>';
+    if(!rows.length){ el.innerHTML='<div class="empty">No loved ones waiting. Add a loved one above.</div>'; return; }
+    if(cardMode==='optB'){ var btn='<div style="display:flex;justify-content:flex-end;padding:0 0 14px"><button class="btn"'+(docsSigned?'':' disabled title="Sign your documents first"')+' onclick="openSendModal()">＋ Send Invites</button></div>'; el.innerHTML=btn+sectionTableB(rows); }
+    else if(cardMode==='optC'){
+      var ready=rows.filter(function(r){return !r.saved;}), saved=rows.filter(function(r){return r.saved;});
+      var mainHtml=ready.length?sectionTableC(ready,false):'<div class="empty">No loved ones ready to invite. Move someone up from Saved for later, or add a loved one.</div>';
+      var savedHtml='<div class="saved-sub"><div class="saved-sub-h">🕓 Saved for later <span class="badge-ct" style="background:#EFEAF9;color:#5B3FA6">'+saved.length+'</span></div>'+(saved.length?sectionTableC(saved,true):'<div class="empty" style="padding:14px 0">No one saved for later yet. Use “Save for later” on a loved one above.</div>')+'</div>';
+      el.innerHTML=mainHtml+savedHtml;
+    }
+    else { var lbl=(cardMode==='optA')?'<div class="opta-label">📋 Select the loved ones you want to invite — check the box next to each, or use <b>Select all</b> at the top of the column.</div>':''; el.innerHTML=lbl+sectionTable(rows,'draft'); }
+  }
+  function sectionTableC(rows, saved){
+    if(saved){
+      var h='<table><thead><tr><th style="width:26px"></th><th style="width:22px"></th><th>Loved one</th><th>Email</th><th>Gift amount</th><th style="text-align:right">Actions</th></tr></thead><tbody>';
+      return h+rows.map(function(r){return inviteRowC(r,true);}).join('')+'</tbody></table>';
+    }
+    var allsel=rows.length&&rows.every(function(r){return selected.indexOf(r.id)>=0;});
+    var head='<table><thead><tr><th style="white-space:nowrap"><label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-size:10.5px;font-weight:700;letter-spacing:.3px;color:var(--faint)"><input type="checkbox" class="cbx" '+(allsel?'checked':'')+' onclick="selAllReadyC(this.checked)"> SELECT ALL</label></th><th style="width:22px"></th><th>Loved one</th><th>Email</th><th>Gift amount</th><th style="text-align:right">Actions</th></tr></thead><tbody>';
+    return selBarHtml()+head+rows.map(function(r){return inviteRowC(r,false);}).join('')+'</tbody></table>';
+  }
+  function inviteRowC(r, saved){
+    var sel=selected.indexOf(r.id)>=0;
+    var acts = saved
+      ? '<button class="ia" onclick="openProposalFor('+r.id+')">▤ View / edit illustration</button>'+'<button class="ia" onclick="unsaveLoved('+r.id+')">↑ Move to invite</button>'+'<button class="ia del" onclick="del('+r.id+')">🗑 Delete</button>'
+      : '<button class="ia" onclick="openProposalFor('+r.id+')">▤ View / edit illustration</button>'+'<button class="btn sm"'+(docsSigned?'':' disabled title="Sign your documents first"')+' onclick="sendInvite('+r.id+')">Send invite</button>'+'<button class="ia" onclick="saveLoved('+r.id+')">🕓 Save for later</button>'+'<button class="ia del" onclick="del('+r.id+')">🗑 Delete</button>';
+    var cbx = saved ? '<td style="width:26px"></td>' : '<td style="width:26px"><input type="checkbox" class="cbx" '+(sel?'checked':'')+' onclick="toggleSel('+r.id+')"></td>';
+    var main='<tr class="rrow">'+cbx
+      +'<td style="width:22px"><button class="expand" id="chev-'+r.id+'" onclick="toggleExp('+r.id+')">›</button></td>'
+      +'<td><div class="rname">'+r.first+' '+r.last+'</div><div class="rrel">'+(r.rel||'')+'</div><button class="ia" style="font-size:12px;margin-top:3px" onclick="openEdit('+r.id+')">✎ Edit</button></td>'
+      +'<td class="email">'+r.email+'</td>'
+      +'<td class="amt"><button class="amtlink" onclick="openProposalFor('+r.id+')" title="View / edit illustration">$'+r.amount+'</button></td>'
+      +'<td><div class="acts">'+acts+'</div></td></tr>';
+    var det='<tr class="exp-row" id="exp-'+r.id+'" style="display:none"><td colspan="6"><div class="exp-in">'
+      +'<div><div class="k">Relationship</div><div class="v">'+(r.rel||'Not set')+'</div></div>'
+      +'<div><div class="k">Illustration</div><div class="v">'+illCell(r)+'</div></div>'
+      +'</div></td></tr>';
+    return main+det;
+  }
+  function saveLoved(id){ var r=find(id); r.saved=true; var i=selected.indexOf(id); if(i>=0)selected.splice(i,1); render(); toast(r.first+' saved for later'); }
+  function unsaveLoved(id){ var r=find(id); r.saved=false; render(); toast(r.first+' moved to ready to invite'); }
+  function selAllReadyC(chk){ var ids=state.filter(function(r){return r.status==='draft'&&!r.saved;}).map(function(r){return r.id;}); ids.forEach(function(id){ var i=selected.indexOf(id); if(chk&&i<0)selected.push(id); if(!chk&&i>=0)selected.splice(i,1); }); render(); }
+  function sectionTableB(rows){
+    var head='<table><thead><tr><th style="width:22px"></th><th>Loved one</th><th>Email</th><th>Gift amount</th><th style="text-align:right">Actions</th></tr></thead><tbody>';
+    return head+rows.map(function(r){return r.status==='review'?reviewRow(r):inviteRowB(r);}).join('')+'</tbody></table>';
+  }
+  function inviteRowB(r){
+    var relTxt=r.rel?r.rel:'Not set';
+    var acts='<button class="ia" onclick="openProposalFor('+r.id+')">▤ View / edit illustration</button>'
+      +'<button class="ia del" onclick="del('+r.id+')">🗑 Delete</button>';
+    var main='<tr class="rrow">'
+      +'<td style="width:22px"><button class="expand" id="chev-'+r.id+'" onclick="toggleExp('+r.id+')">›</button></td>'
+      +'<td><div class="rname">'+r.first+' '+r.last+'</div><div class="rrel">'+(r.rel||'')+'</div><button class="ia" style="font-size:12px;margin-top:3px" onclick="openEdit('+r.id+')">✎ Edit</button></td>'
+      +'<td class="email">'+r.email+'</td>'
+      +'<td class="amt"><button class="amtlink" onclick="openProposalFor('+r.id+')" title="View / edit illustration">$'+r.amount+'</button></td>'
+      +'<td><div class="acts">'+acts+'</div></td></tr>';
+    var det='<tr class="exp-row" id="exp-'+r.id+'" style="display:none"><td colspan="5"><div class="exp-in">'
+      +'<div><div class="k">Relationship</div><div class="v">'+relTxt+'</div></div>'
+      +'<div><div class="k">Illustration</div><div class="v">'+illCell(r)+'</div></div>'
+      +'</div></td></tr>';
+    return main+det;
+  }
+  function openSendModal(){ if(!docsSigned){ toast('Sign your documents first'); return; } smSel=[]; document.getElementById('sm-all').checked=false; renderSendList(); updateSmConfirm(); document.getElementById('sendModalOverlay').classList.add('show'); }
+  function closeSendModal(){ document.getElementById('sendModalOverlay').classList.remove('show'); }
+  function smDrafts(){ return state.filter(function(r){return r.status==='draft';}); }
+  function renderSendList(){
+    document.getElementById('sm-list').innerHTML=smDrafts().map(function(r){ var on=smSel.indexOf(r.id)>=0;
+      return '<label style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 13px;border-bottom:1px solid #F0F3F7;cursor:pointer;font-size:14px"><span style="display:flex;align-items:center;gap:10px"><input type="checkbox" '+(on?'checked':'')+' onclick="smToggle('+r.id+')"> <b>'+r.first+' '+r.last+'</b> <span style="color:var(--faint);font-size:12.5px">'+(r.rel||'')+'</span></span><span style="font-weight:600">$'+r.amount+'</span></label>';
+    }).join('');
+  }
+  function smToggle(id){ var i=smSel.indexOf(id); if(i>=0)smSel.splice(i,1); else smSel.push(id); var rows=smDrafts(); document.getElementById('sm-all').checked=rows.length>0&&smSel.length===rows.length; updateSmConfirm(); renderSendList(); }
+  function smToggleAll(chk){ smSel=chk?smDrafts().map(function(r){return r.id;}):[]; updateSmConfirm(); renderSendList(); }
+  function updateSmConfirm(){ document.getElementById('sm-confirm').disabled=smSel.length===0; }
+  function confirmSendModal(){
+    if(!smSel.length) return;
+    var ids=smSel.slice(); var names=ids.map(function(id){var r=find(id);return r.first+' '+r.last;});
+    closeSendModal();
+    ids.forEach(function(id){var r=find(id); if(!r)return; r.status='invited'; r.acct='inreview'; r.enr='notstarted'; r.pol='proposed'; r.invitedOn='Jul 15, 2026'; r.link=linkFor(r);});
+    smSel=[]; render();
+    var n=ids.length;
+    document.getElementById('sg-title').textContent='Invitations sent for review';
+    document.getElementById('sg-body').innerHTML="<b>"+n+"</b> invitation"+(n>1?'s':'')+" "+(n>1?'are':'is')+" now with <b>NIW for admin review</b>:<ul style=\"margin:8px 0 10px;padding-left:20px;text-align:left\">"+names.map(function(nm){return '<li>'+nm+'</li>';}).join('')+"</ul>Nothing is sent to "+(n>1?'them':'your loved one')+" until we approve it. Once approved, we email "+(n>1?'each of them':'them')+" to begin their Kai-Zen application — track each under <b>Invited loved ones</b> as <b>In Review</b>.";
+    document.getElementById('signedOverlay').classList.add('show');
   }
   function renderLater(){
     var rows=state.filter(function(r){return r.status==='later';});
@@ -1055,16 +1214,15 @@
     });
     var el=document.getElementById('tbl-invited');
     if(!rows.length){ el.innerHTML='<div class="empty">No loved ones match. Try clearing the search or filter.</div>'; return; }
-    var head='<table><thead><tr><th style="width:22px"></th><th>Recipient</th><th>Email</th><th>Gift amount</th><th>Account status</th><th>Enrollment status</th><th>Policy status</th><th style="text-align:right">Actions</th></tr></thead><tbody>';
+    var head='<table><thead><tr><th style="width:22px"></th><th>Loved one</th><th>Email</th><th>Gift amount</th><th>Account status</th><th>Enrollment status</th><th>Policy status</th><th style="text-align:right">Actions</th></tr></thead><tbody>';
     el.innerHTML='<div style="overflow-x:auto">'+head+rows.map(invitedRow).join('')+'</tbody></table></div>';
   }
   function filterInvited(){ invF.q=document.getElementById('inv-search').value; invF.status=document.getElementById('inv-status').value; renderInvited(); }
 
   function render(){
-    selected=selected.filter(function(id){var r=find(id);return r&&(r.status==='draft'||r.status==='later');});
-    renderDraft(); renderLater(); renderInvited();
+    selected=selected.filter(function(id){var r=find(id);return r&&r.status==='draft';});
+    renderDraft(); renderInvited();
     document.getElementById('ct-draft').textContent=state.filter(function(r){return r.status==='draft'||r.status==='review';}).length;
-    document.getElementById('ct-later').textContent=state.filter(function(r){return r.status==='later';}).length;
     document.getElementById('ct-invited').textContent=state.filter(function(r){return r.status==='invited';}).length;
   }
   var toastT;
