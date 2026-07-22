@@ -109,6 +109,9 @@
   .g2-row{display:flex;justify-content:space-between;align-items:center;padding:10px 13px;border:1px solid #D9E6DD;background:#F3FBF6;border-radius:8px;margin-bottom:8px;font-size:14px}
   .g2-em{color:#8A94A3;font-size:12.5px} .g2-amt{font-weight:600;margin-right:10px}
   .g2-x{background:none;border:none;color:#B4231F;cursor:pointer;font-size:12px;font-weight:600}
+  .g2-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .g2-radios{display:flex;gap:18px;margin-top:4px;font-size:13.5px}
+  .g2-radios label{display:inline-flex;align-items:center;gap:6px;cursor:pointer}
 
   table.alloc{width:100%;border-collapse:collapse;margin-top:4px}
   table.alloc th{text-align:left;font-size:11px;letter-spacing:.4px;text-transform:uppercase;color:var(--faint);font-weight:600;padding:0 10px 9px;border-bottom:1px solid var(--border)}
@@ -334,12 +337,27 @@
           <label class="g2-opt"><input type="radio" name="g2mode" onclick="g2Mode('no')"> <div><b>No — send to the giftor</b><div class="g2-note">The giftor adds and invites their loved ones from their own portal after they're invited.</div></div></label>
           <div id="g2-add" style="display:none;margin-top:14px">
             <div id="g2-list"></div>
-            <div id="g2-form" class="g2-form">
-              <div class="fld"><label>First name</label><input id="l-first" placeholder="First name"></div>
-              <div class="fld"><label>Last name</label><input id="l-last" placeholder="Last name"></div>
-              <div class="fld"><label>Email</label><input id="l-email" placeholder="name@example.com"></div>
-              <div class="fld"><label>Gift amount</label><input id="l-amt" placeholder="$25,000"></div>
-              <button class="btn" onclick="addG2()">＋ Add loved one</button>
+            <div id="g2-form">
+              <div class="note blue" style="margin-bottom:12px">ⓘ Complete the fields below to run this loved one's illustration. Documents are optional — you can upload them now or the giftor can add them later.</div>
+              <div class="g2-grid">
+                <div class="fld"><label>First name *</label><input id="l-first" oninput="valG2()" placeholder="First name"></div>
+                <div class="fld"><label>Last name *</label><input id="l-last" oninput="valG2()" placeholder="Last name"></div>
+                <div class="fld"><label>Cell number *</label><input id="l-cell" oninput="valG2()" placeholder="(000) 000-0000"></div>
+                <div class="fld"><label>Email *</label><input id="l-email" oninput="valG2()" placeholder="name@example.com"></div>
+                <div class="fld"><label>Date of birth *</label><input id="l-dob" oninput="valG2()" placeholder="MM/DD/YYYY"></div>
+                <div class="fld"><label>Gender *</label><select id="l-gender" onchange="valG2()"><option value="">Select</option><option>Female</option><option>Male</option><option>Other</option></select></div>
+                <div class="fld"><label>Expected contribution *</label><input id="l-amt" oninput="valG2()" placeholder="$25,000"></div>
+                <div class="fld"><label>Health class *</label><select id="l-health" onchange="valG2()"><option value="">Select</option><option>Preferred Plus</option><option>Preferred</option><option>Standard Plus</option><option>Standard</option><option>Average health</option></select></div>
+                <div class="fld"><label>Relationship *</label><select id="l-rel" onchange="valG2()"><option value="">Select</option><option>Son</option><option>Daughter</option><option>Grandson</option><option>Granddaughter</option><option>Grandchild</option><option>Nephew</option><option>Niece</option><option>Other</option></select></div>
+                <div class="fld"><label>Distribution ages (begin / end) *</label><div style="display:flex;gap:8px;align-items:center"><input id="l-begin" value="65" style="width:64px"><span style="color:#8A94A3">to</span><input id="l-end" value="90" style="width:64px"></div></div>
+              </div>
+              <div class="fld" style="margin-top:12px"><label>Tobacco or marijuana use? *</label><div class="g2-radios"><label><input type="radio" name="l-tob"> Yes</label><label><input type="radio" name="l-tob" checked> No</label></div></div>
+              <div class="fld" style="margin-top:10px"><label>Financially independent, or the giftor's dependent? *</label><div class="g2-radios"><label><input type="radio" name="l-dep" onclick="setDep('ind')"> Financially independent</label><label><input type="radio" name="l-dep" checked onclick="setDep('dep')"> The giftor's dependent</label></div></div>
+              <div style="margin-top:16px;font-weight:600;font-size:13px;color:#1E2A38">Documents for this loved one <span style="font-weight:400;color:#8A94A3;font-size:12px">— optional</span></div>
+              <div class="grid2" style="margin-top:8px"><div class="upload" onclick="fakeUpload(this,'Driver license — front','id')">＋ Upload driver license (front)</div><div class="upload" onclick="fakeUpload(this,'Driver license — back','id')">＋ Upload driver license (back)</div></div>
+              <div id="l-taxwrap" style="display:none"><div class="grid2" style="margin-top:10px"><div class="upload" onclick="fakeUpload(this,'Tax doc — 1 year prior','tax')">＋ Upload 1 year prior tax doc</div><div class="upload" onclick="fakeUpload(this,'Tax doc — 2 years prior','tax')">＋ Upload 2 years prior tax doc</div></div></div>
+              <div id="l-taxnote" style="margin-top:10px;color:#1B7F4B;font-size:12.5px">✓ Tax documents aren't required for a dependent — the giftor's tax docs cover this loved one.</div>
+              <button class="btn" id="l-addbtn" disabled onclick="addG2()" style="margin-top:16px">＋ Add loved one</button>
             </div>
             <button class="btn" id="g2-addmore" style="display:none;margin-top:8px" onclick="addMoreG2()">＋ Add another loved one</button>
           </div>
@@ -385,11 +403,21 @@
   function g2Mode(m){ g2mode=m; document.getElementById('g2-add').style.display=(m==='yes')?'block':'none'; if(m==='yes') g2FormView(); updateSend(); }
   function g2FormView(){ document.getElementById('g2-form').style.display=agLoved.length?'none':'grid'; document.getElementById('g2-addmore').style.display=agLoved.length?'inline-flex':'none'; }
   function addMoreG2(){ document.getElementById('g2-form').style.display='grid'; document.getElementById('g2-addmore').style.display='none'; }
-  function addG2(){ var fst=document.getElementById('l-first').value.trim(), lst=document.getElementById('l-last').value.trim(), em=document.getElementById('l-email').value.trim(), am=document.getElementById('l-amt').value.trim();
-    if(!fst||!lst||!em||!am){ toast('Fill first, last, email and gift amount'); return; }
-    agLoved.push({first:fst,last:lst,email:em,amount:(am.replace(/[^0-9,]/g,'')||am)});
-    ['l-first','l-last','l-email','l-amt'].forEach(function(id){document.getElementById(id).value='';});
-    renderG2(); g2FormView(); updateSend(); toast(fst+' added to this invitation'); }
+  function valG2(){ var ok=true;
+    ['l-first','l-last','l-cell','l-email','l-dob','l-amt'].forEach(function(id){ if(!document.getElementById(id).value.trim()) ok=false; });
+    ['l-gender','l-health','l-rel'].forEach(function(id){ if(!document.getElementById(id).value) ok=false; });
+    var b=document.getElementById('l-addbtn'); if(b) b.disabled=!ok; return ok; }
+  function setDep(kind){ document.getElementById('l-taxwrap').style.display=kind==='ind'?'block':'none'; document.getElementById('l-taxnote').style.display=kind==='ind'?'none':'block'; }
+  function gv(id){ return document.getElementById(id).value.trim(); }
+  function addG2(){
+    if(!valG2()){ toast('Complete the required fields to add this loved one'); return; }
+    var am=gv('l-amt');
+    agLoved.push({first:gv('l-first'),last:gv('l-last'),email:gv('l-email'),cell:gv('l-cell'),dob:gv('l-dob'),gender:gv('l-gender'),amount:(am.replace(/[^0-9,]/g,'')||am),health:gv('l-health'),rel:gv('l-rel'),begin:gv('l-begin'),end:gv('l-end')});
+    var nm=gv('l-first');
+    ['l-first','l-last','l-cell','l-email','l-dob','l-amt'].forEach(function(id){document.getElementById(id).value='';});
+    ['l-gender','l-health','l-rel'].forEach(function(id){document.getElementById(id).selectedIndex=0;});
+    document.getElementById('l-begin').value='65'; document.getElementById('l-end').value='90';
+    valG2(); renderG2(); g2FormView(); updateSend(); toast(nm+' added to this invitation'); }
   function rmG2(ix){ agLoved.splice(ix,1); renderG2(); g2FormView(); updateSend(); }
   function renderG2(){ document.getElementById('g2-list').innerHTML=agLoved.map(function(x,ix){ return '<div class="g2-row"><div><b>'+x.first+' '+x.last+'</b> <span class="g2-em">'+x.email+'</span></div><div><span class="g2-amt">$'+x.amount+'</span><button class="g2-x" onclick="rmG2('+ix+')">✕ Remove</button></div></div>'; }).join(''); }
   function sendInvite(){
@@ -423,6 +451,7 @@
       if(sel.id==='carrier'||sel.id==='prodType') return;
       if(sel.selectedIndex<=0 && sel.options.length>1) sel.selectedIndex=1;
     });
+    if(typeof valG2==='function') valG2();
     toast('Auto-filled with sample data');
   }
   function fakeUpload(el,label,kind){
