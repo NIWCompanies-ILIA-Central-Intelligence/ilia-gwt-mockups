@@ -424,7 +424,8 @@
   function g2Fill(){ for(var k in G2SAMPLE){ var el=document.getElementById('l-'+k); if(el) g2SetField(el,G2SAMPLE[k]); } valG2(); toast('Loved one details auto-filled'); }
   ['l-first','l-last','l-cell','l-email','l-dob','l-gender','l-amt','l-health','l-rel'].forEach(function(id){ var el=document.getElementById(id); if(el) el.addEventListener('focus',function(){ g2FieldFill(el); }); });
   function rmG2(ix){ agLoved.splice(ix,1); renderG2(); g2FormView(); updateSend(); }
-  function renderG2(){ document.getElementById('g2-list').innerHTML=agLoved.map(function(x,ix){ return '<div class="g2-row"><div><b>'+x.first+' '+x.last+'</b> <span class="g2-em">'+x.email+'</span></div><div><span class="g2-amt">$'+x.amount+'</span><button class="g2-x" onclick="rmG2('+ix+')">✕ Remove</button></div></div>'; }).join(''); }
+  function renderG2(){ var el=document.getElementById('g2-list'); if(!agLoved.length){ el.innerHTML=''; return; }
+    el.innerHTML='<div style="font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;color:#5B6472;margin:2px 0 8px">Loved ones ready for invitation ('+agLoved.length+')</div>'+agLoved.map(function(x,ix){ return '<div class="g2-row"><div><b>'+x.first+' '+x.last+'</b> <span class="g2-em">'+x.email+'</span></div><div><span class="g2-amt">$'+x.amount+'</span><button class="g2-x" onclick="rmG2('+ix+')">✕ Remove</button></div></div>'; }).join(''); }
   function sendInvite(){
     var ok=true;
     ['g-first','g-last','g-email'].forEach(function(id){ var f=document.getElementById(id); if(!val(id)){ f.classList.add('err'); ok=false; } else f.classList.remove('err'); });
