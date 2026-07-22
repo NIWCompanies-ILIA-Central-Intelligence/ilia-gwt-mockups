@@ -98,6 +98,17 @@
   .fakeid-lines i{height:3px;background:#C3D2EA;border-radius:2px;display:block}
   .fakeid-lines i:nth-child(2){width:80%} .fakeid-lines i:nth-child(3){width:55%}
   .fakedoc{width:46px;height:46px;display:flex;align-items:center;justify-content:center;font-size:26px;background:#EEF2FF;border-radius:8px;flex-shrink:0}
+  .overlay{position:fixed;inset:0;background:rgba(16,30,60,.5);display:none;align-items:center;justify-content:center;z-index:100;padding:20px}
+  .overlay.show{display:flex}
+  .omodal{background:#fff;border-radius:14px;max-width:470px;width:100%;box-shadow:0 20px 60px rgba(16,30,60,.3);overflow:hidden}
+  .omodal .omf{padding:14px 20px;display:flex;justify-content:center;border-top:1px solid #E5E9F0}
+  .g2-opt{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border:1px solid #E5E9F0;border-radius:10px;margin-bottom:10px;cursor:pointer;font-size:14px}
+  .g2-opt:hover{border-color:#B9C6DE}
+  .g2-note{color:#8A94A3;font-size:12px;font-weight:400;margin-top:2px}
+  .g2-form{display:grid;grid-template-columns:1fr 1fr 1.3fr .8fr auto;gap:10px;align-items:end;margin-top:6px}
+  .g2-row{display:flex;justify-content:space-between;align-items:center;padding:10px 13px;border:1px solid #D9E6DD;background:#F3FBF6;border-radius:8px;margin-bottom:8px;font-size:14px}
+  .g2-em{color:#8A94A3;font-size:12.5px} .g2-amt{font-weight:600;margin-right:10px}
+  .g2-x{background:none;border:none;color:#B4231F;cursor:pointer;font-size:12px;font-weight:600}
 
   table.alloc{width:100%;border-collapse:collapse;margin-top:4px}
   table.alloc th{text-align:left;font-size:11px;letter-spacing:.4px;text-transform:uppercase;color:var(--faint);font-weight:600;padding:0 10px 9px;border-bottom:1px solid var(--border)}
@@ -316,6 +327,25 @@
         </section>
       </div>
 
+      <section class="card" id="g2card" style="display:none">
+        <div class="hd"><span class="snum">6</span><div><div class="stit">Add loved ones (Gen-2)?</div><div class="ssub">Add them now for this giftor, or send the invitation and let the giftor add their loved ones from their own portal.</div></div></div>
+        <div class="bd">
+          <label class="g2-opt"><input type="radio" name="g2mode" onclick="g2Mode('yes')"> <div><b>Yes — add loved ones now</b><div class="g2-note">Enter each loved one's details here. The invitation can't send until at least one loved one is added.</div></div></label>
+          <label class="g2-opt"><input type="radio" name="g2mode" onclick="g2Mode('no')"> <div><b>No — send to the giftor</b><div class="g2-note">The giftor adds and invites their loved ones from their own portal after they're invited.</div></div></label>
+          <div id="g2-add" style="display:none;margin-top:14px">
+            <div id="g2-list"></div>
+            <div id="g2-form" class="g2-form">
+              <div class="fld"><label>First name</label><input id="l-first" placeholder="First name"></div>
+              <div class="fld"><label>Last name</label><input id="l-last" placeholder="Last name"></div>
+              <div class="fld"><label>Email</label><input id="l-email" placeholder="name@example.com"></div>
+              <div class="fld"><label>Gift amount</label><input id="l-amt" placeholder="$25,000"></div>
+              <button class="btn" onclick="addG2()">＋ Add loved one</button>
+            </div>
+            <button class="btn" id="g2-addmore" style="display:none;margin-top:8px" onclick="addMoreG2()">＋ Add another loved one</button>
+          </div>
+        </div>
+      </section>
+
       <div class="footer-bar">
         <div class="lic"><b>Please note:</b> all agents must be licensed in the giftor's state before sending an invite. Anything left blank can be completed by the giftor in their portal.</div>
         <button class="btn" id="sendBtn" disabled onclick="sendInvite()">Send invitation</button>
@@ -323,6 +353,17 @@
     </div>
   </div>
 </div>
+<div class="overlay" id="sentOverlay">
+  <div class="omodal">
+    <div style="text-align:center;padding:30px 24px 6px">
+      <div style="width:56px;height:56px;border-radius:50%;background:#E7F6EE;color:#1B7F4B;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;margin:0 auto">✓</div>
+      <h3 style="margin:14px 0 8px;font-size:19px">Invitation sent</h3>
+      <p id="sent-body" style="color:#5A6472;font-size:14px;line-height:1.6;margin:0 auto 20px;max-width:400px"></p>
+    </div>
+    <div class="omf"><button class="btn" onclick="document.getElementById('sentOverlay').classList.remove('show')">Got it</button></div>
+  </div>
+</div>
+
 <div class="toast" id="toast"><span class="tk">✔</span><span id="toast-msg"></span></div>
 <script>
   function onProduct(){
@@ -331,17 +372,38 @@
     document.getElementById('gwt-note').style.display=gwt?'flex':'none';
     document.getElementById('offerRow').style.display=gwt?'none':'grid';
     document.getElementById('participantCard').style.display=gwt?'none':'block';
-    document.getElementById('sendBtn').disabled=!gwt;
+    document.getElementById('g2card').style.display=gwt?'block':'none';
+    updateSend();
   }
   function sumAlloc(){ var t=0; document.querySelectorAll('.apct').forEach(function(i){ var n=parseFloat(i.value); if(!isNaN(n)) t+=n; });
     var el=document.getElementById('alloc-total'); el.textContent=t+'%'; el.className=t===100?'tot-ok':'tot-bad'; }
   document.querySelectorAll('.apct').forEach(function(i){ i.addEventListener('input',sumAlloc); });
   function val(id){ return document.getElementById(id).querySelector('input,select').value.trim(); }
+  var g2mode=null, agLoved=[];
+  function isGwt(){ return document.getElementById('prodType').value==='gwt'; }
+  function updateSend(){ document.getElementById('sendBtn').disabled = !(isGwt() && (g2mode==='no' || (g2mode==='yes'&&agLoved.length>0))); }
+  function g2Mode(m){ g2mode=m; document.getElementById('g2-add').style.display=(m==='yes')?'block':'none'; if(m==='yes') g2FormView(); updateSend(); }
+  function g2FormView(){ document.getElementById('g2-form').style.display=agLoved.length?'none':'grid'; document.getElementById('g2-addmore').style.display=agLoved.length?'inline-flex':'none'; }
+  function addMoreG2(){ document.getElementById('g2-form').style.display='grid'; document.getElementById('g2-addmore').style.display='none'; }
+  function addG2(){ var fst=document.getElementById('l-first').value.trim(), lst=document.getElementById('l-last').value.trim(), em=document.getElementById('l-email').value.trim(), am=document.getElementById('l-amt').value.trim();
+    if(!fst||!lst||!em||!am){ toast('Fill first, last, email and gift amount'); return; }
+    agLoved.push({first:fst,last:lst,email:em,amount:(am.replace(/[^0-9,]/g,'')||am)});
+    ['l-first','l-last','l-email','l-amt'].forEach(function(id){document.getElementById(id).value='';});
+    renderG2(); g2FormView(); updateSend(); toast(fst+' added to this invitation'); }
+  function rmG2(ix){ agLoved.splice(ix,1); renderG2(); g2FormView(); updateSend(); }
+  function renderG2(){ document.getElementById('g2-list').innerHTML=agLoved.map(function(x,ix){ return '<div class="g2-row"><div><b>'+x.first+' '+x.last+'</b> <span class="g2-em">'+x.email+'</span></div><div><span class="g2-amt">$'+x.amount+'</span><button class="g2-x" onclick="rmG2('+ix+')">✕ Remove</button></div></div>'; }).join(''); }
   function sendInvite(){
     var ok=true;
     ['g-first','g-last','g-email'].forEach(function(id){ var f=document.getElementById(id); if(!val(id)){ f.classList.add('err'); ok=false; } else f.classList.remove('err'); });
     if(!ok){ toast('Add the giftor name and email to send'); return; }
-    toast('Invitation sent — the giftor will receive their email');
+    var body;
+    if(g2mode==='yes' && agLoved.length){
+      body='This invitation includes <b>'+agLoved.length+'</b> loved one'+(agLoved.length>1?'s':'')+' — '+agLoved.map(function(x){return x.first+' '+x.last;}).join(', ')+'. The giftor signs their documents, then reviews and sends to these loved ones from their portal.';
+    } else {
+      body='The invitation was sent to the <b>giftor</b>. They can add and invite their loved ones from their own giftor portal.';
+    }
+    document.getElementById('sent-body').innerHTML=body;
+    document.getElementById('sentOverlay').classList.add('show');
   }
   var tT; function toast(m){ document.getElementById('toast-msg').textContent=m; var t=document.getElementById('toast'); t.classList.add('show'); clearTimeout(tT); tT=setTimeout(function(){t.classList.remove('show');},2600); }
   function autofillAgent(){
