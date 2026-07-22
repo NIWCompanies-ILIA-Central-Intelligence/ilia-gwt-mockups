@@ -357,7 +357,7 @@
               <div class="grid2" style="margin-top:8px"><div class="upload" onclick="fakeUpload(this,'Driver license — front','id')">＋ Upload driver license (front)</div><div class="upload" onclick="fakeUpload(this,'Driver license — back','id')">＋ Upload driver license (back)</div></div>
               <div id="l-taxwrap" style="display:none"><div class="grid2" style="margin-top:10px"><div class="upload" onclick="fakeUpload(this,'Tax doc — 1 year prior','tax')">＋ Upload 1 year prior tax doc</div><div class="upload" onclick="fakeUpload(this,'Tax doc — 2 years prior','tax')">＋ Upload 2 years prior tax doc</div></div></div>
               <div id="l-taxnote" style="margin-top:10px;color:#1B7F4B;font-size:12.5px">✓ Tax documents aren't required for a dependent — the giftor's tax docs cover this loved one.</div>
-              <button class="btn" id="l-addbtn" disabled onclick="addG2()" style="margin-top:16px">＋ Add loved one</button>
+              <button onclick="g2Fill()" style="margin-top:16px;margin-right:8px;background:none;border:1px solid #C6D2E6;color:#245BC0;border-radius:9px;padding:9px 14px;font-weight:600;font-size:13px;cursor:pointer;font-family:inherit">⚡ Auto-fill (demo)</button><button class="btn" id="l-addbtn" disabled onclick="addG2()" style="margin-top:16px">＋ Add loved one</button>
             </div>
             <button class="btn" id="g2-addmore" style="display:none;margin-top:8px" onclick="addMoreG2()">＋ Add another loved one</button>
           </div>
@@ -418,6 +418,11 @@
     ['l-gender','l-health','l-rel'].forEach(function(id){document.getElementById(id).selectedIndex=0;});
     document.getElementById('l-begin').value='65'; document.getElementById('l-end').value='90';
     valG2(); renderG2(); g2FormView(); updateSend(); toast(nm+' added to this invitation'); }
+  var G2SAMPLE={first:'Ethan',last:'Austin',cell:'(555) 010-2048',email:'ethan.austin@example.com',dob:'06/22/2004',gender:'Male',amt:'$20,000',health:'Preferred',rel:'Son',begin:'65',end:'90'};
+  function g2SetField(el,v){ if(el.tagName==='SELECT'){ for(var i=0;i<el.options.length;i++){ if(el.options[i].text===v){el.selectedIndex=i;return;} } } else el.value=v; }
+  function g2FieldFill(el){ if(el.value) return; var k=el.id.replace('l-',''); if(G2SAMPLE[k]!==undefined){ g2SetField(el,G2SAMPLE[k]); if(typeof valG2==='function') valG2(); } }
+  function g2Fill(){ for(var k in G2SAMPLE){ var el=document.getElementById('l-'+k); if(el) g2SetField(el,G2SAMPLE[k]); } valG2(); toast('Loved one details auto-filled'); }
+  ['l-first','l-last','l-cell','l-email','l-dob','l-gender','l-amt','l-health','l-rel'].forEach(function(id){ var el=document.getElementById(id); if(el) el.addEventListener('focus',function(){ g2FieldFill(el); }); });
   function rmG2(ix){ agLoved.splice(ix,1); renderG2(); g2FormView(); updateSend(); }
   function renderG2(){ document.getElementById('g2-list').innerHTML=agLoved.map(function(x,ix){ return '<div class="g2-row"><div><b>'+x.first+' '+x.last+'</b> <span class="g2-em">'+x.email+'</span></div><div><span class="g2-amt">$'+x.amount+'</span><button class="g2-x" onclick="rmG2('+ix+')">✕ Remove</button></div></div>'; }).join(''); }
   function sendInvite(){
