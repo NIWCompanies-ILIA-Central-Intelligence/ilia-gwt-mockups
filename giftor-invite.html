@@ -140,6 +140,9 @@
   .optbadge{background:#EEF2FF;color:#3452B4;border:1px solid #D6DEF8;border-radius:20px;font-size:11.5px;font-weight:700;padding:3px 12px;cursor:pointer;font-family:inherit}
   .optbadge:hover{background:#E1E8FF}
   .optbadge.active{background:#3452B4;color:#fff;border-color:#3452B4}
+  .smtoggle{display:inline-flex;gap:2px;background:#EEF2FF;border:1px solid #D6DEF8;border-radius:8px;padding:2px}
+  .smt{border:none;background:none;font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;color:#3452B4;cursor:pointer;font-family:inherit}
+  .smt.on{background:#3452B4;color:#fff}
   .opta-label{background:#EEF2FF;border:1px solid #D6DEF8;border-radius:9px;padding:9px 13px;color:#3452B4;font-size:12.5px;margin-bottom:12px}
   .saved-sub{margin-top:18px;border-top:2px dashed #E2D9F2;padding-top:12px}
   .saved-sub-h{font-size:13px;font-weight:700;color:#5B3FA6;display:flex;align-items:center;gap:8px;margin:0 0 6px}
@@ -627,10 +630,10 @@
 
 <div class="overlay" id="sendModalOverlay">
   <div class="modal" style="width:530px">
-    <div class="mh"><h3>Send invitations</h3><button class="x" onclick="closeSendModal()">✕</button></div>
+    <div class="mh"><h3>Send invitations</h3><div class="smtoggle" style="margin-left:14px"><button class="smt on" id="smt-a" onclick="smSetMode('a')">Checkbox</button><button class="smt" id="smt-b" onclick="smSetMode('b')">Send all</button></div><button class="x" style="margin-left:auto" onclick="closeSendModal()">✕</button></div>
     <div class="mb">
-      <p class="ds-intro">Select the loved ones you'd like to invite now — you'll send them together.</p>
-      <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin-bottom:8px;cursor:pointer"><input type="checkbox" id="sm-all" onclick="smToggleAll(this.checked)"> Select all</label>
+      <p class="ds-intro" id="sm-intro">Select the loved ones you'd like to invite now — you'll send them together.</p>
+      <label id="sm-allrow" style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin-bottom:8px;cursor:pointer"><input type="checkbox" id="sm-all" onclick="smToggleAll(this.checked)"> Select all</label>
       <div id="sm-list" style="border:1px solid var(--border);border-radius:10px;overflow:hidden"></div>
     </div>
     <div class="mfoot"><button class="btn ghost" onclick="closeSendModal()">Cancel</button><button class="btn" id="sm-confirm" onclick="confirmSendModal()" disabled>Confirm send</button></div>
@@ -745,7 +748,7 @@
     {first:'Riley',last:'Foster',email:'riley.foster@example.com',rel:'Nephew',amount:'30,000'}
   ];
   var sampleIx=0, editId=null, delId=null, seq=100;
-  var selected=[]; var pendingBatch=[]; var pendingTip=[]; var estId=null; var giftorDone=false; var docsSigned=false; var cardMode='default'; var smSel=[];
+  var selected=[]; var pendingBatch=[]; var pendingTip=[]; var estId=null; var giftorDone=false; var docsSigned=false; var cardMode='default'; var smSel=[]; var smForce=false;
   var invF={q:'',status:'all'};
   var state=[
     {id:1,first:'Jordan',last:'Rivera',email:'jordan.rivera@example.com',amount:'25,000',rel:'Daughter',status:'invited',invitedOn:'Jul 12, 2026',acct:'created',enr:'step2',pol:'quoted',illRun:true,illDate:'Jul 12, 2026'},
@@ -1177,20 +1180,25 @@
       +'</div></td></tr>';
     return main+det;
   }
-  function openSendModal(){ if(!docsSigned){ toast('Sign your documents first'); return; } smSel=[]; document.getElementById('sm-all').checked=false; renderSendList(); updateSmConfirm(); document.getElementById('sendModalOverlay').classList.add('show'); }
+  function openSendModal(){ if(!docsSigned){ toast('Sign your documents first'); return; } smSel=[]; document.getElementById('sm-all').checked=false; smSetMode(smForce?'b':'a'); document.getElementById('sendModalOverlay').classList.add('show'); }
+  function smSetMode(m){ smForce=(m==='b'); document.getElementById('smt-a').classList.toggle('on',!smForce); document.getElementById('smt-b').classList.toggle('on',smForce); document.getElementById('sm-allrow').style.display=smForce?'none':'flex'; document.getElementById('sm-intro').textContent=smForce?"Everyone below will be invited — you'll send them together.":"Select the loved ones you'd like to invite now — you'll send them together."; if(smForce) smSel=[]; renderSendList(); updateSmConfirm(); }
   function closeSendModal(){ document.getElementById('sendModalOverlay').classList.remove('show'); }
   function smDrafts(){ return state.filter(function(r){return r.status==='draft';}); }
   function renderSendList(){
+    if(smForce){ document.getElementById('sm-list').innerHTML=smDrafts().map(function(r){
+      return '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 13px;border-bottom:1px solid #F0F3F7;font-size:14px"><span><b>'+r.first+' '+r.last+'</b> <span style="color:var(--faint);font-size:12.5px">'+(r.rel||'')+'</span></span><span style="font-weight:600">$'+r.amount+'</span></div>';
+    }).join(''); return; }
     document.getElementById('sm-list').innerHTML=smDrafts().map(function(r){ var on=smSel.indexOf(r.id)>=0;
       return '<label style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 13px;border-bottom:1px solid #F0F3F7;cursor:pointer;font-size:14px"><span style="display:flex;align-items:center;gap:10px"><input type="checkbox" '+(on?'checked':'')+' onclick="smToggle('+r.id+')"> <b>'+r.first+' '+r.last+'</b> <span style="color:var(--faint);font-size:12.5px">'+(r.rel||'')+'</span></span><span style="font-weight:600">$'+r.amount+'</span></label>';
     }).join('');
   }
   function smToggle(id){ var i=smSel.indexOf(id); if(i>=0)smSel.splice(i,1); else smSel.push(id); var rows=smDrafts(); document.getElementById('sm-all').checked=rows.length>0&&smSel.length===rows.length; updateSmConfirm(); renderSendList(); }
   function smToggleAll(chk){ smSel=chk?smDrafts().map(function(r){return r.id;}):[]; updateSmConfirm(); renderSendList(); }
-  function updateSmConfirm(){ document.getElementById('sm-confirm').disabled=smSel.length===0; }
+  function updateSmConfirm(){ var n=smForce?smDrafts().length:smSel.length; document.getElementById('sm-confirm').disabled=n===0; }
   function confirmSendModal(){
-    if(!smSel.length) return;
-    var ids=smSel.slice(); var names=ids.map(function(id){var r=find(id);return r.first+' '+r.last;});
+    var ids=smForce?smDrafts().map(function(r){return r.id;}):smSel.slice();
+    if(!ids.length) return;
+    var names=ids.map(function(id){var r=find(id);return r.first+' '+r.last;});
     closeSendModal();
     ids.forEach(function(id){var r=find(id); if(!r)return; r.status='invited'; r.acct='inreview'; r.enr='notstarted'; r.pol='proposed'; r.invitedOn='Jul 15, 2026'; r.link=linkFor(r);});
     smSel=[]; render();
