@@ -136,6 +136,7 @@
       <div class="who"><span>🔔</span><span>Welcome! Test</span><span class="av">TA</span></div>
     </div>
     <div class="wrap">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:2px"><button onclick="autofillAgent()" style="background:none;border:1px solid #D6DCE6;border-radius:8px;color:#245BC0;font-weight:600;font-size:12px;padding:6px 12px;cursor:pointer;font-family:inherit">⚡ Auto-fill (demo)</button></div>
       <div class="crumb">Client Management · Create invitation · Individual</div>
       <h1>Create a new invitation</h1>
       <p class="lede">Choose the carrier and product to invite your client. When you select the Greatest Wealth Transfer, we'll guide you through the giftor setup below.</p>
@@ -333,6 +334,25 @@
     toast('Invitation sent — the giftor will receive their email');
   }
   var tT; function toast(m){ document.getElementById('toast-msg').textContent=m; var t=document.getElementById('toast'); t.classList.add('show'); clearTimeout(tT); tT=setTimeout(function(){t.classList.remove('show');},2600); }
+  function autofillAgent(){
+    var main=document.querySelector('.main')||document.body;
+    main.querySelectorAll('input').forEach(function(i){
+      if(i.disabled||i.type==='radio'||i.type==='checkbox'||i.classList.contains('apct')) return;
+      var p=(i.getAttribute('placeholder')||'').toLowerCase(); var v=i.value||'';
+      if(p.indexOf('first')>=0) i.value='Jordan';
+      else if(p.indexOf('last')>=0) i.value='Rivera';
+      else if(p.indexOf('@')>=0||p.indexOf('email')>=0) i.value='jordan.rivera@example.com';
+      else if(p.indexOf('000')>=0||p.indexOf('phone')>=0) i.value='(555) 010-2024';
+      else if(p.indexOf('mm/dd')>=0) i.value='08/14/1985';
+      else if(p==='$'||v==='$'||p.indexOf('amount')>=0) i.value='$50,000';
+      else if(!i.value) i.value='Sample';
+    });
+    main.querySelectorAll('select').forEach(function(sel){
+      if(sel.id==='carrier'||sel.id==='prodType') return;
+      if(sel.selectedIndex<=0 && sel.options.length>1) sel.selectedIndex=1;
+    });
+    toast('Auto-filled with sample data');
+  }
   sumAlloc();
 </script>
 </body>
