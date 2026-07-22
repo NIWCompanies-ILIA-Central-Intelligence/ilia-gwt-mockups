@@ -89,6 +89,15 @@
   .note.green{background:var(--g-bg);border-color:#BFE6CF;color:var(--g-tx)}
   .upload{border:1.5px dashed var(--border-d);border-radius:10px;padding:16px;text-align:center;color:var(--muted);font-size:13px;cursor:pointer}
   .upload:hover{border-color:var(--blue);color:var(--blue)}
+  .upload.uploaded{border-style:solid;border-color:#BFE0CC;background:#F3FBF6;cursor:pointer;text-align:left}
+  .fakeid{width:66px;height:42px;border-radius:5px;background:linear-gradient(135deg,#DCE7F7,#EEF3FB);border:1px solid #C3D2EA;padding:4px;flex-shrink:0}
+  .fakeid-strip{font-size:5px;font-weight:700;color:#3452B4;letter-spacing:.3px}
+  .fakeid-row{display:flex;gap:4px;margin-top:3px}
+  .fakeid-photo{width:16px;height:22px;background:#B9C6DE;border-radius:2px}
+  .fakeid-lines{flex:1;display:flex;flex-direction:column;gap:3px;justify-content:center}
+  .fakeid-lines i{height:3px;background:#C3D2EA;border-radius:2px;display:block}
+  .fakeid-lines i:nth-child(2){width:80%} .fakeid-lines i:nth-child(3){width:55%}
+  .fakedoc{width:46px;height:46px;display:flex;align-items:center;justify-content:center;font-size:26px;background:#EEF2FF;border-radius:8px;flex-shrink:0}
 
   table.alloc{width:100%;border-collapse:collapse;margin-top:4px}
   table.alloc th{text-align:left;font-size:11px;letter-spacing:.4px;text-transform:uppercase;color:var(--faint);font-weight:600;padding:0 10px 9px;border-bottom:1px solid var(--border)}
@@ -281,8 +290,9 @@
           <div class="bd">
             <div class="note blue" style="margin-bottom:16px">ⓘ If you don't upload these, the giftor uploads them in their portal after they're invited.</div>
             <div class="fld" style="margin-bottom:14px"><label>Identity document type</label><select><option value="">Select</option><option>Driver's license</option><option>Passport</option><option>State ID</option></select></div>
-            <div class="grid2" style="margin-bottom:18px"><div class="upload">＋ Upload ID (front)</div><div class="upload">＋ Upload ID (back)</div></div>
-            <div class="fld"><label>Tax document type</label><select><option value="">Select</option><option>W-2</option><option>Tax return</option><option>1099</option></select></div>
+            <div class="grid2" style="margin-bottom:18px"><div class="upload" onclick="fakeUpload(this,'ID — front','id')">＋ Upload ID (front)</div><div class="upload" onclick="fakeUpload(this,'ID — back','id')">＋ Upload ID (back)</div></div>
+            <div class="fld"><label>Tax document type</label><select id="taxsel" onchange="onTaxSel()"><option value="">Select</option><option>W-2</option><option>Tax return</option><option>1099</option></select></div>
+            <div class="grid2" id="taxUploads" style="display:none;margin-top:14px"><div class="upload" onclick="fakeUpload(this,'Tax doc — 1 year prior','tax')">＋ Upload 1 year prior</div><div class="upload" onclick="fakeUpload(this,'Tax doc — 2 years prior','tax')">＋ Upload 2 years prior</div></div>
           </div>
         </details>
 
@@ -353,6 +363,14 @@
     });
     toast('Auto-filled with sample data');
   }
+  function fakeUpload(el,label,kind){
+    var thumb = kind==='id'
+      ? '<div class="fakeid"><div class="fakeid-strip">DRIVER LICENSE</div><div class="fakeid-row"><div class="fakeid-photo"></div><div class="fakeid-lines"><i></i><i></i><i></i></div></div></div>'
+      : '<div class="fakedoc">📄</div>';
+    el.classList.add('uploaded');
+    el.innerHTML='<div style="display:flex;align-items:center;gap:12px">'+thumb+'<div><div style="font-weight:600;color:#1E2A38;font-size:13px">'+label+'</div><div style="color:#1B7F4B;font-size:12px;font-weight:600">✓ Uploaded (sample)</div><div style="color:#8A94A3;font-size:11px">Click to replace</div></div></div>';
+  }
+  function onTaxSel(){ document.getElementById('taxUploads').style.display=document.getElementById('taxsel').value?'grid':'none'; }
   sumAlloc();
 </script>
 </body>
