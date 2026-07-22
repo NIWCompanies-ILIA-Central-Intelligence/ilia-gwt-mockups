@@ -630,7 +630,7 @@
 
 <div class="overlay" id="sendModalOverlay">
   <div class="modal" style="width:530px">
-    <div class="mh"><h3>Send invitations</h3><div class="smtoggle" style="margin-left:14px"><button class="smt on" id="smt-a" onclick="smSetMode('a')">Checkbox</button><button class="smt" id="smt-b" onclick="smSetMode('b')">Send all</button></div><button class="x" style="margin-left:auto" onclick="closeSendModal()">✕</button></div>
+    <div class="mh"><h3>Send invitations</h3><button class="x" style="margin-left:auto" onclick="closeSendModal()">✕</button></div>
     <div class="mb">
       <p class="ds-intro" id="sm-intro">Select the loved ones you'd like to invite now — you'll send them together.</p>
       <label id="sm-allrow" style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin-bottom:8px;cursor:pointer"><input type="checkbox" id="sm-all" onclick="smToggleAll(this.checked)"> Select all</label>
@@ -1121,7 +1121,13 @@
     var rows=state.filter(function(r){return r.status==='draft'||r.status==='review';});
     var el=document.getElementById('tbl-draft');
     if(!rows.length){ el.innerHTML='<div class="empty">No loved ones waiting. Add a loved one above.</div>'; return; }
-    if(cardMode==='optB'){ var btn='<div style="display:flex;justify-content:flex-end;padding:0 0 14px"><button class="btn"'+(docsSigned?'':' disabled title="Sign your documents first"')+' onclick="openSendModal()">＋ Send Invites</button></div>'; el.innerHTML=btn+sectionTableB(rows); }
+    if(cardMode==='optB'){
+      var readyB=rows.filter(function(r){return !r.saved;}), savedB=rows.filter(function(r){return r.saved;});
+      var btnB='<div style="display:flex;justify-content:flex-end;padding:0 0 14px"><button class="btn"'+(docsSigned?'':' disabled title="Sign your documents first"')+' onclick="openSendModal()">＋ Send Invites</button></div>';
+      var mainB=readyB.length?sectionTableB(readyB,false):'<div class="empty">No loved ones ready to invite.</div>';
+      var savB='<div class="saved-sub"><div class="saved-sub-h">🕓 Saved for later <span class="badge-ct" style="background:#EFEAF9;color:#5B3FA6">'+savedB.length+'</span></div>'+(savedB.length?sectionTableB(savedB,true):'<div class="empty" style="padding:14px 0">No one saved for later yet. Use "Save for later" on a loved one above.</div>')+'</div>';
+      el.innerHTML=btnB+mainB+savB;
+    }
     else if(cardMode==='optC'){
       var ready=rows.filter(function(r){return !r.saved;}), saved=rows.filter(function(r){return r.saved;});
       var mainHtml=ready.length?sectionTableC(ready,false):'<div class="empty">No loved ones ready to invite. Move someone up from Saved for later, or add a loved one.</div>';
@@ -1160,14 +1166,15 @@
   function saveLoved(id){ var r=find(id); r.saved=true; var i=selected.indexOf(id); if(i>=0)selected.splice(i,1); render(); toast(r.first+' saved for later'); }
   function unsaveLoved(id){ var r=find(id); r.saved=false; render(); toast(r.first+' moved to ready to invite'); }
   function selAllReadyC(chk){ var ids=state.filter(function(r){return r.status==='draft'&&!r.saved;}).map(function(r){return r.id;}); ids.forEach(function(id){ var i=selected.indexOf(id); if(chk&&i<0)selected.push(id); if(!chk&&i>=0)selected.splice(i,1); }); render(); }
-  function sectionTableB(rows){
+  function sectionTableB(rows, saved){
     var head='<table><thead><tr><th style="width:22px"></th><th>Loved one</th><th>Email</th><th>Gift amount</th><th style="text-align:right">Actions</th></tr></thead><tbody>';
-    return head+rows.map(function(r){return r.status==='review'?reviewRow(r):inviteRowB(r);}).join('')+'</tbody></table>';
+    return head+rows.map(function(r){return inviteRowB(r, saved);}).join('')+'</tbody></table>';
   }
-  function inviteRowB(r){
+  function inviteRowB(r, saved){
     var relTxt=r.rel?r.rel:'Not set';
-    var acts='<button class="ia" onclick="openProposalFor('+r.id+')">▤ View / edit illustration</button>'
-      +'<button class="ia del" onclick="del('+r.id+')">🗑 Delete</button>';
+    var acts = saved
+      ? '<button class="ia" onclick="openProposalFor('+r.id+')">▤ View / edit illustration</button>'+'<button class="ia" onclick="unsaveLoved('+r.id+')">↑ Move to invite</button>'+'<button class="ia del" onclick="del('+r.id+')">🗑 Delete</button>'
+      : '<button class="ia" onclick="openProposalFor('+r.id+')">▤ View / edit illustration</button>'+'<button class="ia" onclick="saveLoved('+r.id+')">🕓 Save for later</button>'+'<button class="ia del" onclick="del('+r.id+')">🗑 Delete</button>';
     var main='<tr class="rrow">'
       +'<td style="width:22px"><button class="expand" id="chev-'+r.id+'" onclick="toggleExp('+r.id+')">›</button></td>'
       +'<td><div class="rname">'+r.first+' '+r.last+'</div><div class="rrel">'+(r.rel||'')+'</div><button class="ia" style="font-size:12px;margin-top:3px" onclick="openEdit('+r.id+')">✎ Edit</button></td>'
@@ -1180,10 +1187,9 @@
       +'</div></td></tr>';
     return main+det;
   }
-  function openSendModal(){ if(!docsSigned){ toast('Sign your documents first'); return; } smSel=[]; document.getElementById('sm-all').checked=false; smSetMode(smForce?'b':'a'); document.getElementById('sendModalOverlay').classList.add('show'); }
-  function smSetMode(m){ smForce=(m==='b'); document.getElementById('smt-a').classList.toggle('on',!smForce); document.getElementById('smt-b').classList.toggle('on',smForce); document.getElementById('sm-allrow').style.display=smForce?'none':'flex'; document.getElementById('sm-intro').textContent=smForce?"Everyone below will be invited — you'll send them together.":"Select the loved ones you'd like to invite now — you'll send them together."; if(smForce) smSel=[]; renderSendList(); updateSmConfirm(); }
+  function openSendModal(){ if(!docsSigned){ toast('Sign your documents first'); return; } smForce=true; smSel=[]; document.getElementById('sm-allrow').style.display='none'; document.getElementById('sm-intro').textContent="Everyone below will be invited — you'll send them together."; renderSendList(); updateSmConfirm(); document.getElementById('sendModalOverlay').classList.add('show'); }
   function closeSendModal(){ document.getElementById('sendModalOverlay').classList.remove('show'); }
-  function smDrafts(){ return state.filter(function(r){return r.status==='draft';}); }
+  function smDrafts(){ return state.filter(function(r){return r.status==='draft' && !r.saved;}); }
   function renderSendList(){
     if(smForce){ document.getElementById('sm-list').innerHTML=smDrafts().map(function(r){
       return '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 13px;border-bottom:1px solid #F0F3F7;font-size:14px"><span><b>'+r.first+' '+r.last+'</b> <span style="color:var(--faint);font-size:12.5px">'+(r.rel||'')+'</span></span><span style="font-weight:600">$'+r.amount+'</span></div>';
