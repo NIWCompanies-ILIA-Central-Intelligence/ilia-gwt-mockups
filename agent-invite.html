@@ -373,13 +373,23 @@
   </div>
 </div>
 <div class="overlay" id="sentOverlay">
-  <div class="omodal">
-    <div style="text-align:center;padding:30px 24px 6px">
+  <div class="omodal" style="max-width:500px">
+    <div style="text-align:center;padding:30px 26px 4px">
       <div style="width:56px;height:56px;border-radius:50%;background:#E7F6EE;color:#1B7F4B;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;margin:0 auto">✓</div>
-      <h3 style="margin:14px 0 8px;font-size:19px">Invitation sent</h3>
-      <p id="sent-body" style="color:#5A6472;font-size:14px;line-height:1.6;margin:0 auto 20px;max-width:400px"></p>
+      <h3 style="margin:14px 0 4px;font-size:20px">Invitation sent</h3>
+      <p style="color:#8A94A3;font-size:13px;margin:0 0 18px">Here's what you set up — and what happens next.</p>
     </div>
-    <div class="omf"><button class="btn" onclick="document.getElementById('sentOverlay').classList.remove('show')">Got it</button></div>
+    <div style="padding:0 26px">
+      <div style="background:#F5F8FC;border:1px solid #E5EBF3;border-radius:12px;padding:14px 16px;margin-bottom:14px;text-align:left">
+        <div style="display:flex;gap:12px;margin-bottom:10px"><span style="color:#8A94A3;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;min-width:82px;padding-top:2px">Giftor</span><span id="sent-giftor" style="font-weight:600;color:#1E2A38">—</span></div>
+        <div style="display:flex;gap:12px"><span style="color:#8A94A3;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;min-width:82px;padding-top:2px">Loved ones</span><span id="sent-loved" style="color:#1E2A38;line-height:1.6">—</span></div>
+      </div>
+      <div style="background:#FBFBFD;border:1px solid #ECEFF4;border-radius:12px;padding:14px 16px;text-align:left">
+        <div style="font-weight:700;color:#1E2A38;font-size:13px;margin-bottom:6px">What happens next</div>
+        <div id="sent-next" style="font-size:13.5px;color:#4A5568;line-height:1.6"></div>
+      </div>
+    </div>
+    <div class="omf" style="margin-top:18px"><button class="btn" onclick="document.getElementById('sentOverlay').classList.remove('show')">Got it</button></div>
   </div>
 </div>
 
@@ -431,13 +441,15 @@
     var ok=true;
     ['g-first','g-last','g-email'].forEach(function(id){ var f=document.getElementById(id); if(!val(id)){ f.classList.add('err'); ok=false; } else f.classList.remove('err'); });
     if(!ok){ toast('Add the giftor name and email to send'); return; }
-    var body;
+    var gname=(val('g-first')+' '+val('g-last')).trim()||'the giftor';
+    document.getElementById('sent-giftor').textContent=gname;
     if(g2mode==='yes' && agLoved.length){
-      body='This invitation includes <b>'+agLoved.length+'</b> loved one'+(agLoved.length>1?'s':'')+' — '+agLoved.map(function(x){return x.first+' '+x.last;}).join(', ')+'. The giftor signs their documents, then reviews and sends to these loved ones from their portal.';
+      document.getElementById('sent-loved').innerHTML=agLoved.map(function(x){return '<b>'+x.first+' '+x.last+'</b> <span style="color:#8A94A3;font-size:12.5px">$'+x.amount+'</span>';}).join('<br>');
+      document.getElementById('sent-next').innerHTML='<b>'+gname+'</b> is now invited to ILIA. From their <b>Giftor Portal</b> (in the giftor-details section) they will <b>sign their documents</b> and review the loved ones you added — they can <b>confirm, edit, add, or remove</b> — then <b>send the invitations</b> out to their loved ones.';
     } else {
-      body='The invitation was sent to the <b>giftor</b>. They can add and invite their loved ones from their own giftor portal.';
+      document.getElementById('sent-loved').innerHTML='<span style="color:#8A94A3">None added — '+gname+' will add their loved ones from their portal.</span>';
+      document.getElementById('sent-next').innerHTML='<b>'+gname+'</b> is now invited to ILIA. From their <b>Giftor Portal</b> they will <b>sign their documents</b>, <b>add their loved ones</b>, and <b>send the invitations</b> out.';
     }
-    document.getElementById('sent-body').innerHTML=body;
     document.getElementById('sentOverlay').classList.add('show');
   }
   var tT; function toast(m){ document.getElementById('toast-msg').textContent=m; var t=document.getElementById('toast'); t.classList.add('show'); clearTimeout(tT); tT=setTimeout(function(){t.classList.remove('show');},2600); }
