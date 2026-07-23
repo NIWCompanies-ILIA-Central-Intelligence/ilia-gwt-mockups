@@ -496,7 +496,8 @@
     <div class="mh"><h3 id="add-title">Add a loved one</h3><button class="clr-demo" style="color:var(--blue-d);margin-left:auto" onclick="addAutofill()">⚡ Auto-fill (demo)</button><button class="x" onclick="closeAdd()">✕</button></div>
     <div class="mb">
       <div id="add-step1">
-        <p class="ds-intro">Provide your loved one's details so we can run their sample illustration. Fields marked * are required to run it.</p>
+        <p class="ds-intro">Provide your loved one's details so we can run their sample illustration. Fields marked * are required to run it. <button class="secdev" onclick="toggleSecDev('sd-addfields')" title="Dev-facing">🛠 Dev notes</button></p>
+        <div class="secdev-panel" id="sd-addfields" style="display:none"><div class="t">🛠 Dev note — for the build team</div>These fields are illustrative for the mock. <b>Do not treat this exact field set as the requirement.</b> When building the add-Gen-2 flow, use ILIA's <b>current/existing required fields</b> for adding a Gen-2 — the mock may have missed, added, or renamed fields.</div>
         <div class="mrow"><div class="mf"><label>First name *</label><input id="ar-first"></div><div class="mf"><label>Last name *</label><input id="ar-last"></div></div>
         <div class="mrow"><div class="mf"><label>Cell number *</label><input id="ar-cell" placeholder="(000) 000-0000"></div><div class="mf"><label>Email address *</label><input id="ar-email" placeholder="name@example.com"></div></div>
         <div class="mrow"><div class="mf"><label>Date of birth *</label><input id="ar-dob" placeholder="MM/DD/YYYY"></div><div class="mf"><label>Gender *</label><select id="ar-gender"><option value="">Select</option><option>Female</option><option>Male</option><option>Other</option></select></div></div>
