@@ -1201,7 +1201,7 @@
     smSel=[]; render();
     var n=ids.length;
     document.getElementById('sg-title').textContent='Invitations sent for review';
-    document.getElementById('sg-body').innerHTML="<b>"+n+"</b> invitation"+(n>1?'s':'')+" "+(n>1?'are':'is')+" now with <b>NIW for admin review</b>:<ul style=\"margin:8px 0 10px;padding-left:20px;text-align:left\">"+names.map(function(nm){return '<li>'+nm+'</li>';}).join('')+"</ul>Nothing is sent to "+(n>1?'them':'your loved one')+" until we approve it. Once approved, we email "+(n>1?'each of them':'them')+" to begin their Kai-Zen application — track each under <b>Invited loved ones</b> as <b>In Review</b>.";
+    document.getElementById('sg-body').innerHTML="<b>"+n+"</b> invitation"+(n>1?'s':'')+" "+(n>1?'are':'is')+" now with <b>NIW for admin review</b>:<ul style=\"margin:8px 0 10px;padding-left:20px;text-align:left\">"+names.map(function(nm){return '<li>'+nm+'</li>';}).join('')+"</ul>Nothing is sent to "+(n>1?'them':'your loved one')+" until we approve it. Once approved, we email "+(n>1?'each of them':'them')+" to begin their Kai-Zen application — track each under <b>Invited loved ones</b> as <b>In Review</b>.<br><br><b>We'll notify you</b> as soon as NIW approves the request and the invitations are sent to your loved ones.";
     document.getElementById('signedOverlay').classList.add('show');
   }
   function renderLater(){
